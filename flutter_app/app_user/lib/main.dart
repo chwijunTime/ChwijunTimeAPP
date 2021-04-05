@@ -11,7 +11,7 @@ class UserApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ChwijunTimeApp",
-      initialRoute: "/",
+      initialRoute: "/login",
       routes: {
         "/": (context) => MainPage(),
         "/contracting_company": (context) => ContractingCompPage(),
