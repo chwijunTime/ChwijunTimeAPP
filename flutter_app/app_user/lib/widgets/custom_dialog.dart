@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/widgets/tag.dart';
+import 'package:app_user/widgets/tag.dart';
 
 class CustomDialog extends StatefulWidget {
   final String msg, content;

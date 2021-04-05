@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/widgets/button.dart';
+import 'package:app_user/widgets/button.dart';
 
 Widget buildDrawer(BuildContext context) {
   return Drawer(
