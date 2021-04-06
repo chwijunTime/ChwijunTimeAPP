@@ -29,7 +29,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           field: "모바일 앱, 웹",
           address: "광주광역시 광산구 목련로 273번길 76",
           compInfo:
-              "회사 소개Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
+              "printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
           preferentialInfo:
               "우대 조건 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
           isBookMark: false,

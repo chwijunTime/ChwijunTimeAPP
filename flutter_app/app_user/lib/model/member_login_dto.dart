@@ -1,7 +1,7 @@
 import 'package:json_serializable/json_serializable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'part/member_login_dto.g.dart';
+part 'member_login_dto.g.dart';
 
 @JsonSerializable()
 class MemberLoginDTO{

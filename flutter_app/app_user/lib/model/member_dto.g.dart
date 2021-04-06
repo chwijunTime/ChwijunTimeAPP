@@ -1,23 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../data.dart';
+part of 'member_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Data _$DataFromJson(Map<String, dynamic> json) {
-  return Data(
-    accessToken: json['accessToken'] as String,
+MemberDTO _$MemberDTOFromJson(Map<String, dynamic> json) {
+  return MemberDTO(
     memberClassNumber: json['memberClassNumber'] as String,
     memberEmail: json['memberEmail'] as String,
-    roles: json['roles'] as String,
+    memberPassword: json['memberPassword'] as String,
   );
 }
 
-Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
-      'accessToken': instance.accessToken,
+Map<String, dynamic> _$MemberDTOToJson(MemberDTO instance) => <String, dynamic>{
       'memberClassNumber': instance.memberClassNumber,
       'memberEmail': instance.memberEmail,
-      'roles': instance.roles,
+      'memberPassword': instance.memberPassword,
     };

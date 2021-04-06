@@ -7,7 +7,7 @@ Widget buildTextField(String hint, TextEditingController controller) {
       hintText: hint,
       hintStyle: TextStyle(
         color: Colors.grey,
-        fontWeight: FontWeight.w600
+        fontWeight: FontWeight.w500
       ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.blueAccent)
