@@ -1,5 +1,9 @@
+import 'package:app_user/model/member_login_dto.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +16,29 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passWordController = TextEditingController();
 
+  RetrofitHelper helper;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Dio dio = Dio();
+    helper = RetrofitHelper(dio);
+  }
+
+  postLogin() async {
+    var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
+    if (res.success) {
+      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+    } else {
+      switch (res.msg) {
+        case "오잉" : {
+          print(res.msg);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +48,13 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Stack(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                        child: Image.asset(
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    child: Image.asset(
                       "images/top.png",
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.fill,
                     )),
-                  ],
-                ),
                 Padding(
                   padding: const EdgeInsets.all(30),
                   child: Column(
@@ -60,12 +85,18 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: buildTextField("email", emailController),
+                  SizedBox(
+                    height: 10,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(right: 34.0, left: 34),
+                    child: buildTextField("email", emailController),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 34, left: 34),
                     child: buildTextField("password", passWordController),
                   ),
                   SizedBox(
@@ -75,20 +106,38 @@ class _LoginPageState extends State<LoginPage> {
                       msg: "Login",
                       onPressed: () {
                         print("로그인");
+                        postLogin();
                       },
                       mode: 3),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        "아직 계정이 없으신가요?",
+                        style: TextStyle(color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400),
+                      )),
+                  GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        "계정이 기억나지 않으시나요?",
+                        style: TextStyle(color: Colors.grey,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400),
+                      )),
                 ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                    child: Image.asset(
-                  "images/bottom_2.png",
-                  fit: BoxFit.fitWidth,
-                )),
-              ],
-            )
+            Container(
+                width: MediaQuery.of(context).size.width,
+                height: 250,
+                child: Image.asset(
+                  "images/bottom.png",
+                  fit: BoxFit.fill,
+                ))
           ],
         ),
       ),
