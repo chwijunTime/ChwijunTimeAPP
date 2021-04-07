@@ -1,3 +1,4 @@
+import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:app_user/widgets/button.dart';
 
@@ -130,6 +131,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.tag),
           onTap: () {
             print("태그 추가 요청 하자");
+            showDialog(context: context, builder: (BuildContext context) => TagAddReqDialog());
           },
         ),
         Padding(
