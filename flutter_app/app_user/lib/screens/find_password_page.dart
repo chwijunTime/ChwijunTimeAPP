@@ -70,7 +70,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
                 Padding(
                   padding: EdgeInsets.only(right: 34, left: 34),
                   child:
-                      buildTextField("Email", email, autoFocus: false),
+                      buildTextField("Email", email, autoFocus: false, type: TextInputType.emailAddress),
                 ),
                 SizedBox(
                   height: 24,
@@ -148,6 +148,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
       ));
     } else {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) => StdDialog(
           msg: "해당 이메일로 메일이 발송되었습니다.",
@@ -158,8 +159,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
           ),
           btnName2: "로그인하기",
           btnCall2: () {
-            Navigator.pop(context);
-            Navigator.pushReplacementNamed(context, "/login");
+            Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
           },
         ),
       );

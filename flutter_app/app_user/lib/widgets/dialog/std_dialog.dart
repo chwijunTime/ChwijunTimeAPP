@@ -18,7 +18,7 @@ class StdDialog extends StatefulWidget {
       this.btnName1,
       this.btnName2,
       this.btnCall1,
-      this.btnCall2});
+      this.btnCall2,});
 
   @override
   _StdDialog createState() => _StdDialog();

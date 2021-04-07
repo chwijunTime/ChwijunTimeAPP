@@ -141,6 +141,7 @@ class _FindIdPageState extends State<FindIdPage> {
       ));
     } else {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) =>
               FindIdDialog(name: "예원문", email: "jjol@naver.com"));
