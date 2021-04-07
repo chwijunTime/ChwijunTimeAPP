@@ -138,7 +138,10 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 5,),
                   Center(
                     child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          print("눌림 계정찾기");
+                          Navigator.pushNamed(context, "/find_acount");
+                        },
                         child: Text(
                           "계정이 기억나지 않으시나요?",
                           style: TextStyle(color: Colors.grey,

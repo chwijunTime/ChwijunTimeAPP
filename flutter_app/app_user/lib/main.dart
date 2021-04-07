@@ -1,5 +1,6 @@
 import 'package:app_user/screens/company_notice.dart';
 import 'package:app_user/screens/contracting_company.dart';
+import 'package:app_user/screens/find_acount_page.dart';
 import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
@@ -21,6 +22,7 @@ class UserApp extends StatelessWidget {
         "/login": (context) => LoginPage(),
         "/join": (context) => JoinPage(),
         "/success_join": (context) => SuccessJoinPage(),
+        "/find_acount": (context) => FindAcountPage(),
       },
       debugShowCheckedModeBanner: false,
     );

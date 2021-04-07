@@ -1,5 +1,5 @@
 import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/custom_dialog.dart';
+import 'file:///D:/ChwijunTime/flutter_app/app_user/lib/widgets/dialog/custom_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';

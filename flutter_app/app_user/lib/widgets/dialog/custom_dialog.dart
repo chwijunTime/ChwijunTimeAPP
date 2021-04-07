@@ -7,6 +7,7 @@ class CustomDialog extends StatefulWidget {
   final Size size;
   final List<String> tag;
   bool isFavorite;
+  Icon icon;
 
   CustomDialog({
     @required this.msg,
@@ -14,6 +15,7 @@ class CustomDialog extends StatefulWidget {
     @required this.size,
     @required this.tag,
     @required this.isFavorite,
+    this.icon,
   });
 
   @override
