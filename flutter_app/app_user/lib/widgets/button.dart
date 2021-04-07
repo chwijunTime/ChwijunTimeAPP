@@ -89,7 +89,7 @@ Widget makeBtn(
     _borderRadius = 5;
   } else if (mode == 2) {
     // 기본 네모 버튼 2
-    _width = 135;
+    _width = 130;
     _height = 33;
     _borderRadius = 5;
   } else {

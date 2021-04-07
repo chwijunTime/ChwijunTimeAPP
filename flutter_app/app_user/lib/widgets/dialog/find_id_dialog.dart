@@ -68,20 +68,19 @@ class _FindIdDialogState extends State<FindIdDialog> {
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Color(0xff5BC7F5)
-                  )),
-                  TextSpan(text: widget.email,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                  )),
+                  )),         TextSpan(text: widget.email,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black
+                      )),
                   TextSpan(text: "입니다", style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: Color(0xff5BC7F5)
                   )),
                 ]
-              )),
+                  )),
             ),
             SizedBox(height: 10,),
             Row(

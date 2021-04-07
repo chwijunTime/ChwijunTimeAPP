@@ -1,21 +1,28 @@
+import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class FindPasswordPage extends StatefulWidget {
+  final scafforldkey = GlobalKey<ScaffoldState>();
+
   @override
   _FindPasswordPageState createState() => _FindPasswordPageState();
 }
 
 class _FindPasswordPageState extends State<FindPasswordPage> {
+  var email = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      key: widget.scafforldkey,
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
           child: AppBar(
             backgroundColor: Colors.white,
           ),
-          preferredSize: Size.fromHeight(0)
-      ),
+          preferredSize: Size.fromHeight(0)),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -37,14 +44,14 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        "계정 찾기",
+                        "비밀번호 찾기",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
                             fontSize: 48),
                       ),
                       Text(
-                        "아이디 & 비밀번호 찾기",
+                        "아이디(이메일)을 입력해주세요.",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -57,21 +64,29 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
             ),
             Expanded(
                 child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-
-                    ],
-                  ),
-                )
-            ),
+                    child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 34, left: 34),
+                  child:
+                      buildTextField("Email", email, autoFocus: false),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                makeGradientBtn(
+                    msg: "비밀번호 찾기",
+                    onPressed: () {
+                      onFindPassword();
+                    },
+                    mode: 3),
+              ],
+            ))),
             Stack(
               children: [
                 Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     height: 250,
                     child: Image.asset(
                       "images/bottom.png",
@@ -116,5 +131,38 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
         ),
       ),
     );
+  }
+
+  onFindPassword() {
+    if (email.text.isEmpty) {
+      widget.scafforldkey.currentState.showSnackBar(SnackBar(
+        content: Text("이메일을 입력해주세요."),
+        duration: Duration(milliseconds: 1500),
+      ));
+    } else if (!RegExp(
+            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+        .hasMatch(email.text)) {
+      widget.scafforldkey.currentState.showSnackBar(SnackBar(
+        content: Text("올바른 이메일 형식으로 입력해주세요."),
+        duration: Duration(milliseconds: 1500),
+      ));
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => StdDialog(
+          msg: "해당 이메일로 메일이 발송되었습니다.",
+          size: Size(346, 138),
+          icon: Icon(
+            Icons.outgoing_mail,
+            color: Color(0xff4687FF),
+          ),
+          btnName2: "로그인하기",
+          btnCall2: () {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, "/login");
+          },
+        ),
+      );
+    }
   }
 }
