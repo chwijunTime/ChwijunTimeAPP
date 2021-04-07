@@ -70,7 +70,7 @@ class _FindIdPageState extends State<FindIdPage> {
                 Padding(
                   padding: EdgeInsets.only(right: 34, left: 34),
                   child:
-                      buildTextField("Phone Number", phoneC, autoFocus: false),
+                      buildTextField("Phone Number", phoneC, autoFocus: false, type: TextInputType.phone),
                 ),
                 SizedBox(
                   height: 24,
