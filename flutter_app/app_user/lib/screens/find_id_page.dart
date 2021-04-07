@@ -4,6 +4,8 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class FindIdPage extends StatefulWidget {
+  final scafforldkey = GlobalKey<ScaffoldState>();
+
   @override
   _FindIdPageState createState() => _FindIdPageState();
 }
@@ -14,13 +16,13 @@ class _FindIdPageState extends State<FindIdPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      key: widget.scafforldkey,
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
           child: AppBar(
             backgroundColor: Colors.white,
           ),
-          preferredSize: Size.fromHeight(0)
-      ),
+          preferredSize: Size.fromHeight(0)),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -62,26 +64,29 @@ class _FindIdPageState extends State<FindIdPage> {
             ),
             Expanded(
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(padding: EdgeInsets.only(right: 34, left: 34),
-                      child: buildTextField("Phone Number", phoneC, autoFocus: false),),
-                      SizedBox(height: 24,),
-                      makeGradientBtn(msg: "아이디 찾기", onPressed: (){
-                        onFindId();
-                      }, mode: 3),
-                    ],
-                  )
-                )
-            ),
+                    child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 34, left: 34),
+                  child:
+                      buildTextField("Phone Number", phoneC, autoFocus: false),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                makeGradientBtn(
+                    msg: "아이디 찾기",
+                    onPressed: () {
+                      onFindId();
+                    },
+                    mode: 3),
+              ],
+            ))),
             Stack(
               children: [
                 Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     height: 250,
                     child: Image.asset(
                       "images/bottom.png",
@@ -129,8 +134,16 @@ class _FindIdPageState extends State<FindIdPage> {
   }
 
   onFindId() {
-    if(phoneC.text.isEmpty) {
-
+    if (phoneC.text.isEmpty) {
+      widget.scafforldkey.currentState.showSnackBar(SnackBar(
+        content: Text("핸드폰 번호를 입력해주세요."),
+        duration: Duration(milliseconds: 1500),
+      ));
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              FindIdDialog(name: "예원문", email: "jjol@naver.com"));
     }
   }
 }
