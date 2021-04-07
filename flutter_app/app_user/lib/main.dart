@@ -3,6 +3,7 @@ import 'package:app_user/screens/contracting_company.dart';
 import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
+import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(UserApp());
@@ -19,6 +20,7 @@ class UserApp extends StatelessWidget {
         "/company_notice": (context) => CompanyNoticePage(),
         "/login": (context) => LoginPage(),
         "/join": (context) => JoinPage(),
+        "/success_join": (context) => SuccessJoinPage(),
       },
       debugShowCheckedModeBanner: false,
     );

@@ -72,7 +72,7 @@ Widget makeGradientBtn({@required String msg, @required VoidCallback onPressed, 
   );
 }
 
-Widget makeBtn({@required String msg, @required VoidCallback onPressed, @required int mode, Icon icon}) {
+Widget makeBtn({@required String msg, @required VoidCallback onPressed, @required int mode, Icon icon, Color color = Colors.grey, Color textColor = Colors.white, bool shadow = true}) {
   if (mode == 1) {
     // 기본 네모 버튼 1
     _width = 175;
@@ -92,15 +92,18 @@ Widget makeBtn({@required String msg, @required VoidCallback onPressed, @require
 
   return Container(
     decoration: BoxDecoration(
-      color: Color(0xffBBBBBB),
+      color: color,
         borderRadius: BorderRadius.all(Radius.circular(_borderRadius)),
         boxShadow: [
+          shadow ?
           BoxShadow(
               color: Colors.grey[500],
               offset: Offset(2,4),
               blurRadius: 5,
               spreadRadius: 0.5
-          )]
+          ) : BoxShadow(
+            color: Colors.transparent
+          ) ]
     ),
     width: _width,
     height: _height,
@@ -111,7 +114,7 @@ Widget makeBtn({@required String msg, @required VoidCallback onPressed, @require
           Text(
             msg,
             style: TextStyle(
-                color: Colors.white,
+                color: textColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w700),
           ),
