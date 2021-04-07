@@ -1,4 +1,5 @@
 import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -52,13 +53,42 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     return Scaffold(
         drawer: buildDrawer(context),
         appBar: buildAppBar("custom Appbar"),
-        body: Center(
+        body: Container(
+          color: Colors.white,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              makeDropDownBtn(
-                  valueList: valueList,
-                  selectedValue: selectedValue,
-                  onSetState: onSetState),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(26),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "취준타임",
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0x832B8AC0)),
+                        ),
+                        Text(
+                          "협약업체",
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 26),
+                    child: makeGradientBtn(msg: "좋아요 모아보기", onPressed: (){}, mode: 1, icon: Icon(Icons.favorite, color: Colors.white,)),
+                  )
+                ],
+              ),
               Expanded(
                 child: ListView.builder(
                     itemCount: compList.length,
@@ -71,8 +101,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         ));
   }
 
-  bool selected = false;
-
   Widget buildItemCompany(BuildContext context, int index) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -81,7 +109,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            selected = !selected;
+
           });
         },
         child: Padding(
@@ -92,18 +120,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
               Row(
                 children: [
                   Expanded(
-                    child: AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 1000),
+                    child: Text(
+                      "${compList[index].name}. 업체명",
                       style: TextStyle(
-                          color: selected ? Colors.red : Colors.black,
-                          fontWeight:
-                          selected ? FontWeight.w200 : FontWeight.w900,
-                          letterSpacing: selected ? 1 : 5),
-                      child: Text(
-                        "${compList[index].name}. 업체명",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w900),
-                      ),
+                          fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton(
