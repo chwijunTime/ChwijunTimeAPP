@@ -1,11 +1,10 @@
-import 'package:app_user/model/member_dto.dart';
-import 'package:app_user/model/member_login_dto.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sweet_alert_dialogs/sweet_alert_dialogs.dart';
+
 
 class JoinPage extends StatefulWidget {
   @override
@@ -48,31 +47,48 @@ class _JoinPageState extends State<JoinPage> {
     ).hasMatch(emailC.text)) {
       showDialog(context: context, builder: (BuildContext context) {
         return RichAlertDialog(alertTitle: richTitle("입력 에러"),
-          alertSubtitle: richSubtitle("이메일 형식으로 입력해주세요.\n'@' 포함"),
+          alertSubtitle: richSubtitle("이메일 형식으로 입력해주세요. '@[   ].[   ]' 포함"),
           alertType: RichAlertType.ERROR,
           actions: [
             FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.orange[800],)
           ],);
       });
+    } else if(passwordC.text != rePasswordC.text) {
+      showDialog(context: context, builder: (BuildContext context) {
+        return RichAlertDialog(alertTitle: richTitle("입력 에러"),
+          alertSubtitle: richSubtitle("비밀번호를 다시 확인해주세요.\n비밀번호는 '뭐무머무머'로 해야합니다."),
+          alertType: RichAlertType.ERROR,
+          actions: [
+            FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.orange[800],)
+          ],);
+      });
+    } else if (stIDC.text.length !=4 ) {
+      showDialog(context: context, builder: (BuildContext context) {
+        return RichAlertDialog(alertTitle: richTitle("입력 에러"),
+          alertSubtitle: richSubtitle("학번은 숫자 4자리로 입력해주세요.\nex) 3210 (3학년2반10번)"),
+          alertType: RichAlertType.ERROR,
+          actions: [
+            FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.orange[800],)
+          ],);
+      });
+    } else {
+      Navigator.popAndPushNamed(context, "/success_join");
+      // var res = await helper.postJoin(MemberDTO(
+      //         memberClassNumber: stIDC.text,
+      //         memberEmail: emailC.text,
+      //         memberPassword: passwordC.text)
+      //     .toJson());
+      // if (res.success) {
+      //   Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+      // } else {
+      //   switch (res.msg) {
+      //     case "오잉":
+      //       {
+      //         print(res.msg);
+      //       }
+      //   }
+      // }
     }
-    print(MemberDTO(memberClassNumber: stIDC.text,
-        memberEmail: emailC.text,
-        memberPassword: passwordC.text).toJson());
-    // var res = await helper.postJoin(MemberDTO(
-    //         memberClassNumber: stIDC.text,
-    //         memberEmail: emailC.text,
-    //         memberPassword: passwordC.text)
-    //     .toJson());
-    // if (res.success) {
-    //   Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-    // } else {
-    //   switch (res.msg) {
-    //     case "오잉":
-    //       {
-    //         print(res.msg);
-    //       }
-    //   }
-    // }
   }
 
   @override
