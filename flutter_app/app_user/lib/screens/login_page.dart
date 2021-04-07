@@ -98,14 +98,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34.0, left: 34),
-                    child: buildTextField("email", emailController),
+                    child: buildTextField("email", emailController, type: TextInputType.emailAddress),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34, left: 34),
-                    child: buildTextField("password", passWordController),
+                    child: buildTextField("password", passWordController, password: true),
                   ),
                   SizedBox(
                     height: 20,
