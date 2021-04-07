@@ -1,4 +1,7 @@
+import 'package:app_user/model/member_login_dto.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/main_page.dart';
+import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -14,32 +17,40 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passWordController = TextEditingController();
 
-  // RetrofitHelper helper;
+  RetrofitHelper helper;
 
   @override
   void initState() {
     super.initState();
 
     Dio dio = Dio();
-    // helper = RetrofitHelper(dio);
+    helper = RetrofitHelper(dio);
   }
 
-  // postLogin() async {
-  //   var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
-  //   if (res.success) {
-  //     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-  //   } else {
-  //     switch (res.msg) {
-  //       case "오잉" : {
-  //         print(res.msg);
-  //       }
-  //     }
-  //   }
-  // }
+  postLogin() async {
+    var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
+    if (res.success) {
+      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+    } else {
+      switch (res.msg) {
+        case "오잉" : {
+          print(res.msg);
+        }
+      }
+    }
+    Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
+      appBar: PreferredSize(
+        child: AppBar(
+            backgroundColor: Colors.white,
+        ),
+          preferredSize: Size.fromHeight(0)
+      ),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -48,13 +59,13 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 200,
+                    height: 250,
                     child: Image.asset(
                       "images/top.png",
                       fit: BoxFit.fill,
                     )),
                 Padding(
-                  padding: const EdgeInsets.all(30),
+                  padding: const EdgeInsets.only(top: 54, left: 38),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -80,11 +91,10 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
                 children: [
                   SizedBox(
-                    height: 10,
+                    height: 30,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34.0, left: 34),
@@ -100,32 +110,42 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 20,
                   ),
-                  makeGradientBtn(
-                      msg: "Login",
-                      onPressed: () {
-                        print("로그인");
-                        //postLogin();
-                      },
-                      mode: 3),
-                  SizedBox(
-                    height: 20,
+                  Center(
+                    child: makeGradientBtn(
+                        msg: "Login",
+                        onPressed: () {
+                          print("로그인");
+                          postLogin();
+                        },
+                        mode: 3),
                   ),
-                  GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        "아직 계정이 없으신가요?",
-                        style: TextStyle(color: Colors.grey,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400),
-                      )),
-                  GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        "계정이 기억나지 않으시나요?",
-                        style: TextStyle(color: Colors.grey,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400),
-                      )),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Center(
+                    child: GestureDetector(
+                        onTap: () {
+                          print("눌림");
+                          Navigator.pushNamed(context, "/join");
+                        },
+                        child: Text(
+                          "아직 계정이 없으신가요?",
+                          style: TextStyle(color: Colors.grey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400),
+                        )),
+                  ),
+                  SizedBox(height: 5,),
+                  Center(
+                    child: GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          "계정이 기억나지 않으시나요?",
+                          style: TextStyle(color: Colors.grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400),
+                        )),
+                  ),
                 ],
               ),
             ),
