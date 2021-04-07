@@ -1,5 +1,6 @@
 import 'package:app_user/model/company_vo.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -148,47 +149,50 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                        height: 22,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return buildItemTag(index);
-                            })),
-                  ),
-                  Text(
-                    "평균: ${compList[index].minSalary}~${compList[index].maxSalary}",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w400),
-                  )
-                ],
+              SizedBox(
+                height: 22,
+                child: Row(
+                  children: [
+                    Row(
+                      children: List.generate(2, (indextag) {
+                        return buildItemTag(
+                            compList[index].tag, indextag);
+                      }),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                      margin: EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.blue[400],
+                          )),
+                      child: Center(
+                        child: Text(
+                          "외 ${compList[index].tag.length - 2}개",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "평균: ${compList[index].minSalary}~${compList[index].maxSalary}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               )
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildItemTag(int index) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-      margin: EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Colors.blue[400],
-          )),
-      child: Text(
-        "#${compList[index].tag[index]}",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
       ),
     );
   }
