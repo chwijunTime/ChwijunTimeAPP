@@ -28,16 +28,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   postLogin() async {
-    var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
-    if (res.success) {
-      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-    } else {
-      switch (res.msg) {
-        case "오잉" : {
-          print(res.msg);
-        }
-      }
-    }
+    // var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
+    // if (res.success) {
+    //   Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+    // } else {
+    //   switch (res.msg) {
+    //     case "오잉" : {
+    //       print(res.msg);
+    //     }
+    //   }
+    // }
     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 
@@ -114,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: makeGradientBtn(
                         msg: "Login",
                         onPressed: () {
-                          print("로그인");
                           postLogin();
                         },
                         mode: 3),
@@ -125,7 +124,6 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                         onTap: () {
-                          print("눌림");
                           Navigator.pushNamed(context, "/join");
                         },
                         child: Text(
@@ -139,7 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                         onTap: () {
-                          print("눌림 계정찾기");
                           Navigator.pushNamed(context, "/find_acount");
                         },
                         child: Text(
