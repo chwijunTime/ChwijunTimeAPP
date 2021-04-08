@@ -1,5 +1,5 @@
-import 'package:app_user/screens/company_notice.dart';
-import 'package:app_user/screens/contracting_company.dart';
+import 'file:///D:/ChwijunTime/flutter_app/app_user/lib/screens/list_page/company_notice.dart';
+import 'file:///D:/ChwijunTime/flutter_app/app_user/lib/screens/list_page/contracting_company.dart';
 import 'package:app_user/screens/find_acount_page.dart';
 import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/login_page.dart';

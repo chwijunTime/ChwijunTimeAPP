@@ -1,4 +1,5 @@
 import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:flutter/material.dart';
@@ -30,30 +31,23 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   void _listSetting() {
     for (int i = 1; i <= 8; i++) {
       compList.add(CompanyVO(
-          name: "${i}. name",
-          content: "${i}. content",
-          tag: List.generate(5, (index) => "${i}.태그"),
+          title: "${i}. 업체명",
+          info: "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
+          tag: List.generate(5, (index) => "${index}.태그"),
           minSalary: i * 1000,
           maxSalary: i * 1000 + 500,
-          isFavorite: false));
+          isFavorite: false,
+        address: "광주광역시 광산구 목련로",
+        field: "모바일 앱, 웹"
+      ));
     }
   }
-
-  void onSetState(String value) {
-    setState(() {
-      selectedValue = value;
-      print("onSetState: ${value}, ${selectedValue}");
-    });
-  }
-
-  var valueList = ["첫번째", "두번째", "세번째"];
-  var selectedValue = "첫번째";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: buildDrawer(context),
-        appBar: buildAppBar("custom Appbar"),
+        appBar: buildAppBar("취준타임"),
         body: Container(
           color: Colors.white,
           child: Column(
@@ -91,11 +85,13 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 ],
               ),
               Expanded(
-                child: ListView.builder(
-                    itemCount: compList.length,
-                    itemBuilder: (context, index) {
-                      return buildItemCompany(context, index);
-                    }),
+                child: Align(
+                  child: ListView.builder(
+                      itemCount: compList.length,
+                      itemBuilder: (context, index) {
+                        return buildItemCompany(context, index);
+                      }),
+                ),
               )
             ],
           ),
@@ -109,9 +105,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          setState(() {
-
-          });
+          print("눌림");
+          Navigator.push(context, MaterialPageRoute(builder: (countext) => ContractingCompanyDetailPage(list: compList[index],)));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -122,7 +117,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${compList[index].name}. 업체명",
+                      "${compList[index].title}",
                       style: TextStyle(
                           fontSize: 24, fontWeight: FontWeight.w900),
                     ),
@@ -145,7 +140,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${compList[index].content}. 이것은 회사 설명입니다.",
+                  "${compList[index].info}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),

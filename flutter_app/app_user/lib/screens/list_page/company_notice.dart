@@ -4,7 +4,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 
-import 'company_notice_detail.dart';
+import '../detail_page/company_notice_detail.dart';
 
 class CompanyNoticePage extends StatefulWidget {
   @override

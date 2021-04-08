@@ -25,69 +25,72 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
   }
 
   dialogContent(BuildContext context) {
-    return Container(
-      width: 311,
-      height: 385,
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.only(top: 60),
-      decoration: new BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              spreadRadius: 1,
-              offset: const Offset(0.0, 0.0),
-            )
-          ]),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RichText(
-                text: TextSpan(children: [
-              TextSpan(
-                  text: "등록하고 싶은 ",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black)),
-              TextSpan(
-                  text: "태그명",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff4F9ECB))),
-              TextSpan(
-                  text: "과\n ",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black)),
-              TextSpan(
-                  text: "이유",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff4F9ECB))),
-              TextSpan(
-                  text: "를 작성해주세요.",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black)),
-            ])),
-            SizedBox(height: 10,),
-            buildTextField("태그명", titleC, autoFocus: false),
-            SizedBox(height: 10,),
-            buildTextField("등록 이유", contentC, autoFocus: false, maxLine: 5, maxLength: 80),
-            SizedBox(height: 10,),
-            makeGradientBtn(msg: "요청해요!", onPressed: () {
-              postAddTagReq();
-            }, mode: 1, icon: Icon(Icons.add_box_rounded, color: Colors.white, ))
-          ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
+        width: 311,
+        height: 385,
+        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.only(top: 60),
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                spreadRadius: 1,
+                offset: const Offset(0.0, 0.0),
+              )
+            ]),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: "등록하고 싶은 ",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black)),
+                TextSpan(
+                    text: "태그명",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff4F9ECB))),
+                TextSpan(
+                    text: "과\n ",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black)),
+                TextSpan(
+                    text: "이유",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff4F9ECB))),
+                TextSpan(
+                    text: "를 작성해주세요.",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black)),
+              ])),
+              SizedBox(height: 10,),
+              buildTextField("태그명", titleC, autoFocus: false),
+              SizedBox(height: 10,),
+              buildTextField("등록 이유", contentC, autoFocus: false, maxLine: 5, maxLength: 80),
+              SizedBox(height: 10,),
+              makeGradientBtn(msg: "요청해요!", onPressed: () {
+                postAddTagReq();
+              }, mode: 1, icon: Icon(Icons.add_box_rounded, color: Colors.white, ))
+            ],
+          ),
         ),
       ),
     );

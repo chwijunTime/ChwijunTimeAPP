@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget makeTagWidget({@required List<String> tag, @required Size size, @required int mode}) {
   return SizedBox(
-      height: 26+size.height,
+      height: 28+size.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -27,7 +27,7 @@ Widget makeTagWidget({@required List<String> tag, @required Size size, @required
 Widget makeTagList(List<String> tag, Size size) {
   return SizedBox(
     width: size.width,
-    height: 18,
+    height: 20,
     child: ListView.builder(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
