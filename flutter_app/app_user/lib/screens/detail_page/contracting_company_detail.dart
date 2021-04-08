@@ -143,7 +143,7 @@ class _ContractingCompanyDetailPageState
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.hasData == false) {
-                                  return CircularProgressIndicator();
+                                  return Center(child: CircularProgressIndicator());
                                 } else {
                                   return GoogleMap(
                                     initialCameraPosition: CameraPosition(
