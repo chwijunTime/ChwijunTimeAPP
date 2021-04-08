@@ -22,6 +22,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
 
   List<CompanyVO> compList = [];
   final tagC = TextEditingController();
+  final titleC = TextEditingController();
   List<String> _list;
   List<String> tagList = [];
 
@@ -424,7 +425,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     return Column(
       children: [
         SizedBox(
-          height: 15,
+          height: 10,
         ),
         Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
@@ -432,7 +433,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         ),
         SingleChildScrollView(
           child: Container(
-            height: 240,
+            height: 220,
             margin: EdgeInsets.all(15),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -450,6 +451,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             ),
           ),
         ),
+        SizedBox(height: 5,),
         SizedBox(
             height: 58,
             child: Column(
@@ -477,6 +479,17 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       }),
                 )
               ],
+            )),
+        SizedBox(height: 5,),
+        makeGradientBtn(
+            msg: "조회하기",
+            onPressed: () {
+              print("눌려버림");
+            },
+            mode: 4,
+            icon: Icon(
+              Icons.check,
+              color: Colors.white,
             ))
       ],
     );
@@ -562,7 +575,43 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   }
 
   Widget selectTitleWidget() {
-    return Container();
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(left: 10, right: 10),
+          height: 1,
+          color: Colors.grey,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Center(
+          child: Text(
+            "업체명을 입력해주세요.",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        SizedBox(
+          height: 30,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: buildTextField("TAG", titleC, autoFocus: false),
+        ),
+        SizedBox(height: 250,),
+        makeGradientBtn(
+            msg: "조회하기",
+            onPressed: () {
+              print("눌려버림");
+            },
+            mode: 4,
+            icon: Icon(
+              Icons.check,
+              color: Colors.white,
+            ))
+      ],
+    );
   }
 
   searchState() {
