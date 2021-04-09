@@ -603,7 +603,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
-              print("눌려버림");
+              print("titleC = ${titleC.text}");
             },
             mode: 4,
             icon: Icon(
