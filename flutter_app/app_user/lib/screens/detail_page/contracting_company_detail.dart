@@ -45,7 +45,6 @@ class _ContractingCompanyDetailPageState
 
   @override
   Widget build(BuildContext context) {
-    widget.list.isFavorite = true;
     return Scaffold(
       appBar: buildAppBar("취준타임"),
       body: Container(

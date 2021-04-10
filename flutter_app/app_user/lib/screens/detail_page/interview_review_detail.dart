@@ -20,7 +20,7 @@ class InterviewReviewDetail extends StatefulWidget {
 class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   LatLng latLng;
 
-  _onBookMarkPressed() {
+  _onFavoriteMarkPressed() {
     setState(() {
       widget.list.isFavorite = !widget.list.isFavorite;
       print(widget.list.isFavorite);
@@ -40,7 +40,6 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
 
   @override
   Widget build(BuildContext context) {
-    widget.list.isFavorite = true;
     return Scaffold(
       appBar: buildAppBar("취준타임"),
       body: Container(
@@ -92,7 +91,7 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                           Icons.favorite_border_outlined,
                                           size: 28,
                                         ),
-                                  onPressed: () => _onBookMarkPressed(),
+                                  onPressed: () => _onFavoriteMarkPressed(),
                                 ),
                         ],
                       ),
