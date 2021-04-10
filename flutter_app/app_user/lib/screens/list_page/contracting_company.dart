@@ -20,6 +20,8 @@ enum Year { y2018, y2019, y2020, y2021 }
 class _ContractingCompPageState extends State<ContractingCompPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
+  PanelController panelController = PanelController();
+
   List<CompanyVO> compList = [];
   final tagC = TextEditingController();
   final titleC = TextEditingController();
@@ -82,6 +84,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>
               buildSlidingPanel(scrollController: scrollController),
+          controller: panelController,
           minHeight: 80,
           maxHeight: 600,
           backdropEnabled: true,
@@ -327,7 +330,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           height: 15,
         ),
         if (_select == Select.YEAR) selectYearWidget(),
-        if (_select == Select.TAG) selectTagWidget(),
+        if (_select == Select.TAG) selectTagWidget(scrollController),
         if (_select == Select.TITLE) selectTitleWidget(),
       ],
     );
@@ -409,6 +412,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             msg: "조회하기",
             onPressed: () {
               print("눌려버림");
+              panelController.close();
             },
             mode: 4,
             icon: Icon(
@@ -421,7 +425,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
 
   bool _IsSearching = false;
 
-  Widget selectTagWidget() {
+  Widget selectTagWidget(ScrollController sc) {
     return Column(
       children: [
         SizedBox(
@@ -446,6 +450,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 ],
                 color: Colors.white),
             child: ListView(
+              controller: sc,
               padding: EdgeInsets.symmetric(vertical: 8),
               children: _buildSearchList(),
             ),
@@ -485,6 +490,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             msg: "조회하기",
             onPressed: () {
               print("눌려버림");
+              panelController.close();
             },
             mode: 4,
             icon: Icon(
@@ -604,6 +610,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             msg: "조회하기",
             onPressed: () {
               print("titleC = ${titleC.text}");
+              panelController.close();
             },
             mode: 4,
             icon: Icon(
