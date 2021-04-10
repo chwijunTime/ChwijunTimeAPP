@@ -81,6 +81,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.book),
           onTap: () {
             print("면접후기로 가자");
+            Navigator.pushNamedAndRemoveUntil(context, "/interview_review", (route) => false);
           },
         ),
         ListTile(
