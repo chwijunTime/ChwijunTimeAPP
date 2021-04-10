@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 Widget makeDropDownBtn(
     {List<String> valueList,
     String selectedValue,
-    void Function(String value) onSetState}) {
+    void Function(String value) onSetState,
+    String hint}) {
   return Container(
-    padding: const EdgeInsets.only(left: 10, right: 10),
+    padding: const EdgeInsets.only(left: 10, right: 10, top: 7, bottom: 7),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(5),
       color: Colors.white,
-      boxShadow: [
-        BoxShadow(color: Colors.grey[500], offset: Offset(0,2))
-      ]
+      border: Border.all(color: Colors.grey),
     ),
     child: DropdownButtonHideUnderline(
       child: DropdownButton(
         value: selectedValue,
         hint: Text(
-          "Please select the number!",
-          style: TextStyle(color: Colors.blue),
+          hint,
+          style: TextStyle(color: Colors.grey),
         ),
         items: valueList.map(
           (value) {
@@ -32,6 +31,7 @@ Widget makeDropDownBtn(
           print("onChanged: ${value}");
           onSetState(value);
         },
+
       ),
     ),
   );

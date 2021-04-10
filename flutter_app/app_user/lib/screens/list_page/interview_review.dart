@@ -1,5 +1,6 @@
 import 'package:app_user/model/review_vo.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
+import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -63,17 +64,18 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   void _listSetting() {
     for (int i = 1; i <= 8; i++) {
       compList.add(ReviewVO(
-        isMine: i%2 == 0,
+          isMine: i % 2 == 0,
           title: "${i}. 업체명",
           review:
-          "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
+              "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
           tag: List.generate(5, (index) => "${index}.태그"),
           applyDate: "2021.03.21",
-          grade: (i%3) + 1,
+          grade: (i % 3) + 1,
           price: i * 1000,
           isFavorite: false,
           address: "광주광역시 광산구 목련로 273번길",
-          question: "질문1, 이런 질문이 나왔어요 신기하더라구요 아니... 그런 질문은 생각도 못했어요 하지만 생각해 보니 그 질문은 이 길을 가는데 적합한 사람인지 확인하기 위해 참 좋던 질문이더라구용"));
+          question:
+              "질문1, 이런 질문이 나왔어요 신기하더라구요 아니... 그런 질문은 생각도 못했어요 하지만 생각해 보니 그 질문은 이 길을 가는데 적합한 사람인지 확인하기 위해 참 좋던 질문이더라구용"));
     }
   }
 
@@ -131,26 +133,40 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                         ],
                       ),
                     ),
-                    Padding(padding: EdgeInsets.only(right: 25),
-                    child: FloatingActionButton(onPressed: () {},
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xff4FB8F3), Color(0xff9342FA), Color(0xff2400FF)]),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey[500],
-                                offset: Offset(2, 4),
-                                blurRadius: 5,
-                                spreadRadius: 0.5)
-                          ]),
-                      child: Icon(Icons.note_add, color: Colors.white, size: 30,),
-                    ),),)
+                    Padding(
+                      padding: EdgeInsets.only(right: 25),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewWrite()));
+                        },
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xff4FB8F3),
+                                    Color(0xff9342FA),
+                                    Color(0xff2400FF)
+                                  ]),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey[500],
+                                    offset: Offset(2, 4),
+                                    blurRadius: 5,
+                                    spreadRadius: 0.5)
+                              ]),
+                          child: Icon(
+                            Icons.note_add,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 Expanded(
@@ -180,8 +196,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
               context,
               MaterialPageRoute(
                   builder: (countext) => InterviewReviewDetail(
-                    list: compList[index],
-                  )));
+                        list: compList[index],
+                      )));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -194,20 +210,20 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                     child: Text(
                       "${compList[index].title}",
                       style:
-                      TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton(
                     icon: compList[index].isFavorite
                         ? Icon(
-                      Icons.favorite,
-                      size: 28,
-                      color: Colors.red,
-                    )
+                            Icons.favorite,
+                            size: 28,
+                            color: Colors.red,
+                          )
                         : Icon(
-                      Icons.favorite_border_outlined,
-                      size: 28,
-                    ),
+                            Icons.favorite_border_outlined,
+                            size: 28,
+                          ),
                     onPressed: () => _onHeartPressed(index),
                   ),
                 ],
@@ -285,40 +301,40 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
           children: [
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.YEAR,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "년도별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.YEAR,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "년도별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.TAG,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "태그별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.TAG,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "태그별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
           ],
         ),
         Row(children: [
@@ -467,7 +483,9 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
             ),
           ),
         ),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         SizedBox(
             height: 58,
             child: Column(
@@ -496,7 +514,9 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 )
               ],
             )),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -548,20 +568,20 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     if (tagC.text.isEmpty) {
       return _list
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          print(contact);
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  print(contact);
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     } else {
       List<String> _searchList = [];
@@ -573,20 +593,20 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       }
       return _searchList
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          print(contact);
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  print(contact);
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     }
   }
@@ -616,7 +636,9 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
           padding: EdgeInsets.only(left: 20, right: 20),
           child: buildTextField("TAG", titleC, autoFocus: false),
         ),
-        SizedBox(height: 250,),
+        SizedBox(
+          height: 250,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
