@@ -10,6 +10,7 @@ class ReviewVO {
   String question;
   List<String> tag;
   bool isFavorite;
+  bool isMine;
 
   ReviewVO(
       {@required this.title,
@@ -20,5 +21,6 @@ class ReviewVO {
       @required this.review,
       @required this.question,
       @required this.tag,
-      @required this.isFavorite});
+      @required this.isFavorite,
+      @required this.isMine});
 }

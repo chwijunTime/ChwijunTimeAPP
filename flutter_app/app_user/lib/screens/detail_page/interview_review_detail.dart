@@ -1,5 +1,6 @@
 import 'package:app_user/model/review_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -64,27 +65,35 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
-                            child: Text(
-                              widget.list.title,
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
-                            ),
+                          Text(
+                            widget.list.title,
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.w600),
                           ),
-                          Text("${widget.list.grade}학년"),
-                          IconButton(
-                            icon: widget.list.isFavorite
-                                ? Icon(
-                              Icons.favorite,
-                              size: 28,
-                              color: Colors.red,
-                            )
-                                : Icon(
-                              Icons.favorite_border_outlined,
-                              size: 28,
-                            ),
-                            onPressed: () => _onBookMarkPressed(),
-                          ),
+                          SizedBox(width: 5,),
+                          Expanded(child: Text("${widget.list.grade}학년")),
+                          widget.list.isMine
+                              ? IconButton(
+                                  icon: Icon(
+                                          Icons.delete_sharp,
+                                          size: 28,
+                                          color: Colors.black,
+                                        ),
+                                  onPressed: () => print("${widget.list.title} 을 삭제합니다."),
+                                )
+                              : IconButton(
+                                  icon: widget.list.isFavorite
+                                      ? Icon(
+                                          Icons.favorite,
+                                          size: 28,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.favorite_border_outlined,
+                                          size: 28,
+                                        ),
+                                  onPressed: () => _onBookMarkPressed(),
+                                ),
                         ],
                       ),
                       Text(
@@ -138,7 +147,8 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.hasData == false) {
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(
+                                      child: CircularProgressIndicator());
                                 } else {
                                   return GoogleMap(
                                     initialCameraPosition: CameraPosition(
@@ -193,7 +203,9 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             Card(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -237,8 +249,19 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
             ),
             Align(
                 alignment: Alignment.center,
-                child: makeTagWidget(tag: widget.list.tag, size: Size(360, 27), mode: 1)),
-            SizedBox(height: 25,)
+                child: makeTagWidget(
+                    tag: widget.list.tag, size: Size(360, 27), mode: 1)),
+            SizedBox(
+              height: 25,
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 25),
+                child: makeGradientBtn(msg: "면접 후기 수정하기", onPressed: (){print("수정하기");}, mode: 2, icon: Icon(Icons.arrow_forward, color: Colors.white,)),
+              ),
+            ),
+            SizedBox(height: 25,),
           ],
         ),
       ),

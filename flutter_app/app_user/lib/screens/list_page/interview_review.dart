@@ -63,6 +63,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   void _listSetting() {
     for (int i = 1; i <= 8; i++) {
       compList.add(ReviewVO(
+        isMine: i%2 == 0,
           title: "${i}. 업체명",
           review:
           "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
