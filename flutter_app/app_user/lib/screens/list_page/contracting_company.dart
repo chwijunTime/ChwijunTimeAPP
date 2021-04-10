@@ -330,7 +330,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           height: 15,
         ),
         if (_select == Select.YEAR) selectYearWidget(),
-        if (_select == Select.TAG) selectTagWidget(scrollController),
+        if (_select == Select.TAG) selectTagWidget(),
         if (_select == Select.TITLE) selectTitleWidget(),
       ],
     );
@@ -425,7 +425,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
 
   bool _IsSearching = false;
 
-  Widget selectTagWidget(ScrollController sc) {
+  Widget selectTagWidget() {
     return Column(
       children: [
         SizedBox(
@@ -450,7 +450,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 ],
                 color: Colors.white),
             child: ListView(
-              controller: sc,
               padding: EdgeInsets.symmetric(vertical: 8),
               children: _buildSearchList(),
             ),
