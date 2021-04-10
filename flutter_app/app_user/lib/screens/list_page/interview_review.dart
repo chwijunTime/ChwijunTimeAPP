@@ -9,15 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class InterviewReview extends StatefulWidget {
+class InterviewReviewPage extends StatefulWidget {
   @override
-  _InterviewReviewState createState() => _InterviewReviewState();
+  _InterviewReviewPageState createState() => _InterviewReviewPageState();
 }
 
 enum Select { YEAR, TAG, TITLE }
 enum Year { y2018, y2019, y2020, y2021 }
 
-class _InterviewReviewState extends State<InterviewReview> {
+class _InterviewReviewPageState extends State<InterviewReviewPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
   PanelController panelController = PanelController();

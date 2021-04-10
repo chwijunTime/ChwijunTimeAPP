@@ -24,7 +24,7 @@ class UserApp extends StatelessWidget {
         "/join": (context) => JoinPage(),
         "/success_join": (context) => SuccessJoinPage(),
         "/find_acount": (context) => FindAcountPage(),
-        "/interview_review": (context) => InterviewReview(),
+        "/interview_review": (context) => InterviewReviewPage(),
       },
       debugShowCheckedModeBanner: false,
     );
