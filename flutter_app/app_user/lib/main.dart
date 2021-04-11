@@ -3,6 +3,7 @@ import 'package:app_user/screens/list_page/contracting_company.dart';
 import 'package:app_user/screens/find_acount_page.dart';
 import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/list_page/interview_review.dart';
+import 'package:app_user/screens/list_page/notification.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/screens/success_join_page.dart';
@@ -25,6 +26,7 @@ class UserApp extends StatelessWidget {
         "/success_join": (context) => SuccessJoinPage(),
         "/find_acount": (context) => FindAcountPage(),
         "/interview_review": (context) => InterviewReviewPage(),
+        "/notification": (context) => NotificationPage(),
       },
       debugShowCheckedModeBanner: false,
     );

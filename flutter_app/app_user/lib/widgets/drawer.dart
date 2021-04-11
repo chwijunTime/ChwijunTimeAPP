@@ -112,6 +112,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.calendar_today_outlined),
           onTap: () {
             print("공지사항으로 가자");
+            Navigator.pushNamedAndRemoveUntil(context, "/notification", (route) => false);
           },
         ),
         ListTile(

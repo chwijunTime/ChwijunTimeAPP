@@ -1,5 +1,6 @@
+import 'package:app_user/model/notification_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
-import 'file:///D:/ChwijunTime/flutter_app/app_user/lib/widgets/dialog/custom_dialog.dart';
+import 'package:app_user/widgets/dialog/custom_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -17,14 +18,15 @@ class _MainPageState extends State<MainPage> {
     SliderCard(title: "호잇", image: "images/loco.jpg", route: "/"),
   ];
 
-  List<Notification> notiList = [];
+  List<NotificationVO> notiList = [];
 
   initNotiList() {
     for (int i = 0; i < 10; i++) {
-      notiList.add(Notification(
+      notiList.add(NotificationVO(
+          isFavorite: false,
           title: "${i}.title",
           content:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
           date: "2021.03.19",
           tag: List.generate(8, (index) => "${index}android")));
     }
@@ -113,7 +115,9 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
-  }Widget buildItemCompany(BuildContext context, int index) {
+  }
+
+  Widget buildItemCompany(BuildContext context, int index) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -123,12 +127,12 @@ class _MainPageState extends State<MainPage> {
           showDialog(
               context: context,
               builder: (BuildContext context) => CustomDialog(
-                msg: "${notiList[index].title}",
-                content: "${notiList[index].content}",
-                size: Size(346, 502),
-                tag: notiList[index].tag,
-                isFavorite: notiList[index].isFavorite,
-              ));
+                    msg: "${notiList[index].title}",
+                    content: "${notiList[index].content}",
+                    size: Size(346, 502),
+                    tag: notiList[index].tag,
+                    isFavorite: notiList[index].isFavorite,
+                  ));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -141,20 +145,20 @@ class _MainPageState extends State<MainPage> {
                     child: Text(
                       "${notiList[index].title}",
                       style:
-                      TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton(
                     icon: notiList[index].isFavorite
                         ? Icon(
-                      Icons.favorite,
-                      size: 28,
-                      color: Colors.red,
-                    )
+                            Icons.favorite,
+                            size: 28,
+                            color: Colors.red,
+                          )
                         : Icon(
-                      Icons.favorite_border_outlined,
-                      size: 28,
-                    ),
+                            Icons.favorite_border_outlined,
+                            size: 28,
+                          ),
                     onPressed: () => _onHeartPressed(index),
                   ),
                 ],
@@ -272,16 +276,15 @@ Widget makeSlider(List<SliderCard> list) {
                     height: 250,
                     color: Colors.black,
                     colorBlendMode: BlendMode.softLight,
-
                   ),
                   Center(
                       child: Text(
-                        card.title,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white),
-                      )),
+                    card.title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white),
+                  )),
                 ],
               ),
             );
@@ -304,19 +307,4 @@ class SliderCard {
 
   SliderCard(
       {@required this.title, @required this.image, @required this.route});
-}
-
-class Notification {
-  String title;
-  String content;
-  String date;
-  bool isFavorite;
-  List<String> tag;
-
-  Notification(
-      {@required this.title,
-        @required this.content,
-        @required this.date,
-        @required this.tag,
-        this.isFavorite = false});
 }
