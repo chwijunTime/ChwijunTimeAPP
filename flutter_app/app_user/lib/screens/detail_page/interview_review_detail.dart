@@ -1,4 +1,5 @@
 import 'package:app_user/model/review_vo.dart';
+import 'package:app_user/screens/modify_page/interview_review_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
@@ -257,7 +258,9 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
               alignment: Alignment.bottomRight,
               child: Padding(
                 padding: const EdgeInsets.only(right: 25),
-                child: makeGradientBtn(msg: "면접 후기 수정하기", onPressed: (){print("수정하기");}, mode: 2, icon: Icon(Icons.arrow_forward, color: Colors.white,)),
+                child: makeGradientBtn(msg: "면접 후기 수정하기", onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewModify(list: widget.list)));
+                }, mode: 2, icon: Icon(Icons.arrow_forward, color: Colors.white,)),
               ),
             ),
             SizedBox(height: 25,),
