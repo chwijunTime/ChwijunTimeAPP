@@ -102,6 +102,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.school),
           onTap: () {
             print("취업 확정 현황으로 가자");
+            Navigator.pushNamedAndRemoveUntil(context, "/confirmation_status", (route) => false);
           },
         ),
         ListTile(

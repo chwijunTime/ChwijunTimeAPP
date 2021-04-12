@@ -1,4 +1,5 @@
 import 'package:app_user/screens/list_page/company_notice.dart';
+import 'package:app_user/screens/list_page/confirmation_status.dart';
 import 'package:app_user/screens/list_page/contracting_company.dart';
 import 'package:app_user/screens/find_acount_page.dart';
 import 'package:app_user/screens/join_page.dart';
@@ -27,6 +28,7 @@ class UserApp extends StatelessWidget {
         "/find_acount": (context) => FindAcountPage(),
         "/interview_review": (context) => InterviewReviewPage(),
         "/notification": (context) => NotificationPage(),
+        "/confirmation_status": (context) => ConfirmationStatusPage(),
       },
       debugShowCheckedModeBanner: false,
     );

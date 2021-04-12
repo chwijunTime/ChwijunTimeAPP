@@ -1,25 +1,20 @@
-import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/text_field.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
+import 'package:app_user/model/confirmation_status_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/tag.dart';
+import 'package:app_user/widgets/text_field.dart';
+import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../detail_page/company_notice_detail.dart';
-
-class CompanyNoticePage extends StatefulWidget {
+class ConfirmationStatusPage extends StatefulWidget {
   @override
-  _CompanyNoticePageState createState() => _CompanyNoticePageState();
-
-  final List<CompNotice> notiList = [];
+  _ConfirmationStatusPageState createState() => _ConfirmationStatusPageState();
 }
 
 enum Select { YEAR, TAG, TITLE }
 enum Year { y2018, y2019, y2020, y2021 }
 
-class _CompanyNoticePageState extends State<CompanyNoticePage> {
+class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
   PanelController panelController = PanelController();
@@ -30,70 +25,37 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   List<String> _list;
   List<String> tagList = [];
 
+  final List<ConfirmationStatusVO> confList = [];
+
+  initList() {
+    for (int i = 0; i < 12; i++) {
+      if (i % 2 == 0) {
+        confList.add(ConfirmationStatusVO(
+            title: "${i}.title",
+            grade: i % 3 + 1,
+            area: "광주광역시",
+            address: "광주광역시 광산구 광주소프트웨어마이스터고등학교"));
+      } else {
+        confList.add(ConfirmationStatusVO(
+            title: "${i}.title",
+            grade: i % 3 + 1,
+            area: "광주광역시",
+            address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
+            etc:
+                "이것은 비고란 입니당앙ㄴ리;망러;밍나러;ㅣㅁㅇ나 아야아ㅇ아야아야아야어여오ㅇ요오유으이ㅣ아링ㄹ가나다라마바사아자차카타ㅠㅏ사",
+            siteUrl: "https://www.naver.com/"));
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     initList();
-    init();
-    searchState();
-  }
-
-  initList() {
-    for (int i = 0; i < 8; i++) {
-      widget.notiList.add(CompNotice(
-          title: "${i}.title",
-          startDate: "2021.03.31",
-          endDate: "2021.04.01",
-          field: "모바일 앱, 웹",
-          address: "광주광역시 광산구 목련로 273번길 76",
-          compInfo:
-              "printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-          preferentialInfo:
-              "우대 조건 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-          isBookMark: false,
-          tag: List.generate(10, (i) => "${i}.tag")));
-    }
-  }
-  void init() {
-    _list = [];
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
-  searchState() {
-    tagC.addListener(() {
-      print(_IsSearching);
-      if (tagC.text.isEmpty) {
-        setState(() {
-          _IsSearching = false;
-        });
-      } else {
-        setState(() {
-          _IsSearching = true;
-        });
-      }
-    });
-  }
-
-  _onBookMarkPressed(int index) {
-    setState(() {
-      widget.notiList[index].isBookMark = !widget.notiList[index].isBookMark;
-      print(widget.notiList[index].isBookMark);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    initList();
     return Scaffold(
       key: scafforldkey,
       appBar: buildAppBar("appBar"),
@@ -142,14 +104,14 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 ),
               ),
               ListView.builder(
-                itemCount: widget.notiList.length,
+                itemCount: confList.length,
                 itemBuilder: (context, index) {
-                  return buildItemCompany(context, index);
+                  return buildState(context, index);
                 },
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-              )
+              ),
             ],
           ),
         ),
@@ -157,112 +119,34 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     );
   }
 
-  Widget buildItemCompany(BuildContext context, int index) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-      elevation: 5,
-      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CompanyNoticeDetailPage(list: widget.notiList[index])));
-        },
+  Widget buildState(BuildContext context, int index) {
+    return Container(
         child: Padding(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${widget.notiList[index].title}",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  IconButton(
-                    icon: widget.notiList[index].isBookMark
-                        ? Icon(
-                            Icons.bookmark,
-                            size: 28,
-                            color: Color(0xff4687FF),
-                          )
-                        : Icon(
-                            Icons.bookmark_border,
-                            size: 28,
-                          ),
-                    onPressed: () => _onBookMarkPressed(index),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 6, bottom: 6),
-                child: Container(
-                  height: 60,
-                  child: AutoSizeText(
-                    "${widget.notiList[index].compInfo}, ",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
-                    minFontSize: 14,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 22,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Row(
-                      children: List.generate(2, (indextag) {
-                        return buildItemTag(
-                            widget.notiList[index].tag, indextag);
-                      }),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${widget.notiList[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "마감일: ${widget.notiList[index].endDate}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Row(
+        children: [
+          Text(
+            "${confList[index].title}",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
-        ),
+          Expanded(
+            child: Text(
+              "/${confList[index].grade.toString()}학년",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            "${confList[index].area}",
+            style: TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
+          ),
+          SizedBox(width: 10,),
+          Icon(
+            Icons.arrow_forward_ios_rounded
+          )
+        ],
       ),
-    );
+    ));
   }
 
   Widget buildSlidingPanel({
@@ -284,40 +168,40 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           children: [
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.YEAR,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "년도별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.YEAR,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "년도별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.TAG,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "태그별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.TAG,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "태그별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
           ],
         ),
         Row(children: [
@@ -424,7 +308,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             onPressed: () {
               print("selectRadio: ${_year}");
               panelController.close();
-
             },
             mode: 4,
             icon: Icon(
@@ -467,7 +350,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             ),
           ),
         ),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         SizedBox(
             height: 58,
             child: Column(
@@ -496,7 +381,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 )
               ],
             )),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -548,19 +435,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     if (tagC.text.isEmpty) {
       return _list
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     } else {
       List<String> _searchList = [];
@@ -572,19 +459,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       }
       return _searchList
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     }
   }
@@ -614,7 +501,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           padding: EdgeInsets.only(left: 20, right: 20),
           child: buildTextField("TAG", titleC, autoFocus: false),
         ),
-        SizedBox(height: 250,),
+        SizedBox(
+          height: 250,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -629,28 +518,4 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       ],
     );
   }
-}
-
-class CompNotice {
-  String title;
-  String startDate, endDate;
-  String field;
-  String address;
-  String compInfo;
-  String preferentialInfo;
-  String etc;
-  bool isBookMark;
-  List<String> tag;
-
-  CompNotice(
-      {@required this.title,
-      @required this.startDate,
-      @required this.endDate,
-      @required this.field,
-      @required this.address,
-      @required this.compInfo,
-      @required this.preferentialInfo,
-      this.etc = "",
-      @required this.isBookMark,
-      @required this.tag});
 }
