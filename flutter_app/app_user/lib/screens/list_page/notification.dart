@@ -21,11 +21,29 @@ class _NotificationPageState extends State<NotificationPage> {
 
   List<NotificationVO> noticeList = [];
   final titleC = TextEditingController();
+  String _searchText = "";
+  bool _IsSearching;
 
   @override
   void initState() {
     super.initState();
     _listSetting();
+    _IsSearching = false;
+
+    titleC.addListener(() {
+      if (titleC.text.isEmpty) {
+        setState(() {
+          _IsSearching = false;
+          _searchText = "";
+        });
+      } else {
+        setState(() {
+          _IsSearching = true;
+          _searchText = titleC.text;
+          print("searchtext = $_searchText, searchQuery.text = ${titleC.text}");
+        });
+      }
+    });
   }
 
   _onHeartPressed(int index) {
@@ -38,12 +56,11 @@ class _NotificationPageState extends State<NotificationPage> {
     for (int i = 1; i <= 8; i++) {
       noticeList.add(NotificationVO(
           isFavorite: false,
-          title: "${i}.title",
+          title: i%2 == 0 ? "${i}.title": "${i}.abct",
           content:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
           date: "2021.03.19",
-          tag: List.generate(8, (index) => "${index}태그")
-      ));
+          tag: List.generate(8, (index) => "${index}태그")));
     }
   }
 
@@ -80,15 +97,19 @@ class _NotificationPageState extends State<NotificationPage> {
                 ],
               ),
             ),
-            Padding(padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-            child: buildTextField("공지사항 제목", titleC)),
+            Padding(
+                padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                child: buildTextField("공지사항 제목", titleC)),
             Expanded(
               child: Align(
-                child: ListView.builder(
-                    itemCount: noticeList.length,
-                    itemBuilder: (context, index) {
-                      return buildItemNotification(context, index);
-                    }),
+                child: _IsSearching
+                    ? buildSearchList()
+                    : ListView.builder(
+                        itemCount: noticeList.length,
+                        itemBuilder: (context, index) {
+                          return buildItemNotification(
+                              context, index, noticeList);
+                        }),
               ),
             )
           ],
@@ -97,7 +118,31 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget buildItemNotification(BuildContext context, int index) {
+  Widget buildSearchList() {
+    if (_searchText.isEmpty) {
+      return ListView.builder(
+          itemCount: noticeList.length,
+          itemBuilder: (context, index) {
+            return buildItemNotification(context, index, noticeList);
+          });
+    } else {
+      List<NotificationVO> _searchList = [];
+      for (int i = 0; i < noticeList.length; i++) {
+        String name = noticeList[i].title;
+        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+          _searchList.add(noticeList[i]);
+        }
+      }
+      return ListView.builder(
+          itemCount: _searchList.length,
+          itemBuilder: (context, index) {
+            return buildItemNotification(context, index, _searchList);
+          });
+    }
+  }
+
+  Widget buildItemNotification(
+      BuildContext context, int index, List<NotificationVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -115,13 +160,13 @@ class _NotificationPageState extends State<NotificationPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${noticeList[index].title}",
+                      "${list[index].title}",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton(
-                    icon: noticeList[index].isFavorite
+                    icon: list[index].isFavorite
                         ? Icon(
                             Icons.favorite,
                             size: 28,
@@ -138,7 +183,7 @@ class _NotificationPageState extends State<NotificationPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${noticeList[index].content}",
+                  "${list[index].content}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -150,7 +195,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   children: [
                     Row(
                       children: List.generate(2, (indextag) {
-                        return buildItemTag(noticeList[index].tag, indextag);
+                        return buildItemTag(list[index].tag, indextag);
                       }),
                     ),
                     Container(
@@ -163,7 +208,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           )),
                       child: Center(
                         child: Text(
-                          "외 ${noticeList[index].tag.length - 2}개",
+                          "외 ${list[index].tag.length - 2}개",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
@@ -173,7 +218,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "등록일: ${noticeList[index].date}",
+                          "등록일: ${list[index].date}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
