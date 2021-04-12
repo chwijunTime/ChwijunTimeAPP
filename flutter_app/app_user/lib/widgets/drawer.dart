@@ -92,6 +92,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.comment),
           onTap: () {
             print("상담신청으로 가자");
+            Navigator.pushNamedAndRemoveUntil(context, "/counseling_apply", (route) => false);
           },
         ),
         ListTile(
