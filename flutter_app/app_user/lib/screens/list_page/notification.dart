@@ -2,6 +2,7 @@ import 'package:app_user/model/notification_vo.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -149,7 +150,15 @@ class _NotificationPageState extends State<NotificationPage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          print("눌림");
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => NotificationDialog(
+                msg: "${list[index].title}",
+                content: "${list[index].content}",
+                size: Size(346, 502),
+                tag: list[index].tag,
+                isFavorite: list[index].isFavorite,
+              ));
         },
         child: Padding(
           padding: EdgeInsets.all(15),

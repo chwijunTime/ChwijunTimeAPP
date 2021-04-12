@@ -2,14 +2,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:app_user/widgets/tag.dart';
 
-class CustomDialog extends StatefulWidget {
+class NotificationDialog extends StatefulWidget {
   final String msg, content;
   final Size size;
   final List<String> tag;
   bool isFavorite;
   Icon icon;
 
-  CustomDialog({
+  NotificationDialog({
     @required this.msg,
     @required this.content,
     @required this.size,
@@ -19,10 +19,10 @@ class CustomDialog extends StatefulWidget {
   });
 
   @override
-  _CustomDialog createState() => _CustomDialog();
+  _NotificationDialog createState() => _NotificationDialog();
 }
 
-class _CustomDialog extends State<CustomDialog> {
+class _NotificationDialog extends State<NotificationDialog> {
 
 
   @override

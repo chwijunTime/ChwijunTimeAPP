@@ -1,6 +1,6 @@
 import 'package:app_user/model/notification_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/dialog/custom_dialog.dart';
+import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -126,7 +126,7 @@ class _MainPageState extends State<MainPage> {
         onTap: () {
           showDialog(
               context: context,
-              builder: (BuildContext context) => CustomDialog(
+              builder: (BuildContext context) => NotificationDialog(
                     msg: "${notiList[index].title}",
                     content: "${notiList[index].content}",
                     size: Size(346, 502),

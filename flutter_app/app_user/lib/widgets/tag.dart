@@ -41,7 +41,7 @@ Widget makeTagList(List<String> tag, Size size) {
 Widget makeTagGrid(List<String> tag, Size size) {
   return SizedBox(
     width: size.width,
-    height: size.height,
+    height: size.height-3,
     child: GridView.builder(
       itemCount: tag.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
