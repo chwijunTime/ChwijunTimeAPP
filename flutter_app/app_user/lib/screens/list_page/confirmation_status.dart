@@ -95,7 +95,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                           color: Color(0x832B8AC0)),
                     ),
                     Text(
-                      "취업 공고",
+                      "취업확정 현황",
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w900,
@@ -104,10 +104,16 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
-              ListView.builder(
+              ListView.separated(
                 itemCount: confList.length,
                 itemBuilder: (context, index) {
                   return buildState(context, index);
+                },
+                separatorBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Container(height: 1, color: Colors.grey,),
+                  );
                 },
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
@@ -127,7 +133,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       },
       child: Container(
           child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
         child: Row(
           children: [
             Text(
