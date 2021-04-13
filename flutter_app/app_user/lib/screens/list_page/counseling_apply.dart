@@ -34,9 +34,23 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
     return Scaffold(
       appBar: buildAppBar("취준타임"),
       drawer: buildDrawer(context),
+      floatingActionButton: FloatingActionButton.extended(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        label: makeGradientBtn(
+            msg: "내가 신청한 상담 보러가기",
+            onPressed: () {},
+            mode: 4,
+            icon: Icon(
+              Icons.arrow_forward,
+              color: Colors.white,
+            )),
+      ),
       body: Container(
         color: Colors.white,
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.all(26),
@@ -60,31 +74,16 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 ],
               ),
             ),
-            ListView.builder(
-              itemCount: counList.length,
-              itemBuilder: (context, index) {
-                return buildCounseling(context, index);
-              },
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-            ),
-            SizedBox(height: 30,),
-            Padding(
-              padding: const EdgeInsets.only(right: 30),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: makeGradientBtn(
-                    msg: "내가 신청한 상담 보러가기",
-                    onPressed: () {},
-                    mode: 4,
-                    icon: Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                    )),
+            Expanded(
+              child: ListView.builder(
+                itemCount: counList.length,
+                itemBuilder: (context, index) {
+                  return buildCounseling(context, index);
+                },
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
               ),
             ),
-            SizedBox(height: 25,)
           ],
         ),
       ),
@@ -93,6 +92,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
 
   Widget buildCounseling(BuildContext context, int index) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
         elevation: 5,
         margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
         child: Padding(
