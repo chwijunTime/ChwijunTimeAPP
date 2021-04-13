@@ -125,6 +125,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.thumb_up),
           onTap: () {
             print("꿀팁 저장소로 가자");
+            Navigator.pushNamedAndRemoveUntil(context, "/tip_storage", (route) => false);
           },
         ),
         ListTile(
