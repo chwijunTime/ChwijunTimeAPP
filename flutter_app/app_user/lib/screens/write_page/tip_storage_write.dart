@@ -18,7 +18,6 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar("취준타임"),
-      drawer: buildDrawer(context),
       body: Container(
         color: Colors.white,
         child: Padding(
