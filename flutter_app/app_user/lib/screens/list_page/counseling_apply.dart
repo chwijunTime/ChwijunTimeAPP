@@ -1,4 +1,5 @@
 import 'package:app_user/model/counseling_vo.dart';
+import 'package:app_user/screens/detail_page/counseling_apply_detail.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -35,7 +36,8 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
       appBar: buildAppBar("취준타임"),
       drawer: buildDrawer(context),
       floatingActionButton: FloatingActionButton.extended(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5))),
         backgroundColor: Colors.transparent,
         elevation: 0,
         label: makeGradientBtn(
@@ -92,7 +94,8 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
 
   Widget buildCounseling(BuildContext context, int index) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18))),
         elevation: 5,
         margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
         child: Padding(
@@ -106,12 +109,12 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                     Text(
                       "${counList[index].date}, ${counList[index].time}",
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     Text(
                       counList[index].place,
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     )
                   ],
                 ),
@@ -122,7 +125,11 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                     color: Color(0xff4687ff),
                     size: 30,
                   ),
-                  onPressed: () {})
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            CounselingApplyDetail(list: counList[index],)));
+                  })
             ],
           ),
         ));
