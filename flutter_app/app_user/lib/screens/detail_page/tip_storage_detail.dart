@@ -1,4 +1,5 @@
 import 'package:app_user/model/tip_storage_vo.dart';
+import 'package:app_user/screens/modify_page/tip_storage_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,9 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
                       children: [
                         makeGradientBtn(
                               msg: "수정하기",
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageModify(list: widget.list)));
+                              },
                               mode: 1,
                               icon: Icon(
                                 Icons.note_add,
