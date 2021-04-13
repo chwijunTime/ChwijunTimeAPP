@@ -73,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
           _searchList.add(name);
         }
       }
-      return _searchList
+      return _searchList.length != 0 ? _searchList
           .map((contact) => ListTile(
                 title: Text(contact),
                 onTap: () {
@@ -87,7 +87,8 @@ class _SearchPageState extends State<SearchPage> {
                   }
                 },
               ))
-          .toList();
+          .toList() :
+      List.generate(1, (index) => ListTile(title: Text("검색된 태그가 없습니다."),)).toList();
     }
   }
 
