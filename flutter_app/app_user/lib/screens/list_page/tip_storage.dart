@@ -1,4 +1,5 @@
 import 'package:app_user/model/tip_storage_vo.dart';
+import 'package:app_user/screens/write_page/tip_storage_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -89,7 +90,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                   padding: EdgeInsets.only(right: 25),
                   child: FloatingActionButton(
                     onPressed: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewWrite()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageWrite()));
                     },
                     child: Container(
                       width: 60,
