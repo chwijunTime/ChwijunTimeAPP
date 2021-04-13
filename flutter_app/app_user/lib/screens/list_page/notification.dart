@@ -8,7 +8,6 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -17,8 +16,6 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
-
-  PanelController panelController = PanelController();
 
   List<NotificationVO> noticeList = [];
   final titleC = TextEditingController();
@@ -100,7 +97,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             Padding(
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("공지사항 제목", titleC)),
+                child: buildTextField("공지사항 제목", titleC, autoFocus: false)),
             Expanded(
               child: Align(
                 child: _IsSearching
