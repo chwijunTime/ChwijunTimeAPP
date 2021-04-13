@@ -4,6 +4,7 @@ class TipVO {
   String title;
   String address;
   String tip;
+  bool isMine;
 
-  TipVO({@required this.title, @required this.address, @required this.tip});
+  TipVO({@required this.title, @required this.address, @required this.tip, this.isMine});
 }

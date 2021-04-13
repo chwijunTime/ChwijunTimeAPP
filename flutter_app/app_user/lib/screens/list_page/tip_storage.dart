@@ -1,4 +1,5 @@
 import 'package:app_user/model/tip_storage_vo.dart';
+import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/write_page/tip_storage_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -41,11 +42,12 @@ class _TipStoragePageState extends State<TipStoragePage> {
   }
 
   void _listSetting() {
-    for (int i = 1; i <= 8; i++) {
+    for (int i = 0; i < 8; i++) {
       tipList.add(TipVO(
           title: "${i + 1}.업체명",
           address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
-          tip: "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요"));
+          tip: "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요",
+      isMine: i%2==0));
     }
   }
 
@@ -132,7 +134,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                     : ListView.builder(
                         itemCount: tipList.length,
                         itemBuilder: (context, index) {
-                          return buildItemNotification(
+                          return buildItemTip(
                               context, index, tipList);
                         }),
               ),
@@ -148,7 +150,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
       return ListView.builder(
           itemCount: tipList.length,
           itemBuilder: (context, index) {
-            return buildItemNotification(context, index, tipList);
+            return buildItemTip(context, index, tipList);
           });
     } else {
       List<TipVO> _searchList = [];
@@ -161,12 +163,12 @@ class _TipStoragePageState extends State<TipStoragePage> {
       return ListView.builder(
           itemCount: _searchList.length,
           itemBuilder: (context, index) {
-            return buildItemNotification(context, index, _searchList);
+            return buildItemTip(context, index, _searchList);
           });
     }
   }
 
-  Widget buildItemNotification(
+  Widget buildItemTip(
       BuildContext context, int index, List<TipVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -174,7 +176,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          print("눌림");
+          Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageDetail(list: list[index])));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
