@@ -68,8 +68,10 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                       Align(alignment: Alignment.bottomRight,
-                      child: Text("회사 사이트 바로가기",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Color(0xff5bc7f5)),),)
+                        child: Text("회사 사이트 바로가기",
+                          style: TextStyle(fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: Color(0xff5bc7f5)),),)
                     ],
                   ),
                 ),
@@ -129,6 +131,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                 ),
               ),
             ),
+            widget.list.etc != null ?
             Card(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -154,21 +157,19 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                       SizedBox(
                         height: 10,
                       ),
-                      widget.list.etc == null
-                          ? SizedBox()
-                          : AutoSizeText(
-                              widget.list.etc,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              minFontSize: 18,
-                            )
+                      AutoSizeText(
+                        widget.list.etc,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        minFontSize: 18,
+                      )
                     ],
                   ),
                 ),
               ),
-            ),
+            ): SizedBox(),
             SizedBox(
               height: 25,
             ),
