@@ -1,3 +1,4 @@
+import 'package:app_user/screens/my_profile.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -110,29 +111,25 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
             Expanded(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                    padding: EdgeInsets.only(right: 25, bottom: 25),
-                    child: widget.isCreated
-                        ? makeGradientBtn(
-                            msg: "프로필 수정하기",
-                            onPressed: () {},
-                            mode: 1,
-                            icon: Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ))
-                        : makeGradientBtn(
-                            msg: "프로필 생성하기",
-                            onPressed: () {},
-                            mode: 1,
-                            icon: Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ))),
-              ),
-            )
+                child: Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                  padding: EdgeInsets.only(right: 25, bottom: 25),
+                  child: makeGradientBtn(
+                      msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MyProfile(isCreated: widget.isCreated)));
+                      },
+                      mode: 1,
+                      icon: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ))),
+            ))
           ],
         ),
       ),
