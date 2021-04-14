@@ -9,6 +9,7 @@ import 'package:app_user/screens/list_page/notification.dart';
 import 'package:app_user/screens/list_page/tip_storage.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
+import 'package:app_user/screens/my_page.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
 
@@ -33,6 +34,7 @@ class UserApp extends StatelessWidget {
         "/confirmation_status": (context) => ConfirmationStatusPage(),
         "/counseling_apply": (context) => CounselingApplyPage(),
         "/tip_storage": (context) => TipStoragePage(),
+        "/my_page": (context) => MyPage(),
       },
       debugShowCheckedModeBanner: false,
     );

@@ -147,7 +147,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                 builder: (BuildContext context,
                                     AsyncSnapshot snapshot) {
                                   if (snapshot.hasData == false) {
-                                    return CircularProgressIndicator();
+                                    return Center(child: CircularProgressIndicator());
                                   } else {
                                     return GoogleMap(
                                       initialCameraPosition: CameraPosition(

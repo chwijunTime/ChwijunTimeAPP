@@ -144,7 +144,7 @@ Widget buildDrawer(BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              makeGradientBtn(msg: "마이페이지", onPressed: () => print("마이페이지 눌림"), mode: 1, icon: Icon(Icons.person, color: Colors.white,)),
+              makeGradientBtn(msg: "마이페이지", onPressed: () => Navigator.pushNamedAndRemoveUntil(context, "/my_page", (route) => false), mode: 1, icon: Icon(Icons.person, color: Colors.white,)),
               SizedBox(
                 height: 8,
               ),
