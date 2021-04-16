@@ -1,15 +1,18 @@
 import 'package:app_user/model/company_vo.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
+import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ContractingCompPage extends StatefulWidget {
+  String role;
+
   @override
   _ContractingCompPageState createState() => _ContractingCompPageState();
 }
@@ -37,6 +40,21 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     _listSetting();
     init();
     searchState();
+    loadShaPref();
+  }
+
+  loadShaPref() async {
+    var role = await getRole();
+    setState(() {
+      widget.role = role;
+    });
+  }
+
+  Future<String> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    var role = prefs.getString("role") ?? "user";
+    print("role: ${role}");
+    return role;
   }
 
   void init() {
@@ -128,19 +146,57 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 26),
-                      child: makeGradientBtn(
-                          msg: "좋아요 모아보기",
-                          onPressed: () {},
-                          mode: 1,
-                          icon: Icon(
-                            Icons.favorite,
-                            color: Colors.white,
-                          )),
-                    )
+                    widget.role == "user"
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 26),
+                            child: makeGradientBtn(
+                                msg: "좋아요 모아보기",
+                                onPressed: () {},
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.favorite,
+                                  color: Colors.white,
+                                )),
+                          )
+                        : SizedBox()
                   ],
                 ),
+                widget.role == "user"
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                            right: 26, left: 26, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            makeGradientBtn(
+                                msg: "협약 업체 등록하기",
+                                onPressed: () {
+                                  print("등록하자");
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.note_add,
+                                  color: Colors.white,
+                                )),
+                            makeGradientBtn(
+                                msg: "선택된 업체 삭제하기",
+                                onPressed: () {
+                                  print("삭제할 업체들================================");
+                                  for (int i =0; i<compList.length; i++) {
+                                    if(compList[i].isFavorite) {
+                                      print("title: ${compList[i].title}");
+                                    }
+                                  }
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ))
+                          ],
+                        ),
+                      ),
                 Expanded(
                   child: Align(
                     child: ListView.builder(
@@ -185,19 +241,32 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  IconButton(
-                    icon: compList[index].isFavorite
-                        ? Icon(
-                            Icons.favorite,
+                  widget.role == "user"
+                      ? IconButton(
+                          icon: compList[index].isFavorite
+                              ? Icon(
+                                  Icons.favorite,
+                                  size: 28,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border_outlined,
+                                  size: 28,
+                                ),
+                          onPressed: () => _onHeartPressed(index),
+                        )
+                      : IconButton(
+                          icon: compList[index].isFavorite
+                              ? Icon(
+                            Icons.check_box_outlined,
                             size: 28,
                             color: Colors.red,
                           )
-                        : Icon(
-                            Icons.favorite_border_outlined,
+                              : Icon(
+                            Icons.check_box_outline_blank,
                             size: 28,
                           ),
-                    onPressed: () => _onHeartPressed(index),
-                  ),
+                          onPressed: () => _onHeartPressed(index)),
                 ],
               ),
               Padding(
@@ -455,7 +524,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             ),
           ),
         ),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         SizedBox(
             height: 58,
             child: Column(
@@ -484,7 +555,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 )
               ],
             )),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -604,7 +677,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           padding: EdgeInsets.only(left: 20, right: 20),
           child: buildTextField("TAG", titleC, autoFocus: false),
         ),
-        SizedBox(height: 250,),
+        SizedBox(
+          height: 250,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {

@@ -7,13 +7,14 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {  
   TextEditingController emailController = TextEditingController();
   TextEditingController passWordController = TextEditingController();
 
@@ -38,6 +39,9 @@ class _LoginPageState extends State<LoginPage> {
     //     }
     //   }
     // }
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("accessToken", "accessTokenValue");
+    prefs.setString("role", "admin");
     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 

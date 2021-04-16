@@ -1,3 +1,4 @@
+import 'package:app_user/screens/loading.dart';
 import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:app_user/widgets/button.dart';
@@ -59,7 +60,8 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.assignment),
           onTap: () {
             print("협약 업체로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/contracting_company", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/contracting_company")), (route) => false);
+            //Navigator.pushNamedAndRemoveUntil(context, "/contracting_company", (route) => false);
             // Navigator.pushNamed(context, "/contracting_company");
           },
         ),
@@ -70,7 +72,7 @@ Widget buildDrawer(BuildContext context) {
           ),
           leading: Icon(Icons.account_box_outlined),
           onTap: () {
-            Navigator.pushNamedAndRemoveUntil(context, "/company_notice", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/company_notice")), (route) => false);
           },
         ),
         ListTile(
@@ -81,7 +83,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.book),
           onTap: () {
             print("면접후기로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/interview_review", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/interview_review")), (route) => false);
           },
         ),
         ListTile(
@@ -92,7 +94,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.comment),
           onTap: () {
             print("상담신청으로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/counseling_apply", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/counseling_apply")), (route) => false);
           },
         ),
         ListTile(
@@ -103,7 +105,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.school),
           onTap: () {
             print("취업 확정 현황으로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/confirmation_status", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/confirmation_status")), (route) => false);
           },
         ),
         ListTile(
@@ -114,7 +116,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.calendar_today_outlined),
           onTap: () {
             print("공지사항으로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/notification", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/notification")), (route) => false);
           },
         ),
         ListTile(
@@ -125,7 +127,7 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.thumb_up),
           onTap: () {
             print("꿀팁 저장소로 가자");
-            Navigator.pushNamedAndRemoveUntil(context, "/tip_storage", (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoadingPage(page: "/tip_storage")), (route) => false);
           },
         ),
         ListTile(
