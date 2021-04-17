@@ -1,5 +1,6 @@
 import 'package:app_user/model/company_vo.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
+import 'package:app_user/screens/write_page/contracting_company_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -170,9 +171,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             makeGradientBtn(
-                                msg: "협약 업체 등록하기",
+                                msg: "협약 업체 등록",
                                 onPressed: () {
                                   print("등록하자");
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyWrite()));
                                 },
                                 mode: 1,
                                 icon: Icon(
@@ -180,7 +182,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                   color: Colors.white,
                                 )),
                             makeGradientBtn(
-                                msg: "선택된 업체 삭제하기",
+                                msg: "선택된 업체 삭제",
                                 onPressed: () {
                                   print("삭제할 업체들================================");
                                   for (int i =0; i<compList.length; i++) {

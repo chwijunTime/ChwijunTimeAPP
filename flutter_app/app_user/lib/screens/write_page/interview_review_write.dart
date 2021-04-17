@@ -151,9 +151,11 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                         builder: (context) => SearchPage(
                               list: _list,
                             )));
-                setState(() {
+                if (result.isEmpty) {
+                  tagList = [];
+                } else {
                   tagList = result;
-                });
+                }
                 print("tagList: $tagList");
               },
               child: Padding(

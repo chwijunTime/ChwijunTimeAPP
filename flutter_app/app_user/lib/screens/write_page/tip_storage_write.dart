@@ -70,7 +70,7 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
               Align(
                 alignment: Alignment.center,
                 child: makeGradientBtn(
-                    msg: "둥륵하기",
+                    msg: "둥록하기",
                     onPressed: () {},
                     mode: 4,
                     icon: Icon(

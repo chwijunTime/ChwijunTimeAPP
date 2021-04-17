@@ -1,18 +1,18 @@
 import 'package:app_user/model/company_vo.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:app_user/screens/modify_page/contracting_company_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../list_page/company_notice.dart';
 
 class ContractingCompanyDetailPage extends StatefulWidget {
   final CompanyVO list;
   Positioned position;
+  String role;
 
   ContractingCompanyDetailPage({this.list});
 
@@ -76,19 +76,27 @@ class _ContractingCompanyDetailPageState
                                   fontSize: 24, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          IconButton(
-                            icon: widget.list.isFavorite
-                                ? Icon(
-                                    Icons.favorite,
-                                    size: 28,
-                                    color: Colors.red,
-                                  )
-                                : Icon(
-                                    Icons.favorite_border_outlined,
+                          widget.role == "user"
+                              ? IconButton(
+                                  icon: widget.list.isFavorite
+                                      ? Icon(
+                                          Icons.favorite,
+                                          size: 28,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.favorite_border_outlined,
+                                          size: 28,
+                                        ),
+                                  onPressed: () => _onBookMarkPressed(),
+                                )
+                              : IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
                                     size: 28,
                                   ),
-                            onPressed: () => _onBookMarkPressed(),
-                          ),
+                                  onPressed: () {},
+                                ),
                         ],
                       ),
                       Text(
@@ -142,7 +150,8 @@ class _ContractingCompanyDetailPageState
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.hasData == false) {
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(
+                                      child: CircularProgressIndicator());
                                 } else {
                                   return GoogleMap(
                                     initialCameraPosition: CameraPosition(
@@ -201,9 +210,30 @@ class _ContractingCompanyDetailPageState
               height: 25,
             ),
             Align(
-              alignment: Alignment.center,
-                child: makeTagWidget(tag: widget.list.tag, size: Size(360, 27), mode: 1)),
-            SizedBox(height: 25,)
+                alignment: Alignment.center,
+                child: makeTagWidget(
+                    tag: widget.list.tag, size: Size(360, 27), mode: 1)),
+            SizedBox(
+              height: 20,
+            ),
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 30),
+                  child: makeGradientBtn(
+                      msg: "협약 업체 수정하기",
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyModify(list: widget.list)));
+                      },
+                      mode: 2,
+                      icon: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      )),
+                )),
+            SizedBox(
+              height: 25,
+            )
           ],
         ),
       ),
