@@ -1,7 +1,9 @@
 import 'package:app_user/model/notification_vo.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
+import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
@@ -10,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class NotificationPage extends StatefulWidget {
+  String role;
+
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
@@ -95,9 +99,44 @@ class _NotificationPageState extends State<NotificationPage> {
                 ],
               ),
             ),
-            Padding(
+            widget.role == "user"
+                ? Padding(
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("공지사항 제목", titleC, autoFocus: false)),
+                child: buildTextField("공지사항 제목", titleC, autoFocus: false))
+                : Padding(
+              padding: const EdgeInsets.only(
+                  right: 26, left: 26, bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  makeGradientBtn(
+                      msg: "공지사항 등록",
+                      onPressed: () {
+                        print("등록하자");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    NotificationWrite()));
+                      },
+                      mode: 1,
+                      icon: Icon(
+                        Icons.note_add,
+                        color: Colors.white,
+                      )),
+                  makeGradientBtn(
+                      msg: "선택된 공지 삭제",
+                      onPressed: () {
+                        _onDeleteNoti();
+                      },
+                      mode: 1,
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ))
+                ],
+              ),
+            ),
             Expanded(
               child: Align(
                 child: _IsSearching
@@ -171,6 +210,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
+                  widget.role == "user" ?
                   IconButton(
                     icon: list[index].isFavorite
                         ? Icon(
@@ -183,7 +223,18 @@ class _NotificationPageState extends State<NotificationPage> {
                             size: 28,
                           ),
                     onPressed: () => _onHeartPressed(index),
-                  ),
+                  ): IconButton(
+                      icon: list[index].isFavorite
+                          ? Icon(
+                        Icons.check_box_outlined,
+                        size: 28,
+                        color: Colors.red,
+                      )
+                          : Icon(
+                        Icons.check_box_outline_blank,
+                        size: 28,
+                      ),
+                      onPressed: () => _onHeartPressed(index)),
                 ],
               ),
               Padding(
@@ -241,4 +292,6 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
     );
   }
+
+  _onDeleteNoti() {}
 }
