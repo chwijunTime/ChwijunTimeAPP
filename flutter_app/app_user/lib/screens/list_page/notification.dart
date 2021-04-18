@@ -205,11 +205,8 @@ class _NotificationPageState extends State<NotificationPage> {
           showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
-                msg: "${list[index].title}",
-                content: "${list[index].content}",
+                list: list[index],
                 size: Size(346, 502),
-                tag: list[index].tag,
-                isFavorite: list[index].isFavorite,
               ));
         },
         child: Padding(

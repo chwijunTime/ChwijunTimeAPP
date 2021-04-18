@@ -1,23 +1,20 @@
+import 'package:app_user/model/notification_vo.dart';
+import 'package:app_user/screens/modify_page/notification_modify.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class NotificationDialog extends StatefulWidget {
-  final String msg, content;
+  NotificationVO list;
   final Size size;
-  final List<String> tag;
   String role;
-  bool isFavorite;
   Icon icon;
 
   NotificationDialog({
-    @required this.msg,
-    @required this.content,
     @required this.size,
-    @required this.tag,
-    @required this.isFavorite,
     @required this.role,
+    @required this.list,
     this.icon,
   });
 
@@ -40,7 +37,7 @@ class _NotificationDialog extends State<NotificationDialog> {
 
   _onHeartPressed() {
     setState(() {
-      widget.isFavorite = !widget.isFavorite;
+      widget.list.isFavorite = !widget.list.isFavorite;
     });
   }
 
@@ -75,7 +72,7 @@ class _NotificationDialog extends State<NotificationDialog> {
             children: [
               Expanded(
                 child: Text(
-                  widget.msg,
+                  widget.list.title,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
@@ -84,7 +81,7 @@ class _NotificationDialog extends State<NotificationDialog> {
               ),
               widget.role == "user"
                   ? IconButton(
-                      icon: widget.isFavorite
+                      icon: widget.list.isFavorite
                           ? Icon(
                               Icons.favorite,
                               size: 28,
@@ -111,7 +108,7 @@ class _NotificationDialog extends State<NotificationDialog> {
             child: ListView(
               children: [
                 AutoSizeText(
-                  widget.content,
+                  widget.list.content,
                   minFontSize: 16,
                   style: TextStyle(
                     fontSize: 16,
@@ -126,13 +123,15 @@ class _NotificationDialog extends State<NotificationDialog> {
           Align(
               alignment: Alignment.bottomCenter,
               child:
-                  makeTagWidget(tag: widget.tag, size: Size(360, 50), mode: 2)),
+                  makeTagWidget(tag: widget.list.tag, size: Size(360, 50), mode: 2)),
           SizedBox(height: 20,),
           Align(
             alignment: Alignment.bottomRight,
             child: makeGradientBtn(
                 msg: "공지 사항 수정하기",
-                onPressed: () {},
+                onPressed: () {
+                  _moveModify();
+                },
                 mode: 2,
                 icon: Icon(
                   Icons.arrow_forward,
@@ -142,6 +141,17 @@ class _NotificationDialog extends State<NotificationDialog> {
         ],
       ),
     );
+  }
+
+  _moveModify() async {
+    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationModify(list: widget.list)));
+
+    if (result != false && result != null) {
+      print("list: ${widget.list}");
+      setState(() {
+        widget.list = result;
+      });
+    }
   }
 }
 

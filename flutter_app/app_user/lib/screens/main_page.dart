@@ -145,11 +145,8 @@ class _MainPageState extends State<MainPage> {
           showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
-                    msg: "${notiList[index].title}",
-                    content: "${notiList[index].content}",
+                    list: notiList[index],
                     size: Size(346, 502),
-                    tag: notiList[index].tag,
-                    isFavorite: notiList[index].isFavorite,
                 role: widget.role,
                   ));
         },
