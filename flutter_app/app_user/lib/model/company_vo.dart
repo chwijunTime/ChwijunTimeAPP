@@ -19,4 +19,9 @@ class CompanyVO {
       @required this.isFavorite,
       @required this.address,
       @required this.field});
+
+  @override
+  String toString() {
+    return 'CompanyVO{title: $title, info: $info, tag: $tag, minSalary: $minSalary, maxSalary: $maxSalary, isFavorite: $isFavorite, address: $address, field: $field}';
+  }
 }

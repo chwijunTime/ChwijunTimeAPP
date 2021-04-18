@@ -1,8 +1,10 @@
 import 'package:app_user/model/company_vo.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/contracting_company_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -174,7 +176,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                 msg: "협약 업체 등록",
                                 onPressed: () {
                                   print("등록하자");
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyWrite()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ContractingCompanyWrite()));
                                 },
                                 mode: 1,
                                 icon: Icon(
@@ -184,12 +190,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                             makeGradientBtn(
                                 msg: "선택된 업체 삭제",
                                 onPressed: () {
-                                  print("삭제할 업체들================================");
-                                  for (int i =0; i<compList.length; i++) {
-                                    if(compList[i].isFavorite) {
-                                      print("title: ${compList[i].title}");
-                                    }
-                                  }
+                                  _onDeleteCompany();
                                 },
                                 mode: 1,
                                 icon: Icon(
@@ -260,14 +261,14 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       : IconButton(
                           icon: compList[index].isFavorite
                               ? Icon(
-                            Icons.check_box_outlined,
-                            size: 28,
-                            color: Colors.red,
-                          )
+                                  Icons.check_box_outlined,
+                                  size: 28,
+                                  color: Colors.red,
+                                )
                               : Icon(
-                            Icons.check_box_outline_blank,
-                            size: 28,
-                          ),
+                                  Icons.check_box_outline_blank,
+                                  size: 28,
+                                ),
                           onPressed: () => _onHeartPressed(index)),
                 ],
               ),
@@ -710,5 +711,33 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         });
       }
     });
+  }
+
+  _onDeleteCompany() {
+    List<CompanyVO> deleteComp = [];
+    for (int i = 0; i < compList.length; i++) {
+      if (compList[i].isFavorite) {
+        deleteComp.add(compList[i]);
+      }
+    }
+
+    if(deleteComp.isEmpty) {
+      snackBar("삭제할 업체를 선택해주세요.", context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => StdDialog(
+            msg: "해당 협약 업체를 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {Navigator.pop(context);},
+            btnName2: "삭제하기",
+            btnCall2: () {
+              print("삭제할 업체들================================");
+              print(deleteComp.toString());
+              Navigator.pop(context);
+            },),
+          barrierDismissible: false);
+    }
   }
 }

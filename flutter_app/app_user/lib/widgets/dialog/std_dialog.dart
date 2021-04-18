@@ -46,7 +46,7 @@ class _StdDialog extends State<StdDialog> {
       decoration: new BoxDecoration(
           color: Colors.white,
           shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,
@@ -60,39 +60,43 @@ class _StdDialog extends State<StdDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             widget.icon != null ? widget.icon : SizedBox(),
-            Text(
-              widget.msg,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  widget.msg,
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                widget.btnName1 != null
-                    ? Row(
-                      children: [
-                        makeBtn(
-                        msg: widget.btnName1,
-                        onPressed: widget.btnCall1,
-                        mode: 2,
-                        icon: widget.btnIcon1),
-                        SizedBox(width: 20,)
-                      ],
-                    )
-                    : SizedBox(),
-                widget.btnName2 != null
-                    ? makeGradientBtn(
-                        msg: widget.btnName2,
-                        onPressed: widget.btnCall2,
-                        mode: 5,
-                        icon: widget.btnIcon2)
-                    : SizedBox(),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  widget.btnName1 != null
+                      ? Row(
+                        children: [
+                          makeBtn(
+                          msg: widget.btnName1,
+                          onPressed: widget.btnCall1,
+                          mode: 2,
+                          icon: widget.btnIcon1),
+                          SizedBox(width: 20,)
+                        ],
+                      )
+                      : SizedBox(),
+                  widget.btnName2 != null
+                      ? makeGradientBtn(
+                          msg: widget.btnName2,
+                          onPressed: widget.btnCall2,
+                          mode: 5,
+                          icon: widget.btnIcon2)
+                      : SizedBox(),
+                ],
+              ),
             )
           ],
         ),
