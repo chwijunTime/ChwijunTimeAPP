@@ -49,132 +49,135 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: buildAppBar("취준타임"),
-      body: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.list.title,
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      widget.list.field,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      widget.list.address,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    ),
-                    buildTextField("평균 연봉", priceC,
-                        deco: false, autoFocus: false),
-                  ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: buildAppBar("취준타임"),
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.list.title,
+                        style:
+                            TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        widget.list.field,
+                        style:
+                            TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.list.address,
+                        style:
+                            TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      buildTextField("평균 연봉", priceC,
+                          deco: false, autoFocus: false),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              elevation: 5,
-              child: Padding(
-                padding: EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "회사 설명",
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 10,),
-                    buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                        maxLine: 8, maxLength: 300, autoFocus: false),
-                  ],
+              SizedBox(
+                height: 15,
+              ),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                elevation: 5,
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "회사 설명",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(height: 10,),
+                      buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
+                          maxLine: 8, maxLength: 300, autoFocus: false),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchPage(
-                              list: _list,
-                            )));
-                    setState(() {
-                      if (result.isEmpty) {
-                        tagList = [];
-                      } else {
-                        tagList = result;
-                      }
-                    });
-                    print("tagList: $tagList");
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 10, left: 10, bottom: 20),
-                    child: Container(
-                      width: constraints.maxWidth,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 25, top: 16, bottom: 16),
-                        child: Text(
-                          "태그 선택하러 가기",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey),
+              SizedBox(
+                height: 15,
+              ),
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage(
+                                list: _list,
+                              )));
+                      setState(() {
+                        if (result.isEmpty) {
+                          tagList = [];
+                        } else {
+                          tagList = result;
+                        }
+                      });
+                      print("tagList: $tagList");
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10, left: 10, bottom: 20),
+                      child: Container(
+                        width: constraints.maxWidth,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, top: 16, bottom: 16),
+                          child: Text(
+                            "태그 선택하러 가기",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 15, left: 15),
-              child: Align(
-                  alignment: Alignment.center,
-                  child: makeTagWidget(
-                      tag: tagList, size: Size(360, 27), mode: 1)),
-            ),
-            SizedBox(height: 19,),
-            makeGradientBtn(
-                msg: "수정하기",
-                onPressed: () {
-                  onContractingModify();
+                  );
                 },
-                mode: 4,
-                icon: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                ))
-          ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15, left: 15),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: makeTagWidget(
+                        tag: tagList, size: Size(360, 27), mode: 1)),
+              ),
+              SizedBox(height: 19,),
+              makeGradientBtn(
+                  msg: "수정하기",
+                  onPressed: () {
+                    onContractingModify();
+                  },
+                  mode: 4,
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  ))
+            ]),
+          ),
         ),
       ),
     );
@@ -190,4 +193,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
       Navigator.pop(context, widget.list);
     }
   }
+
+  Future<bool> _onBackPressed() {
+    Navigator.pop(context, false);
+  }
+
 }

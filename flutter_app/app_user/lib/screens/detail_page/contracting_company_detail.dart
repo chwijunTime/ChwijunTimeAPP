@@ -2,6 +2,7 @@ import 'package:app_user/model/company_vo.dart';
 import 'package:app_user/screens/modify_page/contracting_company_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -95,7 +96,9 @@ class _ContractingCompanyDetailPageState
                                     Icons.delete,
                                     size: 28,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    _onDeleteComp();
+                                  },
                                 ),
                         ],
                       ),
@@ -241,12 +244,34 @@ class _ContractingCompanyDetailPageState
   }
 
   _moveModify() async {
-    final reuslt = await Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyModify(list: widget.list)));
+    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyModify(list: widget.list)));
 
-    print("list: ${widget.list}");
-    setState(() {
-      widget.list = reuslt;
-    });
+    if (result != false && result != null) {
+      print("list: ${widget.list}");
+      setState(() {
+        widget.list = result;
+      });
+    }
+  }
+
+  _onDeleteComp() async {
+    final result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => StdDialog(
+          msg: "해당 협약 업체를 삭제하시겠습니까?",
+          size: Size(326, 124),
+          btnName1: "아니요",
+          btnCall1: () {Navigator.pop(context, "no");},
+          btnName2: "삭제하기",
+          btnCall2: () {
+            print("삭제할 Comp: ${widget.list}");
+            Navigator.pop(context, "yes");
+          },),
+        barrierDismissible: false);
+
+    if (result == "yes") {
+      Navigator.pop(context);
+    }
   }
 
   Set<Marker> _createMarker() {

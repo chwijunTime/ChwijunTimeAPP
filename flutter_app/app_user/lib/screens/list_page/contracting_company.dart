@@ -727,7 +727,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "해당 협약 업체를 삭제하시겠습니까?",
+            msg: "선택된 협약 업체를 삭제하시겠습니까?",
             size: Size(326, 124),
             btnName1: "아니요",
             btnCall1: () {Navigator.pop(context);},
