@@ -43,7 +43,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     init();
     infoC.text = widget.list.info;
     priceC.text =
-        (widget.list.maxSalary + widget.list.minSalary / 2).toString();
+        (widget.list.maxSalary + widget.list.minSalary / 2).toStringAsFixed(0);
     tagList = widget.list.tag;
   }
 
@@ -181,6 +181,13 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   }
 
   onContractingModify() {
-    
+    if(priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty) {
+      snackBar("빈칸이 없도록 작성해주세요", context);
+    } else {
+      widget.list.maxSalary = int.parse(priceC.text);
+      widget.list.info = infoC.text;
+      widget.list.tag = tagList;
+      Navigator.pop(context, widget.list);
+    }
   }
 }

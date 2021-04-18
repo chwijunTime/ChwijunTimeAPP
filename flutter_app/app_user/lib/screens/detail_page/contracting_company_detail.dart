@@ -10,7 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ContractingCompanyDetailPage extends StatefulWidget {
-  final CompanyVO list;
+  CompanyVO list;
   Positioned position;
   String role;
 
@@ -223,7 +223,7 @@ class _ContractingCompanyDetailPageState
                   child: makeGradientBtn(
                       msg: "협약 업체 수정하기",
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyModify(list: widget.list)));
+                        _moveModify();
                       },
                       mode: 2,
                       icon: Icon(
@@ -238,6 +238,15 @@ class _ContractingCompanyDetailPageState
         ),
       ),
     );
+  }
+
+  _moveModify() async {
+    final reuslt = await Navigator.push(context, MaterialPageRoute(builder: (context) => ContractingCompanyModify(list: widget.list)));
+
+    print("list: ${widget.list}");
+    setState(() {
+      widget.list = reuslt;
+    });
   }
 
   Set<Marker> _createMarker() {
