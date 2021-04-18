@@ -5,8 +5,11 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
+  String role;
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -38,10 +41,25 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  loadShaPref() async {
+    var role = await getRole();
+    setState(() {
+      widget.role = role;
+    });
+  }
+
+  Future<String> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    var role = prefs.getString("role") ?? "user";
+    print("role: ${role}");
+    return role;
+  }
+
   @override
   void initState() {
     super.initState();
     initNotiList();
+    loadShaPref();
   }
 
   @override
@@ -132,6 +150,7 @@ class _MainPageState extends State<MainPage> {
                     size: Size(346, 502),
                     tag: notiList[index].tag,
                     isFavorite: notiList[index].isFavorite,
+                role: widget.role,
                   ));
         },
         child: Padding(
@@ -148,7 +167,7 @@ class _MainPageState extends State<MainPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  IconButton(
+                  widget.role == "user" ? IconButton(
                     icon: notiList[index].isFavorite
                         ? Icon(
                             Icons.favorite,
@@ -160,7 +179,7 @@ class _MainPageState extends State<MainPage> {
                             size: 28,
                           ),
                     onPressed: () => _onHeartPressed(index),
-                  ),
+                  ) : SizedBox(),
                 ],
               ),
               Padding(

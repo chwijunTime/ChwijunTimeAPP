@@ -10,6 +10,7 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
   String role;
@@ -46,6 +47,21 @@ class _NotificationPageState extends State<NotificationPage> {
         });
       }
     });
+    loadShaPref();
+  }
+
+  loadShaPref() async {
+    var role = await getRole();
+    setState(() {
+      widget.role = role;
+    });
+  }
+
+  Future<String> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    var role = prefs.getString("role") ?? "user";
+    print("role: ${role}");
+    return role;
   }
 
   _onHeartPressed(int index) {

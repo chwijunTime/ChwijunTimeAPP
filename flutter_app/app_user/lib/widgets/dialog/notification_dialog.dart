@@ -1,11 +1,13 @@
+import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:app_user/widgets/tag.dart';
 
 class NotificationDialog extends StatefulWidget {
   final String msg, content;
   final Size size;
   final List<String> tag;
+  String role;
   bool isFavorite;
   Icon icon;
 
@@ -15,6 +17,7 @@ class NotificationDialog extends StatefulWidget {
     @required this.size,
     @required this.tag,
     @required this.isFavorite,
+    @required this.role,
     this.icon,
   });
 
@@ -23,8 +26,6 @@ class NotificationDialog extends StatefulWidget {
 }
 
 class _NotificationDialog extends State<NotificationDialog> {
-
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -46,7 +47,8 @@ class _NotificationDialog extends State<NotificationDialog> {
   dialogContent(BuildContext context) {
     return Container(
       width: widget.size.width,
-      height: widget.size.height,
+      height:
+          widget.role == "user" ? widget.size.height : widget.size.height + 20,
       padding: EdgeInsets.only(
           top: Consts.padding,
           bottom: Consts.padding,
@@ -56,7 +58,7 @@ class _NotificationDialog extends State<NotificationDialog> {
       decoration: new BoxDecoration(
           color: Colors.white,
           shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(Consts.padding-10),
+          borderRadius: BorderRadius.circular(Consts.padding - 10),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,
@@ -80,19 +82,26 @@ class _NotificationDialog extends State<NotificationDialog> {
                   ),
                 ),
               ),
-              IconButton(
-                icon: widget.isFavorite
-                    ? Icon(
-                  Icons.favorite,
-                  size: 28,
-                  color: Colors.red,
-                )
-                    : Icon(
-                  Icons.favorite_border_outlined,
-                  size: 28,
-                ),
-                onPressed: () => _onHeartPressed(),
-              ),
+              widget.role == "user"
+                  ? IconButton(
+                      icon: widget.isFavorite
+                          ? Icon(
+                              Icons.favorite,
+                              size: 28,
+                              color: Colors.red,
+                            )
+                          : Icon(
+                              Icons.favorite_border_outlined,
+                              size: 28,
+                            ),
+                      onPressed: () => _onHeartPressed(),
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        size: 28,
+                      ),
+                      onPressed: () {}),
             ],
           ),
           SizedBox(
@@ -104,7 +113,9 @@ class _NotificationDialog extends State<NotificationDialog> {
                 AutoSizeText(
                   widget.content,
                   minFontSize: 16,
-                  style: TextStyle(fontSize: 16,),
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
@@ -113,9 +124,21 @@ class _NotificationDialog extends State<NotificationDialog> {
             height: 10,
           ),
           Align(
-            alignment: Alignment.bottomCenter,
-            child: makeTagWidget(tag: widget.tag, size: Size(360, 50), mode: 2)
-          ),
+              alignment: Alignment.bottomCenter,
+              child:
+                  makeTagWidget(tag: widget.tag, size: Size(360, 50), mode: 2)),
+          SizedBox(height: 20,),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: makeGradientBtn(
+                msg: "공지 사항 수정하기",
+                onPressed: () {},
+                mode: 2,
+                icon: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                )),
+          )
         ],
       ),
     );
