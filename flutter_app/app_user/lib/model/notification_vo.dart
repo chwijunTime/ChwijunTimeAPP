@@ -13,4 +13,9 @@ class NotificationVO {
       @required this.date,
       @required this.isFavorite,
       @required this.tag});
+
+  @override
+  String toString() {
+    return 'NotificationVO{title: $title, content: $content, date: $date, isFavorite: $isFavorite, tag: $tag}';
+  }
 }

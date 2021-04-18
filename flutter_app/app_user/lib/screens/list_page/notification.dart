@@ -1,10 +1,12 @@
 import 'package:app_user/model/notification_vo.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -268,7 +270,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         return buildItemTag(list[index].tag, indextag);
                       }),
                     ),
-                    Container(
+                    list[index].tag.length-2 !=0 ? Container(
                       padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                       margin: EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
@@ -283,7 +285,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
                       ),
-                    ),
+                    ): SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
@@ -306,5 +308,31 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  _onDeleteNoti() {}
+  _onDeleteNoti() {
+    List<NotificationVO> deleteNoti = [];
+    for (int i = 0; i < noticeList.length; i++) {
+      if (noticeList[i].isFavorite) {
+        deleteNoti.add(noticeList[i]);
+      }
+    }
+
+    if(deleteNoti.isEmpty) {
+      snackBar("삭제할 업체를 선택해주세요.", context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => StdDialog(
+            msg: "선택된 공지사항을 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {Navigator.pop(context);},
+            btnName2: "삭제하기",
+            btnCall2: () {
+              print("삭제할 업체들================================");
+              print(deleteNoti.toString());
+              Navigator.pop(context);
+            },),
+          barrierDismissible: false);
+    }
+  }
 }
