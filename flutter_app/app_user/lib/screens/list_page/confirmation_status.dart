@@ -5,9 +5,12 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ConfirmationStatusPage extends StatefulWidget {
+  String role;
+
   @override
   _ConfirmationStatusPageState createState() => _ConfirmationStatusPageState();
 }
@@ -27,6 +30,27 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   List<String> tagList = [];
 
   final List<ConfirmationStatusVO> confList = [];
+  final List<bool> checkList = [];
+
+  loadShaPref() async {
+    var role = await getRole();
+    setState(() {
+      widget.role = role;
+    });
+  }
+
+  Future<String> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    var role = prefs.getString("role") ?? "user";
+    print("role: ${role}");
+    return role;
+  }
+
+  _onHeartPressed(int index) {
+    setState(() {
+      compList[index].isFavorite = !compList[index].isFavorite;
+    });
+  }
 
   initList() {
     for (int i = 0; i < 12; i++) {
@@ -46,6 +70,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 "이것은 비고란 입니당앙ㄴ리;망러;밍나러;ㅣㅁㅇ나 아야아ㅇ아야아야아야어여오ㅇ요오유으이ㅣ아링ㄹ가나다라마바사아자차카타ㅠㅏ사",
             siteUrl: "https://www.naver.com/"));
       }
+      checkList.add(false);
     }
   }
 
@@ -112,7 +137,10 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 separatorBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Container(height: 1, color: Colors.grey,),
+                    child: Container(
+                      height: 1,
+                      color: Colors.grey,
+                    ),
                   );
                 },
                 scrollDirection: Axis.vertical,
@@ -127,38 +155,55 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   }
 
   Widget buildState(BuildContext context, int index) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmationStatusDetail(list: confList[index],)));
-      },
-      child: Container(
-          child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-        child: Row(
-          children: [
-            Text(
-              "${confList[index].title}",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+    return Container(
+        child: Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: Row(
+        children: [
+          Text(
+            "${confList[index].title}",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          Expanded(
+            child: Text(
+              "/${confList[index].grade.toString()}학년",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
-            Expanded(
-              child: Text(
-                "/${confList[index].grade.toString()}학년",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-            ),
-            Text(
-              "${confList[index].area}",
-              style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
-            ),
-            SizedBox(width: 10,),
-            Icon(
-              Icons.arrow_forward_ios_rounded
-            )
-          ],
-        ),
-      )),
-    );
+          ),
+          Text(
+            "${confList[index].area}",
+            style: TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          widget.role == "user"
+              ? InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConfirmationStatusDetail(
+                                  list: confList[index],
+                                )));
+                  },
+                  child: Icon(Icons.arrow_forward_ios_rounded),
+                )
+              : InkWell(
+                  onTap: () {
+
+                  },
+                  child: checkList[index]
+                      ? Icon(
+                          Icons.check_box_outlined,
+                          color: Colors.red,
+                        )
+                      : Icon(Icons.check_box_outline_blank),
+                )
+        ],
+      ),
+    ));
   }
 
   Widget buildSlidingPanel({
