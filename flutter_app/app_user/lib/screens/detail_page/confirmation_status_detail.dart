@@ -1,5 +1,7 @@
 import 'package:app_user/model/confirmation_status_vo.dart';
+import 'package:app_user/screens/modify_page/confirmation_status_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -67,11 +69,16 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      Align(alignment: Alignment.bottomRight,
-                        child: Text("회사 사이트 바로가기",
-                          style: TextStyle(fontWeight: FontWeight.w500,
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          "회사 사이트 바로가기",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
                               fontSize: 14,
-                              color: Color(0xff5bc7f5)),),)
+                              color: Color(0xff5bc7f5)),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -131,45 +138,62 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                 ),
               ),
             ),
-            widget.list.etc != null ?
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                width: 361,
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "비고",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      AutoSizeText(
-                        widget.list.etc,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
+            widget.list.etc != null
+                ? Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    margin: EdgeInsets.only(
+                      left: 25,
+                      right: 25,
+                      top: 25,
+                    ),
+                    child: Container(
+                      width: 361,
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "비고",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            AutoSizeText(
+                              widget.list.etc,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              minFontSize: 18,
+                            )
+                          ],
                         ),
-                        minFontSize: 18,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ): SizedBox(),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+            SizedBox(
+              height: 25,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25, left: 25),
+              child: makeGradientBtn(
+                  msg: "취업 현황 수정하기",
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ConfirmationStatusModify(list: widget.list)));
+                  },
+                  mode: 2, icon: Icon(Icons.arrow_forward, color: Colors.white,)),
+            ),
             SizedBox(
               height: 25,
             ),
