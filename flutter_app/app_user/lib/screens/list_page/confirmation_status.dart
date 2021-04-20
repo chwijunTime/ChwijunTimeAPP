@@ -197,50 +197,55 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: Row(
-        children: [
-          Text(
-            "${confList[index].title}",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          Expanded(
-            child: Text(
-              "/${confList[index].grade.toString()}학년",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      child: GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmationStatusDetail(list: confList[index],)));
+        },
+        child: Row(
+          children: [
+            Text(
+              "${confList[index].title}",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-          ),
-          Text(
-            "${confList[index].area}",
-            style: TextStyle(
-                fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          widget.role == "user"
-              ? InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ConfirmationStatusDetail(
-                                  list: confList[index],
-                                )));
-                  },
-                  child: Icon(Icons.arrow_forward_ios_rounded),
-                )
-              : InkWell(
-                  onTap: () {
-                    _onCheckPressed(index);
-                  },
-                  child: checkList[index]
-                      ? Icon(
-                          Icons.check_box_outlined,
-                          color: Colors.red,
-                        )
-                      : Icon(Icons.check_box_outline_blank),
-                )
-        ],
+            Expanded(
+              child: Text(
+                "/${confList[index].grade.toString()}학년",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Text(
+              "${confList[index].area}",
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            widget.role == "user"
+                ? InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ConfirmationStatusDetail(
+                                    list: confList[index],
+                                  )));
+                    },
+                    child: Icon(Icons.arrow_forward_ios_rounded),
+                  )
+                : InkWell(
+                    onTap: () {
+                      _onCheckPressed(index);
+                    },
+                    child: checkList[index]
+                        ? Icon(
+                            Icons.check_box_outlined,
+                            color: Colors.red,
+                          )
+                        : Icon(Icons.check_box_outline_blank),
+                  )
+          ],
+        ),
       ),
     ));
   }
