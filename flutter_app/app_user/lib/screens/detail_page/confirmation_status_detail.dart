@@ -3,6 +3,7 @@ import 'package:app_user/screens/modify_page/confirmation_status_modify.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -53,6 +54,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             widget.list.title,
@@ -63,6 +65,19 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                             width: 5,
                           ),
                           Expanded(child: Text("${widget.list.grade}학년")),
+                          IconButton(icon: Icon(Icons.delete, size: 28,), onPressed: (){
+                            showDialog(context: context, builder: (BuildContext context) => StdDialog(
+                              msg: "해당 취업현황을 삭제하시겠습니까?",
+                              size: Size(326, 124),
+                              btnName1: "아니요",
+                              btnCall1: () {Navigator.pop(context);},
+                              btnName2: "삭제하기",
+                              btnCall2: () {
+                                print("삭제할 업체: ${widget.list.toString()}");
+                                Navigator.pop(context);
+                              },),
+                                barrierDismissible: false);
+                          })
                         ],
                       ),
                       Text(

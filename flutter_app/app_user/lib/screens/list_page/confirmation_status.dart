@@ -135,8 +135,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
               ),
               widget.role == "user" ? SizedBox() :
               Padding(
-                padding: const EdgeInsets.only(
-                    right: 26, left: 26, bottom: 10),
+                padding: const EdgeInsets.only(right: 20, left:20, bottom: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -634,7 +633,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된  취업현황을 삭제하시겠습니까?",
+            msg: "선택된 취업현황을 삭제하시겠습니까?",
             size: Size(326, 124),
             btnName1: "아니요",
             btnCall1: () {Navigator.pop(context);},
