@@ -1,5 +1,6 @@
 import 'package:app_user/model/confirmation_status_vo.dart';
 import 'package:app_user/screens/modify_page/confirmation_status_modify.dart';
+import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -71,12 +72,17 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                       ),
                       Align(
                         alignment: Alignment.bottomRight,
-                        child: Text(
-                          "회사 사이트 바로가기",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: Color(0xff5bc7f5)),
+                        child: GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ShowWebView(url: widget.list.siteUrl)));
+                          },
+                          child: Text(
+                            "회사 사이트 바로가기",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: Color(0xff5bc7f5)),
+                          ),
                         ),
                       )
                     ],
