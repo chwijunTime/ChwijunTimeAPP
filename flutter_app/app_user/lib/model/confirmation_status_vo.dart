@@ -15,4 +15,9 @@ class ConfirmationStatusVO{
       this.siteUrl,
         @required this.address,
       this.etc});
+
+  @override
+  String toString() {
+    return 'ConfirmationStatusVO{title: $title, grade: $grade, area: $area, siteUrl: $siteUrl, address: $address, etc: $etc}';
+  }
 }

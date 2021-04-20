@@ -1,12 +1,16 @@
 import 'package:app_user/model/confirmation_status_vo.dart';
 import 'package:app_user/screens/detail_page/confirmation_status_detail.dart';
+import 'package:app_user/screens/write_page/confirmation_status_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../search_page.dart';
 
 class ConfirmationStatusPage extends StatefulWidget {
   String role;
@@ -46,9 +50,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     return role;
   }
 
-  _onHeartPressed(int index) {
+  _onCheckPressed(int index) {
     setState(() {
-      compList[index].isFavorite = !compList[index].isFavorite;
+      checkList[index] = !checkList[index];
     });
   }
 
@@ -129,6 +133,41 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
+              widget.role == "user" ? SizedBox() :
+              Padding(
+                padding: const EdgeInsets.only(
+                    right: 26, left: 26, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    makeGradientBtn(
+                        msg: "취업 현황 등록",
+                        onPressed: () {
+                          print("등록하자");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ConfirmationStatusWrite()));
+                        },
+                        mode: 1,
+                        icon: Icon(
+                          Icons.note_add,
+                          color: Colors.white,
+                        )),
+                    makeGradientBtn(
+                        msg: "선택된 현황 삭제",
+                        onPressed: () {
+                          _onDeleteStatus();
+                        },
+                        mode: 1,
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ))
+                  ],
+                ),
+              ),
               ListView.separated(
                 itemCount: confList.length,
                 itemBuilder: (context, index) {
@@ -192,7 +231,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 )
               : InkWell(
                   onTap: () {
-
+                    _onCheckPressed(index);
                   },
                   child: checkList[index]
                       ? Icon(
@@ -574,5 +613,33 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
             ))
       ],
     );
+  }
+
+  _onDeleteStatus() {
+    List<ConfirmationStatusVO> deleteComp = [];
+    for (int i = 0; i < checkList.length; i++) {
+      if (checkList[i]) {
+        deleteComp.add(confList[i]);
+      }
+    }
+
+    if(deleteComp.isEmpty) {
+      snackBar("삭제할 업체를 선택해주세요.", context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => StdDialog(
+            msg: "선택된  취업현황을 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {Navigator.pop(context);},
+            btnName2: "삭제하기",
+            btnCall2: () {
+              print("삭제할 업체들================================");
+              print(deleteComp.toString());
+              Navigator.pop(context);
+            },),
+          barrierDismissible: false);
+    }
   }
 }
