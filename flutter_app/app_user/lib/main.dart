@@ -12,7 +12,7 @@ import 'package:app_user/screens/list_page/tag_list.dart';
 import 'package:app_user/screens/list_page/tip_storage.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
-import 'package:app_user/screens/my_page.dart';
+import 'package:app_user/screens/my_page/my_page.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

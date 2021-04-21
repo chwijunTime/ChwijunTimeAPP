@@ -163,6 +163,8 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
         infoC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
+    } else {
+      Navigator.pop(context);
     }
   }
 }

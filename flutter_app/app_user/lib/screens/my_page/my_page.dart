@@ -1,6 +1,8 @@
-import 'package:app_user/screens/my_profile.dart';
+import 'package:app_user/screens/my_page/my_profile_create.dart';
+import 'package:app_user/screens/my_page/my_profile_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class MyPage extends StatefulWidget {
@@ -13,9 +15,16 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  String phone = "010-2467-9504";
+  String address = "광주광역시 우리집";
+  String classNumber = "2";
+  String number = "10";
+  List<String> tagList = List.generate(5, (index) => "${index}.tag");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: buildDrawer(context),
       appBar: buildAppBar("취준타임"),
       body: Container(
         color: Colors.white,
@@ -26,7 +35,7 @@ class _MyPageState extends State<MyPage> {
               builder: (BuildContext context, BoxConstraints constraints) {
                 return Container(
                   color: Color(0xff5BC7F5),
-                  height: 100,
+                  height: 110,
                   width: constraints.maxWidth,
                   child: Padding(
                     padding: const EdgeInsets.all(22),
@@ -57,6 +66,37 @@ class _MyPageState extends State<MyPage> {
                   ),
                 );
               },
+            ),
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              elevation: 5,
+              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+              child: Container(
+                width: 400,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("${classNumber}반 ${number}번 ${"이건 이름"}",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500)),
+                      SizedBox(height: 10,),
+                      Text(
+                        "TEL. ${phone}",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10,),
+                      Text("Home. ${address}",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500)),
+
+                    ],
+                  ),
+                ),
+              ),
             ),
             Card(
               margin: EdgeInsets.fromLTRB(25, 22, 25, 10),
@@ -112,27 +152,57 @@ class _MyPageState extends State<MyPage> {
             ),
             Expanded(
                 child: Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                  padding: EdgeInsets.only(right: 25, bottom: 25),
-                  child: makeGradientBtn(
-                      msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MyProfile(isCreated: widget.isCreated)));
-                      },
-                      mode: 1,
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ))),
-            ))
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 25, bottom: 25),
+                      child: makeGradientBtn(
+                          msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
+                          onPressed: widget.isCreated
+                              ? _moveProfileModif
+                              : _moveProfileCreate,
+                          mode: 1,
+                          icon: Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                          ))),
+                )),
           ],
         ),
       ),
     );
+  }
+
+  _moveProfileCreate() async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                MyProfileCreate()));
+    setState(() {
+      if (result == null) {
+        widget.isCreated = false;
+      } else {
+        widget.isCreated = result;
+      }
+    });
+  }
+
+  _moveProfileModif() async {
+    final Map<String,String> result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            MyProfileModify(phone: phone,
+              classNumber: classNumber,
+              number: number,
+              tagList: tagList,
+              address: address,))
+    );
+    setState(() {
+      if (result != null) {
+        classNumber = result["class"];
+        number = result["number"];
+        address = result["address"];
+      }
+    });
   }
 }
