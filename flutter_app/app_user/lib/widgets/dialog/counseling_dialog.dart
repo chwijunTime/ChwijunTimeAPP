@@ -116,11 +116,19 @@ class _CounselingDialogState extends State<CounselingDialog> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              Text(
+                widget.list.place,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                width: 5,
+              ),
               Expanded(
                 child: Text(
-                  widget.list.place,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  widget.list.user,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
               Container(
