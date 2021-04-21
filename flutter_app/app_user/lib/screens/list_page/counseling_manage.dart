@@ -2,6 +2,7 @@ import 'package:app_user/model/counseling_vo.dart';
 import 'package:app_user/screens/write_page/counseling_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/counseling_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -146,72 +147,80 @@ class _CounselingManageState extends State<CounselingManage> {
   }
 
   Widget buildCounseling(BuildContext context, int index) {
-    return Card(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18))),
-        elevation: 5,
-        margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
-        child: Padding(
-          padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${counList[index].date}, ${counList[index].time}",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      counList[index].place,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    )
-                  ],
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                CounselingDialog(list: counList[index]));
+      },
+      child: Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(18))),
+          elevation: 5,
+          margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
+          child: Padding(
+            padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${counList[index].date}, ${counList[index].time}",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        counList[index].place,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              counList[index].done
-                  ? Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Color(0xffFF7777))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "마감",
-                          style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xffFF7777)),
-                          textAlign: TextAlign.center,
+                counList[index].done
+                    ? Container(
+                        width: 48,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            border: Border.all(color: Color(0xffFF7777))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "마감",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xffFF7777)),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    )
-                  : Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Color(0xff5BC7F5))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "진행중",
-                          style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff5BC7F5)),
-                          textAlign: TextAlign.center,
+                      )
+                    : Container(
+                        width: 48,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            border: Border.all(color: Color(0xff5BC7F5))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "진행중",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff5BC7F5)),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    )
-            ],
-          ),
-        ));
+                      )
+              ],
+            ),
+          )),
+    );
   }
 
   Widget buildSlidingPanel({
