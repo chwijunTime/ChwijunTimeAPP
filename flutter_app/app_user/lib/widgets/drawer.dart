@@ -184,9 +184,17 @@ Widget buildDrawer(BuildContext context) {
           leading: Icon(Icons.tag),
           onTap: () {
             print("태그 추가 요청 하자");
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => TagAddReqDialog());
+            role == "user"
+                ? showDialog(
+                    context: context,
+                    builder: (BuildContext context) => TagAddReqDialog())
+                : Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoadingPage(
+                      page: "/tag_list",
+                    )),
+                    (route) => false);
           },
         ),
         Padding(
