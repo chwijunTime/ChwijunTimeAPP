@@ -35,7 +35,8 @@ class _CounselingManageState extends State<CounselingManage> {
           place: "취진부",
           tag: List.generate(5, (index) => "${i}.tag"),
           reason: "이유라는게 뭐 각별하게 있습니다. 있다구요",
-          user: "3210 안수빈"));
+          user: "3210 안수빈",
+          done: i % 2 == 0));
     }
     _list.add("Google");
     _list.add("IOS");
@@ -129,21 +130,11 @@ class _CounselingManageState extends State<CounselingManage> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.separated(
+                  child: ListView.builder(
                     itemCount: counList.length,
                     itemBuilder: (context, index) {
                       return buildCounseling(context, index);
                     },
-                    separatorBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Container(
-                          height: 1,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                    scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                   ),
@@ -155,34 +146,72 @@ class _CounselingManageState extends State<CounselingManage> {
   }
 
   Widget buildCounseling(BuildContext context, int index) {
-    return Container(
+    return Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18))),
+        elevation: 5,
+        margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
         child: Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: GestureDetector(
-        onTap: () {},
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                "${counList[index].user}",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${counList[index].date}, ${counList[index].time}",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      counList[index].place,
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    )
+                  ],
+                ),
               ),
-            ),
-            Text(
-              "${counList[index].date}",
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(Icons.arrow_forward_ios_rounded)
-          ],
-        ),
-      ),
-    ));
+              counList[index].done
+                  ? Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Color(0xffFF7777))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "마감",
+                          style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xffFF7777)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Color(0xff5BC7F5))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "진행중",
+                          style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff5BC7F5)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+            ],
+          ),
+        ));
   }
 
   Widget buildSlidingPanel({

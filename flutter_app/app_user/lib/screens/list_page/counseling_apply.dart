@@ -69,7 +69,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                         color: Color(0x832B8AC0)),
                   ),
                   Text(
-                    "취업확정 현황",
+                    "취진부 상담신청",
                     style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
