@@ -1,9 +1,11 @@
+import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/find_acount_page.dart';
+import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/list_page/company_notice.dart';
 import 'package:app_user/screens/list_page/confirmation_status.dart';
 import 'package:app_user/screens/list_page/contracting_company.dart';
-import 'package:app_user/screens/find_acount_page.dart';
-import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/list_page/counseling_apply.dart';
+import 'package:app_user/screens/list_page/counseling_manage.dart';
 import 'package:app_user/screens/list_page/interview_review.dart';
 import 'package:app_user/screens/list_page/notification.dart';
 import 'package:app_user/screens/list_page/tip_storage.dart';
@@ -12,8 +14,15 @@ import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/screens/my_page.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(UserApp());
+void main() async {
+  runApp(UserApp());
+  var prefs = await SharedPreferences.getInstance();
+  var role = prefs.getString("role") ?? "user";
+  print("role, main: ${role}");
+  User.role = role;
+}
 
 class UserApp extends StatelessWidget {
   @override
@@ -35,6 +44,7 @@ class UserApp extends StatelessWidget {
         "/counseling_apply": (context) => CounselingApplyPage(),
         "/tip_storage": (context) => TipStoragePage(),
         "/my_page": (context) => MyPage(),
+        "/counseling_manage": (context) => CounselingManage(),
       },
       debugShowCheckedModeBanner: false,
     );

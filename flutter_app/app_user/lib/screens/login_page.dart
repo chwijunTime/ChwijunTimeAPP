@@ -1,4 +1,5 @@
 import 'package:app_user/model/member_login_dto.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/widgets/app_bar.dart';

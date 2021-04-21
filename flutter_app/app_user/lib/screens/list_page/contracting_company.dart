@@ -100,7 +100,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scafforldkey,
-        drawer: buildDrawer(context),
+        drawer: buildDrawer(context, ),
         appBar: buildAppBar("취준타임"),
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>

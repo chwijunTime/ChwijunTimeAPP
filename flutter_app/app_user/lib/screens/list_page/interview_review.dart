@@ -11,6 +11,8 @@ import 'package:flutter/rendering.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class InterviewReviewPage extends StatefulWidget {
+  String role;
+
   @override
   _InterviewReviewPageState createState() => _InterviewReviewPageState();
 }

@@ -5,6 +5,7 @@ class CounselingVO {
   String time;
   String place;
   String reason;
+  String user;
   List<String> tag;
 
   CounselingVO(
@@ -12,7 +13,8 @@ class CounselingVO {
       @required this.time,
       @required this.place,
       this.reason,
-      @required this.tag});
+      @required this.tag,
+      this.user});
 
   @override
   String toString() {

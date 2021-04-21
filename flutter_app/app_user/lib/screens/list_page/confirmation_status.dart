@@ -1,4 +1,5 @@
 import 'package:app_user/model/confirmation_status_vo.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/detail_page/confirmation_status_detail.dart';
 import 'package:app_user/screens/write_page/confirmation_status_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -36,20 +37,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   final List<ConfirmationStatusVO> confList = [];
   final List<bool> checkList = [];
 
-  loadShaPref() async {
-    var role = await getRole();
-    setState(() {
-      widget.role = role;
-    });
-  }
-
-  Future<String> getRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString("role") ?? "user";
-    print("role: ${role}");
-    return role;
-  }
-
   _onCheckPressed(int index) {
     setState(() {
       checkList[index] = !checkList[index];
@@ -82,6 +69,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   void initState() {
     super.initState();
     initList();
+    setState(() {
+      widget.role = User.role;
+    });
   }
 
   @override
