@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class MyPage extends StatefulWidget {
   String studentId = "3210";
   String name = "안수빈";
-  bool isCreated = true;
+  bool isCreated = false;
 
   @override
   _MyPageState createState() => _MyPageState();
@@ -67,6 +67,8 @@ class _MyPageState extends State<MyPage> {
                 );
               },
             ),
+            SizedBox(height: 10,),
+            widget.isCreated ?
             Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18)),
@@ -94,6 +96,21 @@ class _MyPageState extends State<MyPage> {
                               fontSize: 18, fontWeight: FontWeight.w500)),
 
                     ],
+                  ),
+                ),
+              ),
+            ): Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              elevation: 5,
+              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+              child: Container(
+                width: 400,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Center(
+                    child: Text("프로필을 작성해주세요.",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),)
                   ),
                 ),
               ),
