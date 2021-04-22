@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_user/model/review_vo.dart';
 import 'package:app_user/screens/modify_page/interview_review_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -9,7 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class InterviewReviewDetail extends StatefulWidget {
-  final ReviewVO list;
+  ReviewVO list;
   Positioned position;
 
   InterviewReviewDetail({this.list});
@@ -20,6 +22,7 @@ class InterviewReviewDetail extends StatefulWidget {
 
 class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   LatLng latLng;
+  GoogleMapController mapController;
 
   _onFavoriteMarkPressed() {
     setState(() {
@@ -31,6 +34,8 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   Future<LatLng> getCordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
+    print(latLng);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 18)));
     return latLng;
   }
 
@@ -70,16 +75,19 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                             style: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.w600),
                           ),
-                          SizedBox(width: 5,),
+                          SizedBox(
+                            width: 5,
+                          ),
                           Expanded(child: Text("${widget.list.grade}학년")),
                           widget.list.isMine
                               ? IconButton(
                                   icon: Icon(
-                                          Icons.delete_sharp,
-                                          size: 28,
-                                          color: Colors.black,
-                                        ),
-                                  onPressed: () => print("${widget.list.title} 을 삭제합니다."),
+                                    Icons.delete_sharp,
+                                    size: 28,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () =>
+                                      print("${widget.list.title} 을 삭제합니다."),
                                 )
                               : IconButton(
                                   icon: widget.list.isFavorite
@@ -156,6 +164,10 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                           latLng.latitude, latLng.longitude),
                                       zoom: 17,
                                     ),
+                                    onMapCreated: (GoogleMapController controller) async {
+                                      mapController = controller;
+                                      print("호잇");
+                                    },
                                     markers: _createMarker(),
                                   );
                                 }
@@ -258,17 +270,39 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
               alignment: Alignment.bottomRight,
               child: Padding(
                 padding: const EdgeInsets.only(right: 25),
-                child: makeGradientBtn(msg: "면접 후기 수정하기", onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewModify(list: widget.list)));
-                }, mode: 2, icon: Icon(Icons.arrow_forward, color: Colors.white,)),
+                child: makeGradientBtn(
+                    msg: "면접 후기 수정하기",
+                    onPressed: _onMoveModify,
+                    mode: 2,
+                    icon: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    )),
               ),
             ),
-            SizedBox(height: 25,),
+            SizedBox(
+              height: 25,
+            ),
           ],
         ),
       ),
     );
   }
+
+  _onMoveModify() async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                InterviewReviewModify(list: widget.list)));
+    print("result: ${result.toString()}");
+    if (result != null) {
+      setState(() {
+        widget.list = result;
+      });
+    }
+  }
+
 
   Set<Marker> _createMarker() {
     return [

@@ -23,4 +23,9 @@ class ReviewVO {
       @required this.tag,
       @required this.isFavorite,
       @required this.isMine});
+
+  @override
+  String toString() {
+    return 'ReviewVO{title: $title, grade: $grade, applyDate: $applyDate, address: $address, price: $price, review: $review, question: $question, tag: $tag, isFavorite: $isFavorite, isMine: $isMine}';
+  }
 }

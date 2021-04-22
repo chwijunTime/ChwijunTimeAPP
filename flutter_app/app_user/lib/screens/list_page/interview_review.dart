@@ -295,7 +295,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       controller: scrollController,
       children: [
         Text(
-          '협약업체 검색하기',
+          '면접 후기 및 회사 후기 조회하기',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         ),
@@ -350,7 +350,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
             },
           ),
           Text(
-            "업체명 검색하기",
+            "제목 검색하기",
             style: TextStyle(
               fontSize: 12,
             ),
@@ -626,7 +626,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
         ),
         Center(
           child: Text(
-            "업체명을 입력해주세요.",
+            "제목을 입력해주세요.",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -636,7 +636,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", titleC, autoFocus: false),
+          child: buildTextField("제목", titleC, autoFocus: false),
         ),
         SizedBox(
           height: 250,
