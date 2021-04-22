@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       body: Container(
         color: Colors.white,

@@ -63,7 +63,7 @@ class _CounselingManageState extends State<CounselingManage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scafforldkey,
-        appBar: buildAppBar("appBar"),
+        appBar: buildAppBar("취준타임", context),
         drawer: buildDrawer(context),
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>

@@ -45,7 +45,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   Widget build(BuildContext context) {
     widget.list.isBookMark = true;
     return Scaffold(
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임" ,context),
       body: Container(
         color: Colors.white,
         child: SingleChildScrollView(

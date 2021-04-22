@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     // }
     final prefs = await SharedPreferences.getInstance();
     prefs.setString("accessToken", "accessTokenValue");
-    prefs.setString("role", "admin");
+    prefs.setString("role", "user");
     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 

@@ -101,7 +101,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     return Scaffold(
         key: scafforldkey,
         drawer: buildDrawer(context, ),
-        appBar: buildAppBar("취준타임"),
+        appBar: buildAppBar("취준타임", context),
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>
               buildSlidingPanel(scrollController: scrollController),

@@ -15,7 +15,7 @@ class _ShowWebViewState extends State<ShowWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임", context),
       body: SafeArea(
         child: WebView(
           initialUrl: widget.url,

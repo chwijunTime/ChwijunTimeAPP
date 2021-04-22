@@ -96,7 +96,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     initList();
     return Scaffold(
       key: scafforldkey,
-      appBar: buildAppBar("appBar"),
+      appBar: buildAppBar("appBar", context),
       drawer: buildDrawer(context),
       body: SlidingUpPanel(
         panelBuilder: (scrollController) =>

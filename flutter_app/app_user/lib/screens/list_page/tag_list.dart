@@ -42,7 +42,7 @@ class _TagListState extends State<TagList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar("appBar"),
+      appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       body: Container(
         color: Colors.white,

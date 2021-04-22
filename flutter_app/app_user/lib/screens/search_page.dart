@@ -58,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: key,
-        appBar: buildAppBar("이건 AppBar"),
+        appBar: buildAppBar("취준타임", context),
         body: buildDropDownTextField());
   }
 

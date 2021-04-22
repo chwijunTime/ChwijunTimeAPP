@@ -1,5 +1,6 @@
 import 'package:app_user/screens/my_page/my_profile_create.dart';
 import 'package:app_user/screens/my_page/my_profile_modify.dart';
+import 'package:app_user/screens/my_page/portfolio.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -25,7 +26,7 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: buildDrawer(context),
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임",  context),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -67,54 +68,62 @@ class _MyPageState extends State<MyPage> {
                 );
               },
             ),
-            SizedBox(height: 10,),
-            widget.isCreated ?
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              elevation: 5,
-              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-              child: Container(
-                width: 400,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${classNumber}반 ${number}번 ${"이건 이름"}",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500)),
-                      SizedBox(height: 10,),
-                      Text(
-                        "TEL. ${phone}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(height: 10,),
-                      Text("Home. ${address}",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500)),
-
-                    ],
-                  ),
-                ),
-              ),
-            ): Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              elevation: 5,
-              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-              child: Container(
-                width: 400,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Center(
-                    child: Text("프로필을 작성해주세요.",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),)
-                  ),
-                ),
-              ),
+            SizedBox(
+              height: 10,
             ),
+            widget.isCreated
+                ? Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Container(
+                      width: 400,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("${classNumber}반 ${number}번 ${"이건 이름"}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "TEL. ${phone}",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Home. ${address}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Container(
+                      width: 400,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Center(
+                            child: Text(
+                          "프로필을 작성해주세요.",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w700),
+                        )),
+                      ),
+                    ),
+                  ),
             Card(
               margin: EdgeInsets.fromLTRB(25, 22, 25, 10),
               elevation: 5,
@@ -162,27 +171,32 @@ class _MyPageState extends State<MyPage> {
                           Icons.file_download,
                           size: 28,
                         ),
-                        onPressed: () {})
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PortfolioPage()));
+                        })
                   ],
                 ),
               ),
             ),
             Expanded(
                 child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                      padding: EdgeInsets.only(right: 25, bottom: 25),
-                      child: makeGradientBtn(
-                          msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
-                          onPressed: widget.isCreated
-                              ? _moveProfileModif
-                              : _moveProfileCreate,
-                          mode: 1,
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                          ))),
-                )),
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                  padding: EdgeInsets.only(right: 25, bottom: 25),
+                  child: makeGradientBtn(
+                      msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
+                      onPressed: widget.isCreated
+                          ? _moveProfileModif
+                          : _moveProfileCreate,
+                      mode: 1,
+                      icon: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ))),
+            )),
           ],
         ),
       ),
@@ -191,10 +205,7 @@ class _MyPageState extends State<MyPage> {
 
   _moveProfileCreate() async {
     final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                MyProfileCreate()));
+        context, MaterialPageRoute(builder: (context) => MyProfileCreate()));
     setState(() {
       if (result == null) {
         widget.isCreated = false;
@@ -205,15 +216,16 @@ class _MyPageState extends State<MyPage> {
   }
 
   _moveProfileModif() async {
-    final Map<String,String> result = await Navigator.push(
+    final Map<String, String> result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>
-            MyProfileModify(phone: phone,
-              classNumber: classNumber,
-              number: number,
-              tagList: tagList,
-              address: address,))
-    );
+        MaterialPageRoute(
+            builder: (context) => MyProfileModify(
+                  phone: phone,
+                  classNumber: classNumber,
+                  number: number,
+                  tagList: tagList,
+                  address: address,
+                )));
     setState(() {
       if (result != null) {
         classNumber = result["class"];

@@ -78,7 +78,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scafforldkey,
-      appBar: buildAppBar("appBar"),
+      appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       body: SlidingUpPanel(
         panelBuilder: (scrollController) =>
@@ -99,7 +99,8 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
         ],
         body: Container(
           color: Colors.white,
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.all(26),
@@ -157,23 +158,25 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
-              ListView.separated(
-                itemCount: confList.length,
-                itemBuilder: (context, index) {
-                  return buildState(context, index);
-                },
-                separatorBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Container(
-                      height: 1,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: confList.length,
+                  itemBuilder: (context, index) {
+                    return buildState(context, index);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: Container(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                ),
               ),
             ],
           ),

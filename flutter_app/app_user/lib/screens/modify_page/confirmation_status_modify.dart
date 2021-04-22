@@ -33,7 +33,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임", context),
       body: Container(
         color: Colors.white,
         child: ListView(

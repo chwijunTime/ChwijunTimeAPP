@@ -35,7 +35,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar("취준타임"),
+      appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       floatingActionButton: FloatingActionButton.extended(
         shape: RoundedRectangleBorder(
