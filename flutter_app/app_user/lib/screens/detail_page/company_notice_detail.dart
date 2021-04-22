@@ -1,5 +1,5 @@
 import 'package:app_user/model/user.dart';
-import 'package:app_user/screens/write_page/company_notice_write.dart';
+import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
@@ -12,7 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../list_page/company_notice.dart';
 
 class CompanyNoticeDetailPage extends StatefulWidget {
-  final CompNotice list;
+  CompNotice list;
   Positioned position;
 
   CompanyNoticeDetailPage({this.list});
@@ -342,8 +342,19 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
 
   _onDeleteCompNotice() {}
 
-  _onModifyCompNotice() {
+  _onModifyCompNotice() async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CompanyNoticeModifyPage(
+                  list: widget.list,
+                )));
 
+    if (result != null) {
+      setState(() {
+        widget.list = result;
+      });
+    }
   }
 
   Set<Marker> _createMarker() {
