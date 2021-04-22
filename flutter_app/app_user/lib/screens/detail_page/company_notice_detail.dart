@@ -1,9 +1,11 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/write_page/company_notice_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -14,6 +16,8 @@ class CompanyNoticeDetailPage extends StatefulWidget {
   Positioned position;
 
   CompanyNoticeDetailPage({this.list});
+
+  String role;
 
   @override
   _CompanyNoticeDetailPageState createState() =>
@@ -39,17 +43,19 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   @override
   void initState() {
     super.initState();
+    widget.role = User.role;
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.list.isBookMark = true;
     return Scaffold(
-      appBar: buildAppBar("취준타임" ,context),
+      appBar: buildAppBar("취준타임", context),
       body: Container(
         color: Colors.white,
         child: SingleChildScrollView(
-          child: Column(
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
             children: [
               Card(
                 elevation: 5,
@@ -76,19 +82,23 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                     fontSize: 24, fontWeight: FontWeight.w600),
                               ),
                             ),
-                            IconButton(
-                              icon: widget.list.isBookMark
-                                  ? Icon(
-                                      Icons.bookmark,
-                                      size: 28,
-                                      color: Color(0xff4687FF),
-                                    )
-                                  : Icon(
-                                      Icons.bookmark_border,
-                                      size: 28,
-                                    ),
-                              onPressed: () => _onBookMarkPressed(),
-                            ),
+                            widget.role == "user"
+                                ? IconButton(
+                                    icon: widget.list.isBookMark
+                                        ? Icon(
+                                            Icons.bookmark,
+                                            size: 28,
+                                            color: Color(0xff4687FF),
+                                          )
+                                        : Icon(
+                                            Icons.bookmark_border,
+                                            size: 28,
+                                          ),
+                                    onPressed: () => _onBookMarkPressed(),
+                                  )
+                                : IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: _onDeleteCompNotice),
                           ],
                         ),
                         Text(
@@ -147,7 +157,8 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                 builder: (BuildContext context,
                                     AsyncSnapshot snapshot) {
                                   if (snapshot.hasData == false) {
-                                    return Center(child: CircularProgressIndicator());
+                                    return Center(
+                                        child: CircularProgressIndicator());
                                   } else {
                                     return GoogleMap(
                                       initialCameraPosition: CameraPosition(
@@ -272,25 +283,67 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                   : SizedBox(
                       height: 25,
                     ),
-              makeTagWidget(tag: widget.list.tag, size: Size(360, 25), mode: 1),
+              Align(
+                alignment: Alignment.center,
+                child: makeTagWidget(
+                    tag: widget.list.tag, size: Size(360, 25), mode: 1),
+              ),
               SizedBox(
                 height: 30,
               ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 30, bottom: 25),
-                  child: makeGradientBtn(
-                      msg: "해당 기업에 지원 신청",
-                      onPressed: () => print("신청"),
-                      mode: 2),
-                ),
-              )
+              widget.role == "user"
+                  ? Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30, bottom: 25),
+                        child: makeGradientBtn(
+                            msg: "해당 기업에 지원 신청",
+                            onPressed: () => print("신청"),
+                            mode: 2),
+                      ),
+                    )
+                  : Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            makeGradientBtn(
+                                msg: "신청한 학생 보기",
+                                onPressed: () {
+                                  print("보자보자");
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Colors.white,
+                                )),
+                            makeGradientBtn(
+                                msg: "취업 공고 수정하기",
+                                onPressed: () {
+                                  _onModifyCompNotice();
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                ))
+                          ],
+                        ),
+                      ),
+                    )
             ],
           ),
         ),
       ),
     );
+  }
+
+  _onDeleteCompNotice() {}
+
+  _onModifyCompNotice() {
+
   }
 
   Set<Marker> _createMarker() {
