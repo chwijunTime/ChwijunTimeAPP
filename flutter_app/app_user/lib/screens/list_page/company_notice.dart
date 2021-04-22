@@ -1,5 +1,6 @@
 import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/search_page.dart';
+import 'package:app_user/screens/write_page/company_notice_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
@@ -160,6 +161,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                               msg: "취업 공고 등록",
                               onPressed: () {
                                 print("등록하자");
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => CompanyNoticeWritePage()));
                               },
                               mode: 1,
                               icon: Icon(
