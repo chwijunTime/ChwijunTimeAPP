@@ -49,9 +49,12 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
       body: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+          padding: const EdgeInsets.only(right: 24, left: 24),
+          child: ListView(
             children: [
+              SizedBox(
+                height: 35,
+              ),
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18)),
@@ -137,7 +140,9 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                     child: makeTagWidget(
                         tag: tagList, size: Size(360, 27), mode: 1)),
               ),
-              SizedBox(height: 19,),
+              SizedBox(
+                height: 19,
+              ),
               makeGradientBtn(
                   msg: "등록하기",
                   onPressed: () {
@@ -147,7 +152,10 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                   icon: Icon(
                     Icons.note_add,
                     color: Colors.white,
-                  ))
+                  )),
+              SizedBox(
+                height: 35,
+              ),
             ],
           ),
         ),
