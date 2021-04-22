@@ -213,7 +213,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-                msg: "선택된 공고 업체를 삭제하시겠습니까?",
+                msg: "선택된 공고를 삭제하시겠습니까?",
                 size: Size(326, 124),
                 btnName1: "아니요",
                 btnCall1: () {
@@ -362,7 +362,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       controller: scrollController,
       children: [
         Text(
-          '협약업체 검색하기',
+          '취업 공고 검색하기',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         ),
@@ -406,29 +406,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             ])),
           ],
         ),
-        Row(children: [
-          Radio(
-            value: Select.TITLE,
-            groupValue: _select,
-            onChanged: (value) {
-              setState(() {
-                _select = value;
-              });
-            },
-          ),
-          Text(
-            "업체명 검색하기",
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          ),
-        ]),
         SizedBox(
           height: 15,
         ),
         if (_select == Select.YEAR) selectYearWidget(),
         if (_select == Select.TAG) selectTagWidget(),
-        if (_select == Select.TITLE) selectTitleWidget(),
       ],
     );
   }
@@ -676,49 +658,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
               ))
           .toList();
     }
-  }
-
-  Widget selectTitleWidget() {
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: 10, right: 10),
-          height: 1,
-          color: Colors.grey,
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Center(
-          child: Text(
-            "업체명을 입력해주세요.",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", titleC, autoFocus: false),
-        ),
-        SizedBox(
-          height: 250,
-        ),
-        makeGradientBtn(
-            msg: "조회하기",
-            onPressed: () {
-              print("titleC = ${titleC.text}");
-              panelController.close();
-            },
-            mode: 4,
-            icon: Icon(
-              Icons.check,
-              color: Colors.white,
-            ))
-      ],
-    );
   }
 }
 
