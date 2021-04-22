@@ -1,10 +1,13 @@
+import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/search_page.dart';
+import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/tag.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../detail_page/company_notice_detail.dart';
@@ -14,6 +17,7 @@ class CompanyNoticePage extends StatefulWidget {
   _CompanyNoticePageState createState() => _CompanyNoticePageState();
 
   final List<CompNotice> notiList = [];
+  String role;
 }
 
 enum Select { YEAR, TAG, TITLE }
@@ -36,6 +40,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     initList();
     init();
     searchState();
+    widget.role = User.role;
   }
 
   initList() {
@@ -54,6 +59,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           tag: List.generate(10, (i) => "${i}.tag")));
     }
   }
+
   void init() {
     _list = [];
     _list.add("Google");
@@ -117,7 +123,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         ],
         body: Container(
           color: Colors.white,
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.all(26),
@@ -141,20 +148,83 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   ],
                 ),
               ),
-              ListView.builder(
-                itemCount: widget.notiList.length,
-                itemBuilder: (context, index) {
-                  return buildItemCompany(context, index);
-                },
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
+              widget.role == "user"
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          right: 26, left: 26, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          makeGradientBtn(
+                              msg: "취업 공고 등록",
+                              onPressed: () {
+                                print("등록하자");
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.note_add,
+                                color: Colors.white,
+                              )),
+                          makeGradientBtn(
+                              msg: "선택된 공고 삭제",
+                              onPressed: () {
+                                _onDeleteCompNotice();
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
+                    ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.notiList.length,
+                  itemBuilder: (context, index) {
+                    return buildItemCompany(context, index);
+                  },
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                ),
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  _onDeleteCompNotice() {
+    List<CompNotice> deleteComp = [];
+    for (int i = 0; i < widget.notiList.length; i++) {
+      if (widget.notiList[i].isBookMark) {
+        deleteComp.add(widget.notiList[i]);
+      }
+    }
+
+    if (deleteComp.isEmpty) {
+      snackBar("삭제할 공고를 선택해주세요.", context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => StdDialog(
+                msg: "선택된 공고 업체를 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () {
+                  print("삭제할 공고들================================");
+                  print(deleteComp.toString());
+                  Navigator.pop(context);
+                },
+              ),
+          barrierDismissible: false);
+    }
   }
 
   Widget buildItemCompany(BuildContext context, int index) {
@@ -184,19 +254,32 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  IconButton(
-                    icon: widget.notiList[index].isBookMark
-                        ? Icon(
-                            Icons.bookmark,
-                            size: 28,
-                            color: Color(0xff4687FF),
-                          )
-                        : Icon(
-                            Icons.bookmark_border,
-                            size: 28,
-                          ),
-                    onPressed: () => _onBookMarkPressed(index),
-                  ),
+                  widget.role == "user"
+                      ? IconButton(
+                          icon: widget.notiList[index].isBookMark
+                              ? Icon(
+                                  Icons.bookmark,
+                                  size: 28,
+                                  color: Color(0xff4687FF),
+                                )
+                              : Icon(
+                                  Icons.bookmark_border,
+                                  size: 28,
+                                ),
+                          onPressed: () => _onBookMarkPressed(index),
+                        )
+                      : IconButton(
+                          icon: widget.notiList[index].isBookMark
+                              ? Icon(
+                                  Icons.check_box_outlined,
+                                  size: 28,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.check_box_outline_blank,
+                                  size: 28,
+                                ),
+                          onPressed: () => _onBookMarkPressed(index)),
                 ],
               ),
               Padding(
@@ -284,40 +367,40 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           children: [
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.YEAR,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "년도별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.YEAR,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "년도별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
             Expanded(
                 child: Row(children: [
-                  Radio(
-                    value: Select.TAG,
-                    groupValue: _select,
-                    onChanged: (value) {
-                      setState(() {
-                        _select = value;
-                      });
-                    },
-                  ),
-                  Text(
-                    "태그별 검색하기",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ])),
+              Radio(
+                value: Select.TAG,
+                groupValue: _select,
+                onChanged: (value) {
+                  setState(() {
+                    _select = value;
+                  });
+                },
+              ),
+              Text(
+                "태그별 검색하기",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ])),
           ],
         ),
         Row(children: [
@@ -424,7 +507,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             onPressed: () {
               print("selectRadio: ${_year}");
               panelController.close();
-
             },
             mode: 4,
             icon: Icon(
@@ -467,7 +549,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             ),
           ),
         ),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         SizedBox(
             height: 58,
             child: Column(
@@ -496,7 +580,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 )
               ],
             )),
-        SizedBox(height: 5,),
+        SizedBox(
+          height: 5,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -548,19 +634,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     if (tagC.text.isEmpty) {
       return _list
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     } else {
       List<String> _searchList = [];
@@ -572,19 +658,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       }
       return _searchList
           .map((contact) => ListTile(
-        title: Text(contact),
-        onTap: () {
-          print("눌림");
-          if (!tagList.contains(contact)) {
-            setState(() {
-              tagList.add(contact);
-            });
-          } else {
-            scafforldkey.currentState
-                .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-          }
-        },
-      ))
+                title: Text(contact),
+                onTap: () {
+                  print("눌림");
+                  if (!tagList.contains(contact)) {
+                    setState(() {
+                      tagList.add(contact);
+                    });
+                  } else {
+                    scafforldkey.currentState
+                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
+                  }
+                },
+              ))
           .toList();
     }
   }
@@ -614,7 +700,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           padding: EdgeInsets.only(left: 20, right: 20),
           child: buildTextField("TAG", titleC, autoFocus: false),
         ),
-        SizedBox(height: 250,),
+        SizedBox(
+          height: 250,
+        ),
         makeGradientBtn(
             msg: "조회하기",
             onPressed: () {
@@ -653,4 +741,9 @@ class CompNotice {
       this.etc = "",
       @required this.isBookMark,
       @required this.tag});
+
+  @override
+  String toString() {
+    return 'CompNotice{title: $title, startDate: $startDate, endDate: $endDate, field: $field, address: $address, compInfo: $compInfo, preferentialInfo: $preferentialInfo, etc: $etc, isBookMark: $isBookMark, tag: $tag}';
+  }
 }
