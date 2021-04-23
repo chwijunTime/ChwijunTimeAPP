@@ -79,7 +79,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                             color: Color(0x832B8AC0)),
                       ),
                       Text(
-                        "면접후기 & 회사후기",
+                        "꿀팁저장소",
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
