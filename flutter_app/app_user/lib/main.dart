@@ -50,7 +50,7 @@ class UserApp extends StatelessWidget {
         "/counseling_manage": (context) => CounselingManage(),
         "/tag_list" : (context) => TagList(),
         "/portfolio": (context) => PortfolioPage(),
-        "introduction": (context) => IntroductionPage(),
+        "/introduction": (context) => IntroductionPage(),
       },
       debugShowCheckedModeBanner: false,
     );

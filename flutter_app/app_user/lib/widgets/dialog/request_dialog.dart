@@ -105,7 +105,7 @@ class _RequestDialog extends State<RequestDialog> {
                         showDialog(
                             context: context,
                             builder: (context) =>
-                                RejectDialog(mode: "portfolio")).then((value) {
+                                RejectDialog(mode: widget.mode)).then((value) {
                           print(value);
                           if (value == "yes") {
                             Navigator.pop(context, "reject");
