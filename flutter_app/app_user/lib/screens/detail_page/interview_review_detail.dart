@@ -4,6 +4,7 @@ import 'package:app_user/model/review_vo.dart';
 import 'package:app_user/screens/modify_page/interview_review_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -86,8 +87,7 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                     size: 28,
                                     color: Colors.black,
                                   ),
-                                  onPressed: () =>
-                                      print("${widget.list.title} 을 삭제합니다."),
+                                  onPressed: _onDelete,
                                 )
                               : IconButton(
                                   icon: widget.list.isFavorite
@@ -287,6 +287,26 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
         ),
       ),
     );
+  }
+
+  _onDelete() async {
+    final result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => StdDialog(
+          msg: "해당 취업확정현황을 삭제하시겠습니까?",
+          size: Size(326, 124),
+          btnName1: "아니요",
+          btnCall1: () {Navigator.pop(context, "no");},
+          btnName2: "삭제하기",
+          btnCall2: () {
+            print("삭제할 list: ${widget.list}");
+            Navigator.pop(context, "yes");
+          },),
+        barrierDismissible: false);
+
+    if (result == "yes") {
+      Navigator.pop(context);
+    }
   }
 
   _onMoveModify() async {

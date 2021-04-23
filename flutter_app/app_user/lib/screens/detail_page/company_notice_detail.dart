@@ -339,23 +339,24 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     );
   }
 
-  _onDeleteCompNotice() {
-    showDialog(
+  _onDeleteCompNotice() async {
+    final result = await showDialog(
         context: context,
         builder: (BuildContext context) => StdDialog(
           msg: "해당 취업 공고를 삭제하시겠습니까?",
           size: Size(326, 124),
           btnName1: "아니요",
-          btnCall1: () {
-            Navigator.pop(context);
-          },
+          btnCall1: () {Navigator.pop(context, "no");},
           btnName2: "삭제하기",
           btnCall2: () {
-            print(widget.list.toString());
-            Navigator.pop(context);
-          },
-        ),
+            print("삭제할 list: ${widget.list}");
+            Navigator.pop(context, "yes");
+          },),
         barrierDismissible: false);
+
+    if (result == "yes") {
+      Navigator.pop(context);
+    }
   }
 
   _onModifyCompNotice() async {

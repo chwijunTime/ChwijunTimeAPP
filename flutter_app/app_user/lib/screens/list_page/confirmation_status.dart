@@ -8,7 +8,6 @@ import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../search_page.dart';
@@ -63,12 +62,26 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       }
       checkList.add(false);
     }
+
+    _list = [];
+    _list.add("Google");
+    _list.add("IOS");
+    _list.add("Android");
+    _list.add("Dart");
+    _list.add("Flutter");
+    _list.add("Python");
+    _list.add("React");
+    _list.add("Xamarin");
+    _list.add("Kotlin");
+    _list.add("Java");
+    _list.add("RxAndroid");
   }
 
   @override
   void initState() {
     super.initState();
     initList();
+    searchState();
     setState(() {
       widget.role = User.role;
     });
@@ -124,40 +137,42 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
-              widget.role == "user" ? SizedBox() :
-              Padding(
-                padding: const EdgeInsets.only(right: 20, left:20, bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    makeGradientBtn(
-                        msg: "취업 현황 등록",
-                        onPressed: () {
-                          print("등록하자");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ConfirmationStatusWrite()));
-                        },
-                        mode: 1,
-                        icon: Icon(
-                          Icons.note_add,
-                          color: Colors.white,
-                        )),
-                    makeGradientBtn(
-                        msg: "선택된 현황 삭제",
-                        onPressed: () {
-                          _onDeleteStatus();
-                        },
-                        mode: 1,
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ))
-                  ],
-                ),
-              ),
+              widget.role == "user"
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          right: 20, left: 20, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          makeGradientBtn(
+                              msg: "취업 현황 등록",
+                              onPressed: () {
+                                print("등록하자");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ConfirmationStatusWrite()));
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.note_add,
+                                color: Colors.white,
+                              )),
+                          makeGradientBtn(
+                              msg: "선택된 현황 삭제",
+                              onPressed: () {
+                                _onDeleteStatus();
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
+                    ),
               Expanded(
                 child: ListView.separated(
                   itemCount: confList.length,
@@ -190,8 +205,13 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: GestureDetector(
-        onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmationStatusDetail(list: confList[index],)));
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ConfirmationStatusDetail(
+                        list: confList[index],
+                      )));
         },
         child: Row(
           children: [
@@ -208,7 +228,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
             Text(
               "${confList[index].area}",
               style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey),
             ),
             SizedBox(
               width: 10,
@@ -253,7 +275,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       controller: scrollController,
       children: [
         Text(
-          '협약업체 검색하기',
+          '취업확정 현황 검색하기',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         ),
@@ -531,6 +553,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 title: Text(contact),
                 onTap: () {
                   print("눌림");
+                  print(contact);
                   if (!tagList.contains(contact)) {
                     setState(() {
                       tagList.add(contact);
@@ -555,6 +578,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 title: Text(contact),
                 onTap: () {
                   print("눌림");
+                  print(contact);
                   if (!tagList.contains(contact)) {
                     setState(() {
                       tagList.add(contact);
@@ -592,7 +616,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", titleC, autoFocus: false),
+          child: buildTextField("업체명", titleC, autoFocus: false),
         ),
         SizedBox(
           height: 250,
@@ -620,23 +644,41 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       }
     }
 
-    if(deleteComp.isEmpty) {
+    if (deleteComp.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된 취업현황을 삭제하시겠습니까?",
-            size: Size(326, 124),
-            btnName1: "아니요",
-            btnCall1: () {Navigator.pop(context);},
-            btnName2: "삭제하기",
-            btnCall2: () {
-              print("삭제할 업체들================================");
-              print(deleteComp.toString());
-              Navigator.pop(context);
-            },),
+                msg: "선택된 취업현황을 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () {
+                  print("삭제할 업체들================================");
+                  print(deleteComp.toString());
+                  Navigator.pop(context);
+                },
+              ),
           barrierDismissible: false);
     }
+  }
+
+  searchState() {
+    tagC.addListener(() {
+      print(_IsSearching);
+      if (tagC.text.isEmpty) {
+        setState(() {
+          _IsSearching = false;
+        });
+      } else {
+        setState(() {
+          _IsSearching = true;
+        });
+      }
+    });
   }
 }

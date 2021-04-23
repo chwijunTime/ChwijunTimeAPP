@@ -65,19 +65,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                             width: 5,
                           ),
                           Expanded(child: Text("${widget.list.grade}학년")),
-                          IconButton(icon: Icon(Icons.delete, size: 28,), onPressed: (){
-                            showDialog(context: context, builder: (BuildContext context) => StdDialog(
-                              msg: "해당 취업현황을 삭제하시겠습니까?",
-                              size: Size(326, 124),
-                              btnName1: "아니요",
-                              btnCall1: () {Navigator.pop(context);},
-                              btnName2: "삭제하기",
-                              btnCall2: () {
-                                print("삭제할 업체: ${widget.list.toString()}");
-                                Navigator.pop(context);
-                              },),
-                                barrierDismissible: false);
-                          })
+                          IconButton(icon: Icon(Icons.delete, size: 28,), onPressed: _onDelete)
                         ],
                       ),
                       Text(
@@ -222,6 +210,26 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
         ),
       ),
     );
+  }
+
+  _onDelete() async {
+    final result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => StdDialog(
+          msg: "해당 취업현황을 삭제하시겠습니까?",
+          size: Size(326, 124),
+          btnName1: "아니요",
+          btnCall1: () {Navigator.pop(context, "no");},
+          btnName2: "삭제하기",
+          btnCall2: () {
+            print("삭제할 list: ${widget.list}");
+            Navigator.pop(context, "yes");
+          },),
+        barrierDismissible: false);
+
+    if (result == "yes") {
+      Navigator.pop(context);
+    }
   }
 
   Set<Marker> _createMarker() {
