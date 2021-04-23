@@ -10,8 +10,8 @@ Widget buildDrawer(BuildContext context) {
   role = User.role;
   print("User.role: ${role}");
   return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
+    child: Column(
+      mainAxisSize: MainAxisSize.max,
       children: [
         DrawerHeader(
           decoration: BoxDecoration(
@@ -192,38 +192,90 @@ Widget buildDrawer(BuildContext context) {
                     context,
                     MaterialPageRoute(
                         builder: (context) => LoadingPage(
-                      page: "/tag_list",
-                    )),
+                              page: "/tag_list",
+                            )),
                     (route) => false);
           },
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 80, left: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              makeGradientBtn(
-                  msg: "마이페이지",
-                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                      context, "/my_page", (route) => false),
-                  mode: 1,
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  )),
-              SizedBox(
-                height: 8,
+        role != "user"
+            ? ListTile(
+                title: Text(
+                  "포트폴리오 첨삭",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                leading: Icon(Icons.event_note_outlined),
+                onTap: () {
+                  print("포트폴리오 첨삭 하자");
+                  role == "user"
+                      ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) => TagAddReqDialog())
+                      : Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoadingPage(
+                                    page: "/portfolio",
+                                  )),
+                          (route) => false);
+                },
+              )
+            : SizedBox(),
+        role != "user"
+            ? ListTile(
+                title: Text(
+                  "자기소개서 첨삭",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                leading: Icon(Icons.sticky_note_2_outlined),
+                onTap: () {
+                  print("자기소개서 첨삭 하자");
+                  role == "user"
+                      ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) => TagAddReqDialog())
+                      : Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoadingPage(
+                                    page: "/introduction",
+                                  )),
+                          (route) => false);
+                },
+              )
+            : SizedBox(),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 20, bottom: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  makeGradientBtn(
+                      msg: "마이페이지",
+                      onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                          context, "/my_page", (route) => false),
+                      mode: 1,
+                      icon: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      )),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  makeBtn(
+                      msg: "로그아웃",
+                      onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                          context, "/", (route) => false),
+                      mode: 1,
+                      icon: Icon(
+                        Icons.exit_to_app,
+                        color: Colors.white,
+                      ))
+                ],
               ),
-              makeBtn(
-                  msg: "로그아웃",
-                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                      context, "/", (route) => false),
-                  mode: 1,
-                  icon: Icon(
-                    Icons.exit_to_app,
-                    color: Colors.white,
-                  ))
-            ],
+            ),
           ),
         ),
       ],

@@ -7,7 +7,9 @@ import 'package:app_user/screens/list_page/contracting_company.dart';
 import 'package:app_user/screens/list_page/counseling_apply.dart';
 import 'package:app_user/screens/list_page/counseling_manage.dart';
 import 'package:app_user/screens/list_page/interview_review.dart';
+import 'package:app_user/screens/list_page/introduction.dart';
 import 'package:app_user/screens/list_page/notification.dart';
+import 'package:app_user/screens/list_page/portfolio.dart';
 import 'package:app_user/screens/list_page/tag_list.dart';
 import 'package:app_user/screens/list_page/tip_storage.dart';
 import 'package:app_user/screens/login_page.dart';
@@ -47,6 +49,8 @@ class UserApp extends StatelessWidget {
         "/my_page": (context) => MyPage(),
         "/counseling_manage": (context) => CounselingManage(),
         "/tag_list" : (context) => TagList(),
+        "/portfolio": (context) => PortfolioPage(),
+        "introduction": (context) => IntroductionPage(),
       },
       debugShowCheckedModeBanner: false,
     );
