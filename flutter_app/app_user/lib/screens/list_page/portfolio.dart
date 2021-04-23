@@ -1,5 +1,6 @@
 import 'package:app_user/model/portfolio_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/dialog/request_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -10,19 +11,20 @@ class PortfolioPage extends StatefulWidget {
 
 class _PortfolioPageState extends State<PortfolioPage> {
   List<PortfolioVO> portList = [];
-  
+
   init() {
-    for(int i=0; i<10; i++) {
-      portList.add(PortfolioVO(user: "3210_안수빈", state: i%2 == 0 ? "처리전":"처리후", url: "https://naver.com"));
+    for (int i = 0; i < 10; i++) {
+      portList.add(PortfolioVO(
+          user: "3210_안수빈", state: "notDone", url: "https://naver.com"));
     }
   }
-  
+
   @override
   void initState() {
     super.initState();
     init();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,24 +57,26 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 ],
               ),
             ),
-            Expanded(child: ListView.separated(
-              itemCount: portList.length,
-              itemBuilder: (context, index) {
-                return buildPortfolio(context, index);
-              },
-              separatorBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Container(
-                    height: 1,
-                    color: Colors.grey,
-                  ),
-                );
-              },
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-            ),)
+            Expanded(
+              child: ListView.separated(
+                itemCount: portList.length,
+                itemBuilder: (context, index) {
+                  return buildPortfolio(context, index);
+                },
+                separatorBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Container(
+                      height: 1,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+              ),
+            )
           ],
         ),
       ),
@@ -82,61 +86,70 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Widget buildPortfolio(BuildContext context, int index) {
     return Container(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-          child: GestureDetector(
-            onTap: () {
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${portList[index].user}",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  portList[index].state == "처리전" ?
-                  Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Color(0xff5BC7F5))),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "처리전",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff5BC7F5)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ) :
-                  Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Color(0xffFF7777))),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "처리후",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xffFF7777)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
-                ],
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      RequestDialog(vo: portList[index], mode: "portfolio"))
+              .then((value) {
+            if (value != null) {
+              print("value: ${value.toString()}");
+              setState(() {
+                portList[index].state = value;
+              });
+            }
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "${portList[index].user}",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
+              makeTag(portList[index].state)
+            ],
           ),
-        ));
+        ),
+      ),
+    ));
+  }
+
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "notDone") {
+      msg = "처리전";
+      color = Colors.black;
+    } else if (str == "approve") {
+      msg = "승인";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "거절";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }
