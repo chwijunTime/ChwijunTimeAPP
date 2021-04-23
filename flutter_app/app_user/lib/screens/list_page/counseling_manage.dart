@@ -13,7 +13,7 @@ class CounselingManage extends StatefulWidget {
   _CounselingManageState createState() => _CounselingManageState();
 }
 
-enum Select { YEAR, TAG }
+enum Select { YEAR, TAG, TITLE }
 enum Year { y2018, y2019, y2020, y2021 }
 
 class _CounselingManageState extends State<CounselingManage> {
@@ -21,6 +21,7 @@ class _CounselingManageState extends State<CounselingManage> {
 
   PanelController panelController = PanelController();
   var tagC = TextEditingController();
+  final titleC = TextEditingController();
 
   List<CounselingVO> counList = [];
   List<String> tagList = [];
@@ -234,7 +235,7 @@ class _CounselingManageState extends State<CounselingManage> {
       controller: scrollController,
       children: [
         Text(
-          '협약업체 검색하기',
+          '상담 신청 내역 검색하기',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         ),
@@ -278,11 +279,32 @@ class _CounselingManageState extends State<CounselingManage> {
             ])),
           ],
         ),
+        Row(children: [
+          Radio(
+            value: Select.TITLE,
+            groupValue: _select,
+            onChanged: (value) {
+              setState(() {
+                _select = value;
+              });
+            },
+          ),
+          Text(
+            "학생명 검색하기",
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ]),
+        SizedBox(
+          height: 15,
+        ),
         SizedBox(
           height: 15,
         ),
         if (_select == Select.YEAR) selectYearWidget(),
         if (_select == Select.TAG) selectTagWidget(),
+        if (_select == Select.TITLE) selectTitleWidget(),
       ],
     );
   }
@@ -384,7 +406,7 @@ class _CounselingManageState extends State<CounselingManage> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", tagC, autoFocus: false),
+          child: buildTextField("학생명", tagC, autoFocus: false),
         ),
         SingleChildScrollView(
           child: Container(
@@ -444,6 +466,49 @@ class _CounselingManageState extends State<CounselingManage> {
             msg: "조회하기",
             onPressed: () {
               print("눌려버림");
+              panelController.close();
+            },
+            mode: 4,
+            icon: Icon(
+              Icons.check,
+              color: Colors.white,
+            ))
+      ],
+    );
+  }
+
+  Widget selectTitleWidget() {
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(left: 10, right: 10),
+          height: 1,
+          color: Colors.grey,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Center(
+          child: Text(
+            "학생명을 입력해주세요.",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        SizedBox(
+          height: 30,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: buildTextField("TAG", titleC, autoFocus: false),
+        ),
+        SizedBox(
+          height: 250,
+        ),
+        makeGradientBtn(
+            msg: "조회하기",
+            onPressed: () {
+              print("titleC = ${titleC.text}");
               panelController.close();
             },
             mode: 4,
