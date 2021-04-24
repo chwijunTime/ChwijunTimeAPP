@@ -30,7 +30,7 @@ class _RejectDialog extends State<RejectDialog> {
   dialogContent(BuildContext context) {
     return Container(
       width: 385,
-      height: 300,
+      height: 350,
       padding: EdgeInsets.all(20),
       margin: EdgeInsets.only(top: 60),
       decoration: new BoxDecoration(
@@ -50,7 +50,8 @@ class _RejectDialog extends State<RejectDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"} 첨삭을 거절 하시겠습니까?",
+              "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"} 첨삭을 \n거절 하시겠습니까?",
+              textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
