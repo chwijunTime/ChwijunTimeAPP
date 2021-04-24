@@ -16,9 +16,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   List<SliderCard> sliderList = [
-    SliderCard(title: "취업공고", image: "images/loco.jpg", route: "/"),
-    SliderCard(title: "협약업체", image: "images/loco.jpg", route: "/"),
-    SliderCard(title: "호잇", image: "images/loco.jpg", route: "/"),
+    SliderCard(title: "협약업체", image: "images/loco.jpg", route: "/contracting_company"),
+    SliderCard(title: "취업공고", image: "images/loco.jpg", route: "/company_notice"),
+    SliderCard(title: "면접후기", image: "images/loco.jpg", route: "/interview_review"),
+    SliderCard(title: "취업 확정 현황", image: "images/loco.jpg", route: "/confirmation_status"),
+    SliderCard(title: "꿀팁 저장소", image: "images/loco.jpg", route: "/tip_storage"),
   ];
 
   List<NotificationVO> notiList = [];
@@ -123,7 +125,7 @@ class _MainPageState extends State<MainPage> {
             ListView.builder(
               itemCount: notiList.length,
               itemBuilder: (context, index) {
-                return buildItemCompany(context, index);
+                return buildItemNotification(context, index);
               },
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -135,7 +137,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget buildItemCompany(BuildContext context, int index) {
+  Widget buildItemNotification(BuildContext context, int index) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -269,39 +271,44 @@ Widget makeSlider(List<SliderCard> list) {
     child: CarouselSlider(
         items: list.map((card) {
           return Builder(builder: (BuildContext context) {
-            return Container(
-              width: 357,
-              height: 250,
-              margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-              decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0, 2),
-                        blurRadius: 3,
-                        spreadRadius: 2)
-                  ]),
-              child: Stack(
-                children: [
-                  Image.asset(
-                    "images/loco.jpg",
-                    fit: BoxFit.cover,
-                    width: 357,
-                    height: 250,
-                    color: Colors.black,
-                    colorBlendMode: BlendMode.softLight,
-                  ),
-                  Center(
-                      child: Text(
-                    card.title,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white),
-                  )),
-                ],
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(context, card.route, (route) => false);
+              },
+              child: Container(
+                width: 357,
+                height: 250,
+                margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0, 2),
+                          blurRadius: 3,
+                          spreadRadius: 2)
+                    ]),
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      "images/loco.jpg",
+                      fit: BoxFit.cover,
+                      width: 357,
+                      height: 250,
+                      color: Colors.black,
+                      colorBlendMode: BlendMode.softLight,
+                    ),
+                    Center(
+                        child: Text(
+                      card.title,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white),
+                    )),
+                  ],
+                ),
               ),
             );
           });
