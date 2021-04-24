@@ -49,21 +49,6 @@ class _NotificationPageState extends State<NotificationPage> {
         });
       }
     });
-    loadShaPref();
-  }
-
-  loadShaPref() async {
-    var role = await getRole();
-    setState(() {
-      widget.role = role;
-    });
-  }
-
-  Future<String> getRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString("role") ?? "user";
-    print("role: ${role}");
-    return role;
   }
 
   _onHeartPressed(int index) {
@@ -74,6 +59,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   void _listSetting() {
     for (int i = 1; i <= 8; i++) {
+
       noticeList.add(NotificationVO(
           isFavorite: false,
           title: i%2 == 0 ? "${i}.title": "${i}.abct",

@@ -1,4 +1,5 @@
 import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/detail_page/company_notice_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/company_notice_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -10,8 +11,6 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import '../detail_page/company_notice_detail.dart';
 
 class CompanyNoticePage extends StatefulWidget {
   @override
@@ -103,7 +102,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     initList();
     return Scaffold(
       key: scafforldkey,
-      appBar: buildAppBar("appBar", context),
+      appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       body: SlidingUpPanel(
         panelBuilder: (scrollController) =>

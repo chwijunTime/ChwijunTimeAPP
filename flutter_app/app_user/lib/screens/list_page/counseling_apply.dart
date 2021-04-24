@@ -6,8 +6,6 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class CounselingApplyPage extends StatefulWidget {
-  String role;
-
   @override
   _CounselingApplyPageState createState() => _CounselingApplyPageState();
 }

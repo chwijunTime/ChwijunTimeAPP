@@ -1,4 +1,5 @@
 import 'package:app_user/model/review_vo.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -40,6 +41,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     _listSetting();
     init();
     searchState();
+    widget.role = User.role;
   }
 
   void init() {

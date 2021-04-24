@@ -1,4 +1,5 @@
 import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/contracting_company_write.dart';
@@ -43,21 +44,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     _listSetting();
     init();
     searchState();
-    loadShaPref();
-  }
-
-  loadShaPref() async {
-    var role = await getRole();
-    setState(() {
-      widget.role = role;
-    });
-  }
-
-  Future<String> getRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString("role") ?? "user";
-    print("role: ${role}");
-    return role;
+    widget.role = User.role;
   }
 
   void init() {
