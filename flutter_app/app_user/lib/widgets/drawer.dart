@@ -1,5 +1,4 @@
 import 'package:app_user/model/user.dart';
-import 'package:app_user/screens/loading.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
 import 'package:flutter/material.dart';
@@ -57,191 +56,94 @@ Widget buildDrawer(BuildContext context) {
             ],
           ),
         ),
-        ListTile(
-          title: Text(
-            "협약업체",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.assignment),
-          onTap: () {
-            print("협약 업체로 가자");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoadingPage(page: "/contracting_company")),
-                (route) => false);
-            //Navigator.pushNamedAndRemoveUntil(context, "/contracting_company", (route) => false);
-            // Navigator.pushNamed(context, "/contracting_company");
-          },
-        ),
-        ListTile(
-          title: Text(
-            "취업공고",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.account_box_outlined),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoadingPage(page: "/company_notice")),
-                (route) => false);
-          },
-        ),
-        ListTile(
-          title: Text(
-            "면접후기",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.book),
-          onTap: () {
-            print("면접후기로 가자");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoadingPage(page: "/interview_review")),
-                (route) => false);
-          },
-        ),
-        ListTile(
-          title: Text(
-            role == "user" ? "상담신청" : "상담 관리",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.comment),
-          onTap: () {
-            print("상담신청으로 가자");
-            if (role == "user") {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          LoadingPage(page: "/counseling_apply")),
-                  (route) => false);
-            } else {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          LoadingPage(page: "/counseling_manage")),
-                  (route) => false);
-            }
-          },
-        ),
-        ListTile(
-          title: Text(
-            "취업 확정 현황",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.school),
-          onTap: () {
-            print("취업 확정 현황으로 가자");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoadingPage(page: "/confirmation_status")),
-                (route) => false);
-          },
-        ),
-        ListTile(
-          title: Text(
-            "공지사항",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.calendar_today_outlined),
-          onTap: () {
-            print("공지사항으로 가자");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoadingPage(page: "/notification")),
-                (route) => false);
-          },
-        ),
-        ListTile(
-          title: Text(
-            "꿀팁 저장소",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.thumb_up),
-          onTap: () {
-            print("꿀팁 저장소로 가자");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoadingPage(page: "/tip_storage")),
-                (route) => false);
-          },
-        ),
-        ListTile(
-          title: Text(
-            "태그 추가 요청",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          leading: Icon(Icons.tag),
-          onTap: () {
-            print("태그 추가 요청 하자");
-            role == "user"
-                ? showDialog(
-                    context: context,
-                    builder: (BuildContext context) => TagAddReqDialog())
-                : Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoadingPage(
-                              page: "/tag_list",
-                            )),
-                    (route) => false);
-          },
-        ),
-        role != "user"
-            ? ListTile(
-                title: Text(
-                  "포트폴리오 첨삭",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+        customListTile(
+            title: "협약업체",
+            leading: Icon(
+              Icons.assignment,
+              color: Colors.grey,
+              size: 28,
+            ),
+            page: "/contracting_company",
+            context: context),
+        customListTile(
+            title: "취업공고",
+            leading:
+                Icon(Icons.account_box_outlined, color: Colors.grey, size: 28),
+            page: "/company_notice",
+            context: context),
+        customListTile(
+            title: "면접후기",
+            leading: Icon(Icons.book, color: Colors.grey, size: 28),
+            page: "/interview_review",
+            context: context),
+        role == "user"
+            ? customListTile(
+                title: "상담 신청",
+                leading: Icon(Icons.account_box_outlined,
+                    color: Colors.grey, size: 28),
+                page: "/counseling_apply",
+                context: context)
+            : customListTile(
+                title: "상담 관리",
+                leading: Icon(
+                  Icons.comment,
+                  color: Colors.grey,
+                  size: 28,
                 ),
-                leading: Icon(Icons.event_note_outlined),
-                onTap: () {
-                  print("포트폴리오 첨삭 하자");
-                  role == "user"
-                      ? showDialog(
-                          context: context,
-                          builder: (BuildContext context) => TagAddReqDialog())
-                      : Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoadingPage(
-                                    page: "/portfolio",
-                                  )),
-                          (route) => false);
-                },
-              )
+                page: "/counseling_manage",
+                context: context),
+        customListTile(
+            title: "취업 확정 현황",
+            leading: Icon(Icons.school, color: Colors.grey, size: 28),
+            page: "/confirmation_status",
+            context: context),
+        customListTile(
+            title: "공지사항",
+            leading: Icon(Icons.calendar_today_outlined,
+                color: Colors.grey, size: 28),
+            page: "/notification",
+            context: context),
+        customListTile(
+            title: "꿀팁 저장소",
+            leading: Icon(Icons.thumb_up, color: Colors.grey, size: 28),
+            page: "/tip_storage",
+            context: context),
+        role == "user"
+            ? customListTile(
+                title: "태그 추가 요청",
+                leading: Icon(Icons.tag, color: Colors.grey, size: 28),
+                page: "",
+                context: context)
+            : customListTile(
+                title: "태그 추가 요청",
+                leading: Icon(
+                  Icons.tag,
+                  color: Colors.grey,
+                  size: 28,
+                ),
+                page: "/tag_list",
+                context: context),
+        role != "user"
+            ? customListTile(
+                title: "포트폴리오 첨삭",
+                leading: Icon(
+                  Icons.event_note_outlined,
+                  color: Colors.grey,
+                  size: 28,
+                ),
+                page: "/portfolio",
+                context: context)
             : SizedBox(),
         role != "user"
-            ? ListTile(
-                title: Text(
-                  "자기소개서 첨삭",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+            ? customListTile(
+                title: "자기소개서 첨삭",
+                leading: Icon(
+                  Icons.sticky_note_2_outlined,
+                  color: Colors.grey,
+                  size: 28,
                 ),
-                leading: Icon(Icons.sticky_note_2_outlined),
-                onTap: () {
-                  print("자기소개서 첨삭 하자");
-                  role == "user"
-                      ? showDialog(
-                          context: context,
-                          builder: (BuildContext context) => TagAddReqDialog())
-                      : Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoadingPage(
-                                    page: "/introduction",
-                                  )),
-                          (route) => false);
-                },
-              )
+                page: "/introduction",
+                context: context)
             : SizedBox(),
         Expanded(
           child: Align(
@@ -254,8 +156,8 @@ Widget buildDrawer(BuildContext context) {
                 children: [
                   makeGradientBtn(
                       msg: "마이페이지",
-                      onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                          context, "/my_page", (route) => false),
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, "/my_page"),
                       mode: 1,
                       icon: Icon(
                         Icons.person,
@@ -266,8 +168,7 @@ Widget buildDrawer(BuildContext context) {
                   ),
                   makeBtn(
                       msg: "로그아웃",
-                      onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                          context, "/", (route) => false),
+                      onPressed: () {},
                       mode: 1,
                       icon: Icon(
                         Icons.exit_to_app,
@@ -279,6 +180,38 @@ Widget buildDrawer(BuildContext context) {
           ),
         ),
       ],
+    ),
+  );
+}
+
+Widget customListTile(
+    {@required String title,
+    @required Icon leading,
+    @required String page,
+    @required BuildContext context}) {
+  return InkWell(
+    onTap: () {
+      page == ""
+          ? showDialog(
+              context: context,
+              builder: (BuildContext context) => TagAddReqDialog())
+          : Navigator.pushReplacementNamed(context, page);
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          leading,
+          SizedBox(
+            width: 20,
+          ),
+          Text(
+            title,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
     ),
   );
 }
