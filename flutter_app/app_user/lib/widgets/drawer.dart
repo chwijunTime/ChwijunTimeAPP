@@ -204,7 +204,7 @@ Widget customListTile(
         children: [
           leading,
           SizedBox(
-            width: 20,
+            width: 30,
           ),
           Text(
             title,
