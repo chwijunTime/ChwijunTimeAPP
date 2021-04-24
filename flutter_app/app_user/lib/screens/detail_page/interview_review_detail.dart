@@ -36,7 +36,6 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     print(latLng);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 18)));
     return latLng;
   }
 
@@ -164,7 +163,8 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                           latLng.latitude, latLng.longitude),
                                       zoom: 17,
                                     ),
-                                    onMapCreated: (GoogleMapController controller) async {
+                                    onMapCreated:
+                                        (GoogleMapController controller) async {
                                       mapController = controller;
                                       print("호잇");
                                     },
@@ -272,7 +272,9 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                 padding: const EdgeInsets.only(right: 25),
                 child: makeGradientBtn(
                     msg: "면접 후기 수정하기",
-                    onPressed: _onMoveModify,
+                    onPressed: () {
+                      _onMoveModify();
+                    },
                     mode: 2,
                     icon: Icon(
                       Icons.arrow_forward,
@@ -293,15 +295,18 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
     final result = await showDialog(
         context: context,
         builder: (BuildContext context) => StdDialog(
-          msg: "해당 취업확정현황을 삭제하시겠습니까?",
-          size: Size(326, 124),
-          btnName1: "아니요",
-          btnCall1: () {Navigator.pop(context, "no");},
-          btnName2: "삭제하기",
-          btnCall2: () {
-            print("삭제할 list: ${widget.list}");
-            Navigator.pop(context, "yes");
-          },),
+              msg: "해당 취업확정현황을 삭제하시겠습니까?",
+              size: Size(326, 124),
+              btnName1: "아니요",
+              btnCall1: () {
+                Navigator.pop(context, "no");
+              },
+              btnName2: "삭제하기",
+              btnCall2: () {
+                print("삭제할 list: ${widget.list}");
+                Navigator.pop(context, "yes");
+              },
+            ),
         barrierDismissible: false);
 
     if (result == "yes") {
@@ -313,16 +318,17 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                InterviewReviewModify(list: widget.list)));
+            builder: (context) => InterviewReviewModify(list: widget.list)));
     print("result: ${result.toString()}");
     if (result != null) {
       setState(() {
         widget.list = result;
       });
     }
+    List<Location> location = await locationFromAddress(widget.list.address);
+    latLng = LatLng(location[0].latitude, location[0].longitude);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 17)));
   }
-
 
   Set<Marker> _createMarker() {
     return [
