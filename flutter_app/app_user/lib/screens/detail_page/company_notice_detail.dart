@@ -1,4 +1,5 @@
 import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -305,14 +306,20 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                 : Align(
                     alignment: Alignment.center,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 25, right: 15, left: 15),
+                      padding: const EdgeInsets.only(
+                          bottom: 25, right: 15, left: 15),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           makeGradientBtn(
                               msg: "신청한 학생 보기",
                               onPressed: () {
-                                print("보자보자");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CompanyNoticeApply(
+                                                list: widget.list)));
                               },
                               mode: 1,
                               icon: Icon(
@@ -343,15 +350,18 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     final result = await showDialog(
         context: context,
         builder: (BuildContext context) => StdDialog(
-          msg: "해당 취업 공고를 삭제하시겠습니까?",
-          size: Size(326, 124),
-          btnName1: "아니요",
-          btnCall1: () {Navigator.pop(context, "no");},
-          btnName2: "삭제하기",
-          btnCall2: () {
-            print("삭제할 list: ${widget.list}");
-            Navigator.pop(context, "yes");
-          },),
+              msg: "해당 취업 공고를 삭제하시겠습니까?",
+              size: Size(326, 124),
+              btnName1: "아니요",
+              btnCall1: () {
+                Navigator.pop(context, "no");
+              },
+              btnName2: "삭제하기",
+              btnCall2: () {
+                print("삭제할 list: ${widget.list}");
+                Navigator.pop(context, "yes");
+              },
+            ),
         barrierDismissible: false);
 
     if (result == "yes") {
