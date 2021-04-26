@@ -13,7 +13,9 @@ class InterviewReviewWrite extends StatefulWidget {
 
 class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   var titleC = TextEditingController();
-  var applyDateC = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+  String strDate = "지원날짜";
+  String date = "";
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var reviewC = TextEditingController();
@@ -74,18 +76,46 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                     width: 10,
                   ),
                   Expanded(
-                    child: buildTextField("지원날짜", applyDateC),
+                    child: buildTextField("비용", priceC, type: TextInputType.number),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("주소", addressC),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("비용", priceC, type: TextInputType.number),
+              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
+              child: GestureDetector(
+                onTap: () async {
+                  final DateTime picked = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2050));
+                  if (picked != null) {
+                    setState(() {
+                      selectedDate = picked;
+                      strDate = "${selectedDate.year}년 ${selectedDate
+                          .month}월 ${selectedDate.day}일";
+                    });
+                    date = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(5))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      strDate,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: strDate == "지원날짜" ? Colors.grey : Colors
+                              .black),
+                    ),
+                  ),
+                ),
+              ),
             ),
             Card(
               elevation: 5,
@@ -204,10 +234,10 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
 
   onReviewPost() {
     print(
-        "${titleC.text}, ${grade}, ${applyDateC.text}, ${addressC.text}, ${priceC.text}, ${reviewC.text}, ${questionC.text}, ${tagList.toString()}");
+        "${titleC.text}, ${grade}, ${strDate}, ${addressC.text}, ${priceC.text}, ${reviewC.text}, ${questionC.text}, ${tagList.toString()}");
 
     if (titleC.text.isEmpty ||
-        applyDateC.text.isEmpty ||
+        date == "" ||
         addressC.text.isEmpty ||
         priceC.text.isEmpty ||
         reviewC.text.isEmpty ||
