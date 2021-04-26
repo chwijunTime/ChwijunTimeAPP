@@ -17,6 +17,7 @@ import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/screens/my_page/my_page.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -33,6 +34,16 @@ class UserApp extends StatelessWidget {
     return MaterialApp(
       title: "ChwijunTimeApp",
       initialRoute: "/login",
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('ko', 'KR'),
+      ],
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+      ),
       routes: {
         "/": (context) => MainPage(),
         "/login": (context) => LoginPage(),
