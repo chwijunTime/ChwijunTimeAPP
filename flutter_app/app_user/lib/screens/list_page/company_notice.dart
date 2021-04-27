@@ -16,7 +16,7 @@ class CompanyNoticePage extends StatefulWidget {
   @override
   _CompanyNoticePageState createState() => _CompanyNoticePageState();
 
-  final List<CompNotice> notiList = [];
+  List<CompNotice> notiList = [];
   String role;
 }
 
@@ -37,27 +37,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   @override
   void initState() {
     super.initState();
-    initList();
     init();
     searchState();
     widget.role = User.role;
-  }
-
-  initList() {
-    for (int i = 0; i < 8; i++) {
-      widget.notiList.add(CompNotice(
-          title: "${i}.title",
-          startDate: "2021.03.31",
-          endDate: "2021.04.01",
-          field: "모바일 앱, 웹",
-          address: "광주광역시 광산구 목련로 273번길 76",
-          compInfo:
-              "printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-          preferentialInfo:
-              "우대 조건 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-          isBookMark: false,
-          tag: List.generate(10, (i) => "${i}.tag")));
-    }
   }
 
   void init() {
@@ -99,7 +81,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
 
   @override
   Widget build(BuildContext context) {
-    initList();
     return Scaffold(
       key: scafforldkey,
       appBar: buildAppBar("취준타임", context),
@@ -182,13 +163,27 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       ),
                     ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: widget.notiList.length,
-                  itemBuilder: (context, index) {
-                    return buildItemCompany(context, index);
-                  },
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
+                child: FutureBuilder(
+                  future: _getCompany(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot snapshot) {
+                    if (snapshot.hasData == false) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    else {
+                      widget.notiList = snapshot.data;
+                      return ListView.builder(
+                        itemCount: widget.notiList.length,
+                        itemBuilder: (context, index) {
+                          return buildItemCompany(context, index);
+                        },
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                      );
+                    }
+                  }
                 ),
               )
             ],
@@ -196,6 +191,26 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         ),
       ),
     );
+  }
+
+  Future<List<CompNotice>> _getCompany() async {
+      await Future.delayed(Duration(seconds: 3));
+      List<CompNotice> list = [];
+      for (int i = 0; i < 8; i++) {
+        list.add(CompNotice(
+            title: "${i}.title",
+            startDate: "2021.03.31",
+            endDate: "2021.04.01",
+            field: "모바일 앱, 웹",
+            address: "광주광역시 광산구 목련로 273번길 76",
+            compInfo:
+            "printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
+            preferentialInfo:
+            "우대 조건 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
+            isBookMark: false,
+            tag: List.generate(10, (i) => "${i}.tag")));
+      }
+      return list;
   }
 
   _onDeleteCompNotice() {
