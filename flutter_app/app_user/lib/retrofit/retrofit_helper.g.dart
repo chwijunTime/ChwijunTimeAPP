@@ -9,7 +9,8 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://ec2-3-35-229-23.ap-northeast-2.compute.amazonaws.com:8080/v1';
+    baseUrl ??=
+        'http://ec2-3-36-120-178.ap-northeast-2.compute.amazonaws.com:8080/';
   }
 
   final Dio _dio;

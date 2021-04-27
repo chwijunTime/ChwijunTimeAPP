@@ -21,20 +21,9 @@ class CompanyNoticeApply extends StatefulWidget {
 class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   List<ApplyVO> applyList = [];
 
-  initList() {
-    for (int i = 0; i < 15; i++) {
-      applyList.add(ApplyVO(
-          user: "3210안수빈",
-          portfolio: "https://www.naver.com/",
-          introduction: "https://www.naver.com/",
-          status: "notDone"));
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    initList();
   }
 
   @override
@@ -68,22 +57,32 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                itemCount: applyList.length,
-                itemBuilder: (context, index) {
-                  return buildTag(context, index);
-                },
-                separatorBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Container(
-                      height: 1,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
+              child: FutureBuilder(
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return ListView.separated(
+                        itemCount: applyList.length,
+                        itemBuilder: (context, index) {
+                          return buildTag(context, index);
+                        },
+                        separatorBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Container(
+                              height: 1,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                      );
+                    }
+                  }
               ),
             ),
           ],
@@ -91,6 +90,19 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
       ),
     );
   }
+
+  Future<List<ApplyVO>> _getList () async {
+    await Future.delayed(Duration(seconds: 3));
+    List<ApplyVO> list = [];
+    for (int i = 0; i < 15; i++) {
+      list.add(ApplyVO(
+          user: "3210안수빈",
+          portfolio: "https://www.naver.com/",
+          introduction: "https://www.naver.com/",
+          status: "notDone"));
+    }
+  }
+
 
   Widget buildTag(BuildContext context, int index) {
     return Container(

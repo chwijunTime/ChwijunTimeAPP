@@ -167,7 +167,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   future: _getCompany(),
                   builder: (BuildContext context,
                       AsyncSnapshot snapshot) {
-                    if (snapshot.hasData == false) {
+                    if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );

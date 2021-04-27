@@ -1,3 +1,4 @@
+import 'package:app_user/model/member_dto.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
@@ -20,7 +21,7 @@ class _JoinPageState extends State<JoinPage> {
   var nameC = TextEditingController();
   var emailC = TextEditingController();
 
-  bool checkEmail = false;
+  bool checkEmail = true;
 
   RetrofitHelper helper;
 
@@ -29,6 +30,10 @@ class _JoinPageState extends State<JoinPage> {
     super.initState();
 
     Dio dio = Dio();
+    dio.options = BaseOptions(
+      followRedirects: false,
+      validateStatus: (status) { return status < 500; }
+    );
     helper = RetrofitHelper(dio);
   }
 
@@ -227,6 +232,7 @@ class _JoinPageState extends State<JoinPage> {
           checkEmail = true;
         });
       } else {
+        print("msg: ${res.msg}");
         switch (res.msg) {
           case "오잉":
             {
@@ -238,6 +244,21 @@ class _JoinPageState extends State<JoinPage> {
   }
 
   _onJoin() async {
+    var res = await helper.postJoin(MemberDTO(
+        memberClassNumber: "3210",
+        memberEmail: "dkstnqls0925@naver.com2",
+        memberPassword: "asdf1234!!")
+        .toJson());
+    if (res.success) {
+      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+    } else {
+      switch (res.msg) {
+        case "오잉":
+          {
+            print(res.msg);
+          }
+      }
+    }
     if (emailC.text.isEmpty || passwordC.text.isEmpty ||
         rePasswordC.text.isEmpty || phoneC.text.isEmpty || stIDC.text.isEmpty ||
         nameC.text.isEmpty) {
@@ -271,22 +292,21 @@ class _JoinPageState extends State<JoinPage> {
           ],);
       });
     } else {
-      Navigator.popAndPushNamed(context, "/success_join");
-      // var res = await helper.postJoin(MemberDTO(
-      //         memberClassNumber: stIDC.text,
-      //         memberEmail: emailC.text,
-      //         memberPassword: passwordC.text)
-      //     .toJson());
-      // if (res.success) {
-      //   Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-      // } else {
-      //   switch (res.msg) {
-      //     case "오잉":
-      //       {
-      //         print(res.msg);
-      //       }
-      //   }
-      // }
+      var res = await helper.postJoin(MemberDTO(
+              memberClassNumber: stIDC.text,
+              memberEmail: "dkstnqls0925@naver.com",
+              memberPassword: passwordC.text)
+          .toJson());
+      if (res.success) {
+        Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+      } else {
+        switch (res.msg) {
+          case "오잉":
+            {
+              print(res.msg);
+            }
+        }
+      }
     }
   }
 }
