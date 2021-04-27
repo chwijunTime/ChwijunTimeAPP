@@ -173,40 +173,22 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () async {
+            Padding(
+              padding: const EdgeInsets.only(left: 100, right: 100),
+              child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
                 final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => SearchPage(
-                              list: _list,
-                            )));
-                if (result.isEmpty) {
-                  tagList = [];
-                } else {
-                  tagList = result;
-                }
+                          list: _list,
+                        )));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
                 print("tagList: $tagList");
-              },
-              child: Padding(
-                padding: EdgeInsets.only(right: 33, left: 33, bottom: 20),
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(left: 25, top: 16, bottom: 16),
-                    child: Text(
-                      "태그 선택하러 가기",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ),
-              ),
+              }, mode: 2),
             ),
             Align(
                 alignment: Alignment.center,

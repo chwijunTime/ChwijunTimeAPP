@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget makeTagWidget({@required List<String> tag, @required Size size, @required int mode}) {
+Widget makeTagWidget({@required List<String> tag, @required Size size, @required int mode, bool addTag}) {
   return SizedBox(
       height: 28+size.height,
       child: Column(
@@ -19,7 +19,7 @@ Widget makeTagWidget({@required List<String> tag, @required Size size, @required
           if (mode == 1)
               makeTagList(tag, size)
           else
-              makeTagGrid(tag, size)
+              makeTagGrid(tag, size,)
         ],
       ));
 }

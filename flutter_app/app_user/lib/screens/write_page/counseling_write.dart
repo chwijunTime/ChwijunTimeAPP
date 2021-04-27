@@ -51,6 +51,7 @@ class _CounselingWriteState extends State<CounselingWrite> {
                                 lastDate: DateTime(2050));
                             if (picked != null) {
                               setState(() {
+                                selectedDate = picked;
                                 strDate = "${selectedDate.year}년 ${selectedDate
                                     .month}월 ${selectedDate.day}일";
                               });

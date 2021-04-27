@@ -1,8 +1,5 @@
-import 'package:app_user/model/member_login_dto.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:app_user/screens/main_page.dart';
-import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -44,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString("accessToken", "accessTokenValue");
     prefs.setString("role", "admin");
     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+    User.role = "admin";
   }
 
   @override

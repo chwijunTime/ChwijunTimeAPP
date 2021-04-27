@@ -50,7 +50,7 @@ class _RejectDialog extends State<RejectDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"} 첨삭을 \n거절 하시겠습니까?",
+              "해당 ${widget.mode == "portfolio" ? "포트폴리오 첨삭" : widget.mode == "introduction" ? "자기소개서 첨삭": "지원"}을 \n거절 하시겠습니까?",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
@@ -93,7 +93,7 @@ class _RejectDialog extends State<RejectDialog> {
                                 return RichAlertDialog(
                                   alertTitle: richTitle("거절 사유를 입력해주세요!"),
                                   alertSubtitle: richSubtitle(
-                                      "${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"} 거절 사유를 작성해주세요."),
+                                      "${widget.mode == "portfolio" ? "포트폴리오 첨삭" : widget.mode == "introduction" ? "자기소개서 첨삭": "지원"} 거절 사유를 작성해주세요."),
                                   alertType: RichAlertType.ERROR,
                                   actions: [
                                     FlatButton(

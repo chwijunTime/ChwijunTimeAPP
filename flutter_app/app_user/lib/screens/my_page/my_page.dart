@@ -135,7 +135,7 @@ class _MyPageState extends State<MyPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        "자소서 다운받기",
+                        "자소서 보러가기",
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 18),
                       ),

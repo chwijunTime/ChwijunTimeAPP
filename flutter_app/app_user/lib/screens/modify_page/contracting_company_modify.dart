@@ -57,8 +57,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
         body: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(children: [
+            padding: const EdgeInsets.only(right: 24, left: 24),
+            child: ListView(children: [
+              SizedBox(height: 24,),
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18)),
@@ -70,18 +71,18 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     children: [
                       Text(
                         widget.list.title,
-                        style:
-                            TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w600),
                       ),
                       Text(
                         widget.list.field,
-                        style:
-                            TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                       Text(
                         widget.list.address,
-                        style:
-                            TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                       buildTextField("평균 연봉", priceC,
                           deco: false, autoFocus: false),
@@ -106,7 +107,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
                           maxLine: 8, maxLength: 300, autoFocus: false),
                     ],
@@ -116,47 +119,22 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
               SizedBox(
                 height: 15,
               ),
-              LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchPage(
-                                list: _list,
-                              )));
-                      setState(() {
-                        if (result.isEmpty) {
-                          tagList = [];
-                        } else {
-                          tagList = result;
-                        }
-                      });
-                      print("tagList: $tagList");
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10, left: 10, bottom: 20),
-                      child: Container(
-                        width: constraints.maxWidth,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, top: 16, bottom: 16),
-                          child: Text(
-                            "태그 선택하러 가기",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+              Padding(
+                padding: const EdgeInsets.only(left: 100, right: 100),
+                child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
+                  final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchPage(
+                            list: _list,
+                          )));
+                  setState(() {
+                    if (result != null) {
+                      tagList = result;
+                    }
+                  });
+                  print("tagList: $tagList");
+                }, mode: 2),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
@@ -165,7 +143,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     child: makeTagWidget(
                         tag: tagList, size: Size(360, 27), mode: 1)),
               ),
-              SizedBox(height: 19,),
+              SizedBox(
+                height: 19,
+              ),
               makeGradientBtn(
                   msg: "수정하기",
                   onPressed: () {
@@ -175,7 +155,8 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                   icon: Icon(
                     Icons.arrow_forward,
                     color: Colors.white,
-                  ))
+                  )),
+              SizedBox(height: 24,),
             ]),
           ),
         ),
@@ -184,7 +165,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   }
 
   onContractingModify() {
-    if(priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty) {
+    if (priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       widget.list.maxSalary = int.parse(priceC.text);
@@ -197,5 +178,4 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   Future<bool> _onBackPressed() {
     Navigator.pop(context, false);
   }
-
 }

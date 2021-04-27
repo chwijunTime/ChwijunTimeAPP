@@ -91,47 +91,22 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
               SizedBox(
                 height: 15,
               ),
-              LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchPage(
-                                    list: _list,
-                                  )));
-                      setState(() {
-                        if (result.isEmpty) {
-                          tagList = [];
-                        } else {
-                          tagList = result;
-                        }
-                      });
-                      print("tagList: $tagList");
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10, left: 10, bottom: 20),
-                      child: Container(
-                        width: constraints.maxWidth,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, top: 16, bottom: 16),
-                          child: Text(
-                            "태그 선택하러 가기",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+              Padding(
+                padding: const EdgeInsets.only(left: 100, right: 100),
+                child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
+                  final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchPage(
+                            list: _list,
+                          )));
+                  setState(() {
+                    if (result != null) {
+                      tagList = result;
+                    }
+                  });
+                  print("tagList: $tagList");
+                }, mode: 2),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
