@@ -4,8 +4,11 @@ part 'response_data.g.dart';
 
 @JsonSerializable()
 class ResponseData {
+  @JsonKey(name: "code")
   int code;
+  @JsonKey(name: "msg")
   String msg;
+  @JsonKey(name: "success")
   bool success;
 
 

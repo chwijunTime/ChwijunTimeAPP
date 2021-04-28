@@ -137,7 +137,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
-              widget.role == "user"
+              widget.role == User.user
                   ? SizedBox()
                   : Padding(
                       padding: const EdgeInsets.only(
@@ -235,7 +235,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
             SizedBox(
               width: 10,
             ),
-            widget.role == "user"
+            widget.role == User.user
                 ? InkWell(
                     onTap: () {
                       Navigator.push(

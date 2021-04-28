@@ -136,7 +136,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         ],
                       ),
                     ),
-                    widget.role == "user"
+                    widget.role == User.user
                         ? Padding(
                             padding: const EdgeInsets.only(right: 26),
                             child: makeGradientBtn(
@@ -151,7 +151,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         : SizedBox()
                   ],
                 ),
-                widget.role == "user"
+                widget.role == User.user
                     ? SizedBox()
                     : Padding(
                         padding: const EdgeInsets.only(
@@ -231,7 +231,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == "user"
+                  widget.role == User.user
                       ? IconButton(
                           icon: compList[index].isFavorite
                               ? Icon(

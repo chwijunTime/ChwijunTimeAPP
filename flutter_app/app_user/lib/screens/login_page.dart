@@ -1,5 +1,7 @@
+import 'package:app_user/model/member_login_dto.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -23,25 +25,34 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     Dio dio = Dio();
+    dio.options = BaseOptions(
+      receiveDataWhenStatusError: true,
+      connectTimeout: 10 * 1000,
+        receiveTimeout: 10 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        });
     helper = RetrofitHelper(dio);
   }
 
   postLogin() async {
-    // var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
-    // if (res.success) {
-    //   Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-    // } else {
-    //   switch (res.msg) {
-    //     case "오잉" : {
-    //       print(res.msg);
-    //     }
-    //   }
-    // }
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("accessToken", "accessTokenValue");
-    prefs.setString("role", "admin");
-    Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-    User.role = "admin";
+    try{
+      var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
+      if (res.success) {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("accessToken", res.data.accessToken);
+        prefs.setString("role", res.data.roles);
+        Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+        User.role = res.data.roles;
+      } else {
+        snackBar(res.msg, context);
+      }
+    } catch (e) {
+      print("e: ${e}");
+    }
+
+
   }
 
   @override

@@ -129,7 +129,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   ],
                 ),
               ),
-              widget.role == "user"
+              widget.role == User.user
                   ? SizedBox()
                   : Padding(
                       padding: const EdgeInsets.only(
@@ -271,7 +271,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == "user"
+                  widget.role == User.user
                       ? IconButton(
                           icon: widget.notiList[index].isBookMark
                               ? Icon(

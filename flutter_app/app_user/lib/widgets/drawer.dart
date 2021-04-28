@@ -76,7 +76,7 @@ Widget buildDrawer(BuildContext context) {
             leading: Icon(Icons.book, color: Colors.grey, size: 28),
             page: "/interview_review",
             context: context),
-        role == "user"
+        role == User.user
             ? customListTile(
                 title: "상담 신청",
                 leading: Icon(Icons.account_box_outlined,
@@ -108,7 +108,7 @@ Widget buildDrawer(BuildContext context) {
             leading: Icon(Icons.thumb_up, color: Colors.grey, size: 28),
             page: "/tip_storage",
             context: context),
-        role == "user"
+        role == User.user
             ? customListTile(
                 title: "태그 추가 요청",
                 leading: Icon(Icons.tag, color: Colors.grey, size: 28),
@@ -123,7 +123,7 @@ Widget buildDrawer(BuildContext context) {
                 ),
                 page: "/tag_list",
                 context: context),
-        role != "user"
+        role != User.user
             ? customListTile(
                 title: "포트폴리오 첨삭",
                 leading: Icon(
@@ -134,7 +134,7 @@ Widget buildDrawer(BuildContext context) {
                 page: "/portfolio",
                 context: context)
             : SizedBox(),
-        role != "user"
+        role != User.user
             ? customListTile(
                 title: "자기소개서 첨삭",
                 leading: Icon(

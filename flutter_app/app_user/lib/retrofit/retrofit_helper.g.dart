@@ -9,8 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??=
-        'http://ec2-3-36-120-178.ap-northeast-2.compute.amazonaws.com:8080/';
+    baseUrl ??= 'http://13.209.85.107:8080/';
   }
 
   final Dio _dio;
@@ -24,7 +23,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/join',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/join',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -43,7 +42,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/login',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/login',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -61,7 +60,7 @@ class _RetrofitHelper implements RetrofitHelper {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'email': email};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/email-check',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/email-check',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -70,6 +69,24 @@ class _RetrofitHelper implements RetrofitHelper {
             baseUrl: baseUrl),
         data: _data);
     final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseNotice> getNoticeList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseNotice.fromJson(_result.data);
     return value;
   }
 }

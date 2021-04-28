@@ -1,9 +1,12 @@
-import 'package:app_user/model/notification_vo.dart';
+import 'package:app_user/model/notice/notification_vo.dart';
+import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,19 +26,9 @@ class _MainPageState extends State<MainPage> {
     SliderCard(title: "꿀팁 저장소", image: "images/loco.jpg", route: "/tip_storage"),
   ];
 
-  List<NotificationVO> notiList = [];
+  RetrofitHelper helper;
 
-  initNotiList() {
-    for (int i = 0; i < 10; i++) {
-      notiList.add(NotificationVO(
-          isFavorite: false,
-          title: "${i}.title",
-          content:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          date: "2021.03.19",
-          tag: List.generate(8, (index) => "${index}android")));
-    }
-  }
+  List<NotificationVO> notiList = [];
 
   _onHeartPressed(int index) {
     setState(() {
@@ -43,25 +36,22 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  loadShaPref() async {
-    var role = await getRole();
-    setState(() {
-      widget.role = role;
-    });
-  }
-
-  Future<String> getRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString("role") ?? "user";
-    print("role: ${role}");
-    return role;
-  }
-
   @override
   void initState() {
     super.initState();
-    initNotiList();
-    loadShaPref();
+    init();
+    widget.role = User.role;
+  }
+
+  init() {
+    Dio dio = Dio(BaseOptions(
+      connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -122,19 +112,46 @@ class _MainPageState extends State<MainPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
             ),
-            ListView.builder(
-              itemCount: notiList.length,
-              itemBuilder: (context, index) {
-                return buildItemNotification(context, index);
-              },
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+            FutureBuilder(
+              future: _getNotice(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  var result = snapshot.data as List<NotificationVO>;
+                  notiList = result;
+                  return ListView.builder(
+                    itemCount: notiList.length,
+                    itemBuilder: (context, index) {
+                      return buildItemNotification(context, index);
+                    },
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                  );
+                }
+                else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }
             )
           ],
         ),
       ),
     );
+  }
+
+  Future<List<NotificationVO>> _getNotice() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    var res = await helper.getNoticeList(token);
+    print("호잇");
+    print("res.msg: ${res.list}");
+    if (res.success) {
+      return res.list;
+    } else {
+      return null;
+    }
   }
 
   Widget buildItemNotification(BuildContext context, int index) {
@@ -166,7 +183,7 @@ class _MainPageState extends State<MainPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == "user" ? IconButton(
+                  widget.role == User.user ? IconButton(
                     icon: notiList[index].isFavorite
                         ? Icon(
                             Icons.favorite,
@@ -186,7 +203,7 @@ class _MainPageState extends State<MainPage> {
                 child: Container(
                   height: 60,
                   child: AutoSizeText(
-                    "${notiList[index].content}, ",
+                    "${notiList[index].content}",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -217,7 +234,8 @@ class _MainPageState extends State<MainPage> {
                           )),
                       child: Center(
                         child: Text(
-                          "외 ${notiList[index].tag.length - 1}개",
+                          // "외 ${notiList[index].tag.length - 1}개",
+                          "어쩔",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
@@ -257,7 +275,8 @@ class _MainPageState extends State<MainPage> {
           )),
       child: Center(
         child: Text(
-          "#${notiList[index].tag[index]}",
+          // "#${notiList[index].tag[index] == null ? "없음" : notiList[index].tag[index].isEmpty}",
+          "어쩌라고",
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         ),
       ),

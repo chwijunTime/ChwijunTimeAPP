@@ -27,7 +27,7 @@ class SuccessJoinPage extends StatelessWidget {
               ),)),
               SizedBox(height: 14,),
               makeBtn(msg: "로그인하러 가기", onPressed: (){
-                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
               }, mode: 1, color: Colors.white, textColor: Colors.black, shadow: false)
             ],
           ),

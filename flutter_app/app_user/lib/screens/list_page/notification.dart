@@ -1,7 +1,6 @@
-import 'package:app_user/model/notification_vo.dart';
-import 'package:app_user/screens/detail_page/interview_review_detail.dart';
+import 'package:app_user/model/notice/notification_vo.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/search_page.dart';
-import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -12,7 +11,6 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
   String role;
@@ -33,6 +31,7 @@ class _NotificationPageState extends State<NotificationPage> {
   void initState() {
     super.initState();
     _listSetting();
+    widget.role = User.role;
     _IsSearching = false;
 
     titleC.addListener(() {
@@ -103,7 +102,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 ],
               ),
             ),
-            widget.role == "user"
+            widget.role == User.user
                 ? Padding(
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                 child: buildTextField("공지사항 제목", titleC, autoFocus: false))
@@ -211,7 +210,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == "user" ?
+                  widget.role == User.user ?
                   IconButton(
                     icon: list[index].isFavorite
                         ? Icon(

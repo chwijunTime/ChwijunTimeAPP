@@ -1,4 +1,4 @@
-import 'package:app_user/model/notification_vo.dart';
+import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';

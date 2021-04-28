@@ -71,7 +71,7 @@ class _TagListState extends State<TagList> {
                 ],
               ),
             ),
-            widget.role == "user"
+            widget.role == User.user
                 ? Padding(
                     padding: EdgeInsets.only(right: 20, left: 20, bottom: 10),
                     child: makeGradientBtn(
@@ -166,7 +166,7 @@ class _TagListState extends State<TagList> {
             SizedBox(
               width: 10,
             ),
-            widget.role == "user"
+            widget.role == User.user
                 ? InkWell(
                     onTap: () {},
                     child: Icon(Icons.tag),

@@ -1,4 +1,5 @@
 import 'package:app_user/model/user.dart';
+import 'package:app_user/screens/list_page/company_notice.dart';
 import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -10,8 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../list_page/company_notice.dart';
 
 class CompanyNoticeDetailPage extends StatefulWidget {
   CompNotice list;
@@ -83,7 +82,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                   fontSize: 24, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          widget.role == "user"
+                          widget.role == User.user
                               ? IconButton(
                                   icon: widget.list.isBookMark
                                       ? Icon(
@@ -292,7 +291,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
             SizedBox(
               height: 30,
             ),
-            widget.role == "user"
+            widget.role == User.user
                 ? Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(

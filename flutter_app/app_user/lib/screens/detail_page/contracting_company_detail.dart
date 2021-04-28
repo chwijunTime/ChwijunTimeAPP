@@ -1,4 +1,5 @@
 import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/modify_page/contracting_company_modify.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -42,6 +43,7 @@ class _ContractingCompanyDetailPageState
   @override
   void initState() {
     super.initState();
+    widget.role = User.role;
   }
 
   @override
@@ -77,7 +79,7 @@ class _ContractingCompanyDetailPageState
                                   fontSize: 24, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          widget.role == "user"
+                          widget.role == User.user
                               ? IconButton(
                                   icon: widget.list.isFavorite
                                       ? Icon(
