@@ -9,7 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://13.209.85.107:8080/';
+    baseUrl ??= 'http://3.34.42.52:8080/';
   }
 
   final Dio _dio;
@@ -87,6 +87,26 @@ class _RetrofitHelper implements RetrofitHelper {
             baseUrl: baseUrl),
         data: _data);
     final value = ResponseNotice.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postNotice(token, noticeSaveDto) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(noticeSaveDto, 'noticeSaveDto');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
     return value;
   }
 }

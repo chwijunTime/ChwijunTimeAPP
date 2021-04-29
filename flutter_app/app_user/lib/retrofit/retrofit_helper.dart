@@ -6,7 +6,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'retrofit_helper.g.dart';
 
-@RestApi(baseUrl: "http://13.209.85.107:8080/")
+@RestApi(baseUrl: "http://3.34.42.52:8080/")
 abstract class RetrofitHelper {
   factory RetrofitHelper(Dio dio, {String baseUrl}) = _RetrofitHelper;
 
@@ -26,6 +26,11 @@ abstract class RetrofitHelper {
   //region 5. 공지사항
   @GET("/v1/notice")
   Future<ResponseNotice> getNoticeList(@Header("Authorization") String token);
+
+  @POST("/v1/notice")
+  Future<ResponseData> postNotice(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> noticeSaveDto);
 
 //endregion
 }
