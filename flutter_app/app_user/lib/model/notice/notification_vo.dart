@@ -23,11 +23,14 @@ class NotificationVO {
         this.content,
         this.date,
         this.isFavorite = false,
-        this.tag});
+        this.tag,
+      this.memberVO,
+      this.index});
+
 
   @override
   String toString() {
-    return 'NotificationVO{title: $title, content: $content, date: $date, isFavorite: $isFavorite, tag: $tag}';
+    return 'NotificationVO{title: $title, content: $content, date: $date, memberVO: $memberVO, index: $index, isFavorite: $isFavorite, tag: $tag}';
   }
 
   factory NotificationVO.fromJson(Map<String, dynamic> json) => _$NotificationVOFromJson(json);

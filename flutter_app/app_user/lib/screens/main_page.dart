@@ -61,10 +61,12 @@ class _MainPageState extends State<MainPage> {
       drawer: buildDrawer(context),
       body: Container(
         color: Colors.white,
-        child: ListView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(26, 18, 26, 18),
+              padding: const EdgeInsets.only(top: 18, right: 26, left: 26 ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -112,28 +114,33 @@ class _MainPageState extends State<MainPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
             ),
-            FutureBuilder(
-              future: _getNotice(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  var result = snapshot.data as List<NotificationVO>;
-                  notiList = result;
-                  return ListView.builder(
-                    itemCount: notiList.length,
-                    itemBuilder: (context, index) {
-                      return buildItemNotification(context, index);
-                    },
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                  );
+            Expanded(
+              child: FutureBuilder(
+                future: _getNotice(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    var result = snapshot.data as List<NotificationVO>;
+                    notiList = result;
+                    for (int i=0; i< notiList.length; i++) {
+                      notiList[i].isFavorite = false;
+                      notiList[i].tag = ["욍", "이건","태그"];
+                    }
+                    return ListView.builder(
+                      itemCount: notiList.length,
+                      itemBuilder: (context, index) {
+                        return buildItemNotification(context, index);
+                      },
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                    );
+                  }
+                  else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
                 }
-                else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }
+              ),
             )
           ],
         ),
@@ -145,10 +152,9 @@ class _MainPageState extends State<MainPage> {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
     var res = await helper.getNoticeList(token);
-    print("호잇");
     print("res.msg: ${res.list}");
     if (res.success) {
-      return res.list;
+      return res.list.reversed.toList();
     } else {
       return null;
     }
@@ -217,14 +223,13 @@ class _MainPageState extends State<MainPage> {
               SizedBox(
                 height: 22,
                 child: Row(
-                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Row(
-                      children: List.generate(1, (index) {
-                        return buildItemTag(index);
+                      children: List.generate(2, (indextag) {
+                        return buildItemTag(indextag);
                       }),
                     ),
-                    Container(
+                    notiList[index].tag.length-2 !=0 ? Container(
                       padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                       margin: EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
@@ -234,23 +239,21 @@ class _MainPageState extends State<MainPage> {
                           )),
                       child: Center(
                         child: Text(
-                          // "외 ${notiList[index].tag.length - 1}개",
-                          "어쩔",
+                          "외 ${notiList[index].tag.length - 2}개",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
                       ),
-                    ),
+                    ): SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
                           "등록일: ${notiList[index].date}",
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
-                          ),
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                     )
@@ -275,8 +278,7 @@ class _MainPageState extends State<MainPage> {
           )),
       child: Center(
         child: Text(
-          // "#${notiList[index].tag[index] == null ? "없음" : notiList[index].tag[index].isEmpty}",
-          "어쩌라고",
+          "#${notiList[index].tag[index] == null ? "없음" : notiList[index].tag[index].isEmpty}",
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -9,8 +10,10 @@ import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
   String role;
@@ -27,10 +30,12 @@ class _NotificationPageState extends State<NotificationPage> {
   String _searchText = "";
   bool _IsSearching;
 
+  RetrofitHelper helper;
+
   @override
   void initState() {
     super.initState();
-    _listSetting();
+    initRetrofit();
     widget.role = User.role;
     _IsSearching = false;
 
@@ -56,17 +61,15 @@ class _NotificationPageState extends State<NotificationPage> {
     });
   }
 
-  void _listSetting() {
-    for (int i = 1; i <= 8; i++) {
-
-      noticeList.add(NotificationVO(
-          isFavorite: false,
-          title: i%2 == 0 ? "${i}.title": "${i}.abct",
-          content:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          date: "2021.03.19",
-          tag: List.generate(8, (index) => "${index}태그")));
-    }
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -114,13 +117,20 @@ class _NotificationPageState extends State<NotificationPage> {
                 children: [
                   makeGradientBtn(
                       msg: "공지사항 등록",
-                      onPressed: () {
+                      onPressed: () async {
                         print("등록하자");
-                        Navigator.push(
+                        final res = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     NotificationWrite()));
+                        if (res != null) {
+                            if (res) {
+                              setState(() {
+                                _getNotice();
+                              });
+                            }
+                        }
                       },
                       mode: 1,
                       icon: Icon(
@@ -144,18 +154,47 @@ class _NotificationPageState extends State<NotificationPage> {
               child: Align(
                 child: _IsSearching
                     ? buildSearchList()
-                    : ListView.builder(
-                        itemCount: noticeList.length,
-                        itemBuilder: (context, index) {
-                          return buildItemNotification(
-                              context, index, noticeList);
-                        }),
+                    : FutureBuilder(
+                  future: _getNotice(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          var result = snapshot.data as List<NotificationVO>;
+                          noticeList = result;
+                          for (int i=0; i< noticeList.length; i++) {
+                            noticeList[i].isFavorite = false;
+                            noticeList[i].tag = ["욍", "이건","태그"];
+                          }
+                          return ListView.builder(
+                              itemCount: noticeList.length,
+                              itemBuilder: (context, index) {
+                                return buildItemNotification(
+                                    context, index, noticeList);
+                              });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }
+                    ),
               ),
             )
           ],
         ),
       ),
     );
+  }
+
+  Future<List<NotificationVO>> _getNotice() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    var res = await helper.getNoticeList(token);
+    print("res.msg: ${res.list}");
+    if (res.success) {
+      return res.list.reversed.toList();
+    } else {
+      return null;
+    }
   }
 
   Widget buildSearchList() {
@@ -183,6 +222,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Widget buildItemNotification(
       BuildContext context, int index, List<NotificationVO> list) {
+    DateTime dt = DateTime.parse(list[index].date);
+    String strDate = "${dt.year}년 ${dt.month}월 ${dt.day}일";
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -275,7 +316,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "등록일: ${list[index].date}",
+                          "등록일: ${strDate}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,

@@ -13,11 +13,11 @@ NotificationVO _$NotificationVOFromJson(Map<String, dynamic> json) {
     date: json['createDated'] as String,
     isFavorite: json['isFavorite'] as bool,
     tag: (json['tag'] as List)?.map((e) => e as String)?.toList(),
-  )
-    ..memberVO = json['member'] == null
+    memberVO: json['member'] == null
         ? null
-        : MemberVO.fromJson(json['member'] as Map<String, dynamic>)
-    ..index = json['noticeIdx'] as int;
+        : MemberVO.fromJson(json['member'] as Map<String, dynamic>),
+    index: json['noticeIdx'] as int,
+  );
 }
 
 Map<String, dynamic> _$NotificationVOToJson(NotificationVO instance) =>
