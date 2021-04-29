@@ -223,9 +223,18 @@ class _NotificationDialog extends State<NotificationDialog> {
                 Navigator.pop(context, "no");
               },
               btnName2: "삭제하기",
-              btnCall2: () {
+              btnCall2: () async {
                 print("삭제할 Comp: ${widget.list}");
-                Navigator.pop(context, "yes");
+                final pref = await SharedPreferences.getInstance();
+                var token = pref.getString("accessToken");
+                final res = await helper.deleteNotice(token: token, index: widget.index);
+                if (res.success) {
+                  Navigator.pop(context, "yes");
+                } else {
+                  snackBar("서버 오류", context);
+                  print("error: ${res.msg}");
+                }
+
               },
             ),
         barrierDismissible: false);

@@ -35,14 +35,17 @@ abstract class RetrofitHelper {
       @Body() Map<String, dynamic> noticeSaveDto);
 
   @GET("/v1/notice/{noticeidx}")
-  Future<ResponseNotice> getNotice(
-      @Header("Authorization") String token, @Path("noticeidx") int index);
+  Future<ResponseNotice> getNotice(@Header("Authorization") String token,
+      @Path("noticeidx") int index);
 
   @PUT("/v1/notice/{noticeidx}")
-  Future<ResponseData> putNotice(
-      {@Header("Authorization") String token,
-      @Path("noticeidx") int index,
-      @Body() Map<String, dynamic> noticeSaveDto});
+  Future<ResponseData> putNotice({@Header("Authorization") String token,
+    @Path("noticeidx") int index,
+    @Body() Map<String, dynamic> noticeSaveDto});
+
+  @DELETE("/v1/notice/{noticeidx}")
+  Future<ResponseData> deleteNotice({@Header("Authorization") String token,
+    @Path("noticeidx") int index});
 
 //endregion
 }
