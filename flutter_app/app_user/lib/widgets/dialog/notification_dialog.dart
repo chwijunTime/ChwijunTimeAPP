@@ -1,29 +1,49 @@
 import 'package:app_user/model/notice/notification_vo.dart';
+import 'package:app_user/model/notice/response_notice.dart';
+import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/modify_page/notification_modify.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationDialog extends StatefulWidget {
-  NotificationVO list;
   final Size size;
   String role;
-  Icon icon;
+  int index;
+  NotificationVO list;
 
-  NotificationDialog({
-    @required this.size,
-    @required this.role,
-    @required this.list,
-    this.icon,
-  });
+  NotificationDialog({this.size, this.role, this.index});
 
   @override
   _NotificationDialog createState() => _NotificationDialog();
 }
 
 class _NotificationDialog extends State<NotificationDialog> {
+  RetrofitHelper helper;
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -36,6 +56,22 @@ class _NotificationDialog extends State<NotificationDialog> {
     );
   }
 
+  Future<ResponseNotice> _getNotice() async {
+    final pref = await SharedPreferences.getInstance();
+    String token = pref.getString("accessToken");
+    print("index: ${widget.index}");
+    print("token: ${token}");
+    final res = await helper.getNotice(token, widget.index);
+    print(res.toJson());
+    if (res.success) {
+      return res;
+    } else {
+      Navigator.pop(context);
+      snackBar("서버 에러", context);
+      print("error: ${res.msg}");
+    }
+  }
+
   _onHeartPressed() {
     setState(() {
       widget.list.isFavorite = !widget.list.isFavorite;
@@ -45,8 +81,9 @@ class _NotificationDialog extends State<NotificationDialog> {
   dialogContent(BuildContext context) {
     return Container(
       width: widget.size.width,
-      height:
-          widget.role == "user" ? widget.size.height : widget.size.height + 20,
+      height: widget.role == User.user
+          ? widget.size.height
+          : widget.size.height + 20,
       padding: EdgeInsets.only(
           top: Consts.padding,
           bottom: Consts.padding,
@@ -65,94 +102,112 @@ class _NotificationDialog extends State<NotificationDialog> {
               offset: const Offset(0.0, 0.0),
             )
           ]),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  widget.list.title,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              widget.role == "user"
-                  ? IconButton(
-                      icon: widget.list.isFavorite
-                          ? Icon(
-                              Icons.favorite,
-                              size: 28,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              Icons.favorite_border_outlined,
-                              size: 28,
-                            ),
-                      onPressed: () => _onHeartPressed(),
-                    )
-                  : IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        size: 28,
+      child: FutureBuilder(
+          future: _getNotice(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              var result = snapshot.data as ResponseNotice;
+              widget.list = result.data;
+              widget.list.tag = ["욍", "이건", "태그"];
+              print("widget: ${widget.list}");
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.list.title,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        _onDeleteNoti();
-                      }),
-            ],
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                AutoSizeText(
-                  widget.list.content,
-                  minFontSize: 16,
-                  style: TextStyle(
-                    fontSize: 16,
+                      widget.role == User.user
+                          ? IconButton(
+                              icon: widget.list.isFavorite
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 28,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border_outlined,
+                                      size: 28,
+                                    ),
+                              onPressed: () => _onHeartPressed(),
+                            )
+                          : IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                size: 28,
+                              ),
+                              onPressed: () {
+                                _onDeleteNoti();
+                              }),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child:
-                  makeTagWidget(tag: widget.list.tag, size: Size(360, 50), mode: 2)),
-          SizedBox(height: 20,),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: makeGradientBtn(
-                msg: "공지 사항 수정하기",
-                onPressed: () {
-                  _moveModify();
-                },
-                mode: 2,
-                icon: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                )),
-          )
-        ],
-      ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        AutoSizeText(
+                          widget.list.content,
+                          minFontSize: 16,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                      alignment: Alignment.bottomCenter,
+                      child: makeTagWidget(
+                          tag: widget.list.tag, size: Size(360, 50), mode: 2)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: makeGradientBtn(
+                        msg: "공지 사항 수정하기",
+                        onPressed: () {
+                          _moveModify();
+                        },
+                        mode: 2,
+                        icon: Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        )),
+                  )
+                ],
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 
   _moveModify() async {
-    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationModify(list: widget.list)));
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => NotificationModify(list: widget.list)));
 
-    if (result != false && result != null) {
-      print("list: ${widget.list}");
+    if (result != null && result == true) {
       setState(() {
-        widget.list = result;
+        _getNotice();
       });
     }
   }
@@ -161,15 +216,18 @@ class _NotificationDialog extends State<NotificationDialog> {
     final result = await showDialog(
         context: context,
         builder: (BuildContext context) => StdDialog(
-          msg: "해당 공지사항을 삭제하시겠습니까?",
-          size: Size(326, 124),
-          btnName1: "아니요",
-          btnCall1: () {Navigator.pop(context, "no");},
-          btnName2: "삭제하기",
-          btnCall2: () {
-            print("삭제할 Comp: ${widget.list}");
-            Navigator.pop(context, "yes");
-          },),
+              msg: "해당 공지사항을 삭제하시겠습니까?",
+              size: Size(326, 124),
+              btnName1: "아니요",
+              btnCall1: () {
+                Navigator.pop(context, "no");
+              },
+              btnName2: "삭제하기",
+              btnCall2: () {
+                print("삭제할 Comp: ${widget.list}");
+                Navigator.pop(context, "yes");
+              },
+            ),
         barrierDismissible: false);
 
     if (result == "yes") {

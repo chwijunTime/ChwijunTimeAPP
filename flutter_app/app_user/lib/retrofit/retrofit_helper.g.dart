@@ -73,7 +73,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseNotice> getNoticeList(token) async {
+  Future<ResponseNoticeList> getNoticeList(token) async {
     ArgumentError.checkNotNull(token, 'token');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -86,7 +86,7 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseNotice.fromJson(_result.data);
+    final value = ResponseNoticeList.fromJson(_result.data);
     return value;
   }
 
@@ -102,6 +102,46 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseNotice> getNotice(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/notice/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseNotice.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putNotice({token, index, noticeSaveDto}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/notice/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
             headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),

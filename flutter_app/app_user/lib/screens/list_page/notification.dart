@@ -223,19 +223,24 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget buildItemNotification(
       BuildContext context, int index, List<NotificationVO> list) {
     DateTime dt = DateTime.parse(list[index].date);
-    String strDate = "${dt.year}년 ${dt.month}월 ${dt.day}일";
+    String strDate = "${dt.year}.${dt.month}.${dt.day}";
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
-        onTap: () {
-          showDialog(
+        onTap: () async {
+          await showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
-                list: list[index],
+                index: noticeList[index].index,
                 size: Size(346, 502),
+                role: widget.role,
               ));
+
+          setState(() {
+            _getNotice();
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),

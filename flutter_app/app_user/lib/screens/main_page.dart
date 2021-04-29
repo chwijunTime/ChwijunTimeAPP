@@ -161,19 +161,21 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildItemNotification(BuildContext context, int index) {
+    DateTime dt = DateTime.parse(notiList[index].date);
+    String strDate = "${dt.year}.${dt.month}.${dt.day}";
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
-        onTap: () {
-          showDialog(
+        onTap: () async {
+          await showDialog(
               context: context,
-              builder: (BuildContext context) => NotificationDialog(
-                    list: notiList[index],
-                    size: Size(346, 502),
-                role: widget.role,
-                  ));
+              builder: (BuildContext context) => NotificationDialog(index: notiList[index].index, size: Size(346, 502), role: widget.role));
+
+          setState(() {
+            _getNotice();
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -249,7 +251,7 @@ class _MainPageState extends State<MainPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "등록일: ${notiList[index].date}",
+                          "등록일: ${strDate}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
