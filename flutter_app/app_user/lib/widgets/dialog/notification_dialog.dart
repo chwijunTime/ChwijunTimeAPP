@@ -227,12 +227,19 @@ class _NotificationDialog extends State<NotificationDialog> {
                 print("삭제할 Comp: ${widget.list}");
                 final pref = await SharedPreferences.getInstance();
                 var token = pref.getString("accessToken");
-                final res = await helper.deleteNotice(token: token, index: widget.index);
-                if (res.success) {
-                  Navigator.pop(context, "yes");
-                } else {
-                  snackBar("서버 오류", context);
-                  print("error: ${res.msg}");
+                try {
+                  final res = await helper.deleteNotice(
+                      token: token, index: widget.index);
+                  if (res.success) {
+                    Navigator.pop(context, "yes");
+                  } else {
+                    Navigator.pop(context, "no");
+                    snackBar("서버 오류", context);
+                    print("error: ${res.msg}");
+                  }
+                } catch (e) {
+                  print("error: ${e}");
+                  Navigator.pop(context,"yes");
                 }
 
               },

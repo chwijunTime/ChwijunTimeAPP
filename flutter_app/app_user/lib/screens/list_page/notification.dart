@@ -26,6 +26,7 @@ class _NotificationPageState extends State<NotificationPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
   List<NotificationVO> noticeList = [];
+  List<bool> deleteNoti = [];
   final titleC = TextEditingController();
   String _searchText = "";
   bool _IsSearching;
@@ -57,7 +58,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   _onHeartPressed(int index) {
     setState(() {
-      noticeList[index].isFavorite = !noticeList[index].isFavorite;
+      deleteNoti[index] = !deleteNoti[index];
     });
   }
 
@@ -107,76 +108,77 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             widget.role == User.user
                 ? Padding(
-                padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("공지사항 제목", titleC, autoFocus: false))
+                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                    child: buildTextField("공지사항 제목", titleC, autoFocus: false))
                 : Padding(
-              padding: const EdgeInsets.only(
-                  right: 26, left: 26, bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  makeGradientBtn(
-                      msg: "공지사항 등록",
-                      onPressed: () async {
-                        print("등록하자");
-                        final res = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    NotificationWrite()));
-                        if (res != null) {
-                            if (res) {
-                              setState(() {
-                                _getNotice();
-                              });
-                            }
-                        }
-                      },
-                      mode: 1,
-                      icon: Icon(
-                        Icons.note_add,
-                        color: Colors.white,
-                      )),
-                  makeGradientBtn(
-                      msg: "선택된 공지 삭제",
-                      onPressed: () {
-                        _onDeleteNoti();
-                      },
-                      mode: 1,
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ))
-                ],
-              ),
-            ),
+                    padding:
+                        const EdgeInsets.only(right: 26, left: 26, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        makeGradientBtn(
+                            msg: "공지사항 등록",
+                            onPressed: () async {
+                              print("등록하자");
+                              final res = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          NotificationWrite()));
+                              if (res != null) {
+                                if (res) {
+                                  setState(() {
+                                    _getNotice();
+                                  });
+                                }
+                              }
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.note_add,
+                              color: Colors.white,
+                            )),
+                        makeGradientBtn(
+                            msg: "선택된 공지 삭제",
+                            onPressed: () {
+                              _onDeleteNoti();
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ))
+                      ],
+                    ),
+                  ),
             Expanded(
               child: Align(
                 child: _IsSearching
                     ? buildSearchList()
                     : FutureBuilder(
-                  future: _getNotice(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          var result = snapshot.data as List<NotificationVO>;
-                          noticeList = result;
-                          for (int i=0; i< noticeList.length; i++) {
-                            noticeList[i].isFavorite = false;
-                            noticeList[i].tag = ["욍", "이건","태그"];
+                        future: _getNotice(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            var result = snapshot.data as List<NotificationVO>;
+                            noticeList = result;
+                            for (int i = 0; i < noticeList.length; i++) {
+                              noticeList[i].isFavorite = false;
+                              noticeList[i].tag = ["욍", "이건", "태그"];
+                              deleteNoti.add(noticeList[i].isFavorite);
+                            }
+                            return ListView.builder(
+                                itemCount: noticeList.length,
+                                itemBuilder: (context, index) {
+                                  return buildItemNotification(
+                                      context, index, noticeList);
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          return ListView.builder(
-                              itemCount: noticeList.length,
-                              itemBuilder: (context, index) {
-                                return buildItemNotification(
-                                    context, index, noticeList);
-                              });
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }
-                    ),
+                        }),
               ),
             )
           ],
@@ -188,8 +190,9 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
+    print(token);
     var res = await helper.getNoticeList(token);
-    print("res.msg: ${res.list}");
+    print("res.success: ${res.success}");
     if (res.success) {
       return res.list.reversed.toList();
     } else {
@@ -233,10 +236,10 @@ class _NotificationPageState extends State<NotificationPage> {
           await showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
-                index: noticeList[index].index,
-                size: Size(346, 502),
-                role: widget.role,
-              ));
+                    index: noticeList[index].index,
+                    size: Size(346, 502),
+                    role: widget.role,
+                  ));
 
           setState(() {
             _getNotice();
@@ -256,31 +259,32 @@ class _NotificationPageState extends State<NotificationPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == User.user ?
-                  IconButton(
-                    icon: list[index].isFavorite
-                        ? Icon(
-                            Icons.favorite,
-                            size: 28,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.favorite_border_outlined,
-                            size: 28,
-                          ),
-                    onPressed: () => _onHeartPressed(index),
-                  ): IconButton(
-                      icon: list[index].isFavorite
-                          ? Icon(
-                        Icons.check_box_outlined,
-                        size: 28,
-                        color: Colors.red,
-                      )
-                          : Icon(
-                        Icons.check_box_outline_blank,
-                        size: 28,
-                      ),
-                      onPressed: () => _onHeartPressed(index)),
+                  widget.role == User.user
+                      ? IconButton(
+                          icon: deleteNoti[index]
+                              ? Icon(
+                                  Icons.favorite,
+                                  size: 28,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border_outlined,
+                                  size: 28,
+                                ),
+                          onPressed: () => _onHeartPressed(index),
+                        )
+                      : IconButton(
+                          icon: deleteNoti[index]
+                              ? Icon(
+                                  Icons.check_box_outlined,
+                                  size: 28,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.check_box_outline_blank,
+                                  size: 28,
+                                ),
+                          onPressed: () => _onHeartPressed(index)),
                 ],
               ),
               Padding(
@@ -301,22 +305,24 @@ class _NotificationPageState extends State<NotificationPage> {
                         return buildItemTag(list[index].tag, indextag);
                       }),
                     ),
-                    list[index].tag.length-2 !=0 ? Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${list[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ): SizedBox(),
+                    list[index].tag.length - 2 != 0
+                        ? Container(
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${list[index].tag.length - 2}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
@@ -339,31 +345,56 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  _onDeleteNoti() {
-    List<NotificationVO> deleteNoti = [];
+  _onDeleteNoti() async {
+    List<int> arr = [];
     for (int i = 0; i < noticeList.length; i++) {
-      if (noticeList[i].isFavorite) {
-        deleteNoti.add(noticeList[i]);
+      if (deleteNoti[i]) {
+        arr.add(noticeList[i].index);
       }
     }
 
-    if(deleteNoti.isEmpty) {
+    if (deleteNoti.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
-      showDialog(
+      var res = await showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된 공지사항을 삭제하시겠습니까?",
-            size: Size(326, 124),
-            btnName1: "아니요",
-            btnCall1: () {Navigator.pop(context);},
-            btnName2: "삭제하기",
-            btnCall2: () {
-              print("삭제할 업체들================================");
-              print(deleteNoti.toString());
-              Navigator.pop(context);
-            },),
+                msg: "선택된 공지사항을 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context, false);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () async {
+                  print("삭제할 업체들================================");
+                  final pref = await SharedPreferences.getInstance();
+                  var token = pref.getString("accessToken");
+                  try {
+                    for (int i = 0; i < arr.length; i++) {
+                      final res = await helper.deleteNotice(
+                          token: token, index: arr[i]);
+                      if (res.success) {
+                        print("삭제함: ${res.msg}");
+                      } else {
+                        print("errorr: ${res.msg}");
+                      }
+                    }
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    print("err: ${e}");
+                    Navigator.pop(context, false);
+                    snackBar("이미 삭제된 공지입니다.", context);
+                  }
+                },
+              ),
           barrierDismissible: false);
+      if (res != null && res) {
+        setState(() {
+          _getNotice();
+          deleteNoti.clear();
+        });
+      }
     }
   }
 }
