@@ -1,4 +1,5 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/company_notice_detail.dart';
@@ -221,13 +222,17 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   Future<List<CompNoticeVO>> _getCompany() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    print(token);
-    var res = await helper.getCompList(token);
-    print("res.success: ${res.success}");
-    if (res.success) {
-      return res.list.reversed.toList();
-    } else {
-      return null;
+    print("token: ${token}");
+    try {
+      var res = await helper.getCompList(token);
+      print("res.success: ${res.success}");
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
     }
   }
 

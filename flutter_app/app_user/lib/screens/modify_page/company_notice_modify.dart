@@ -221,14 +221,10 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
     } else {
       CompNoticeVO vo = CompNoticeVO(
           title: widget.list.title,
-          startDate: widget.list.startDate,
-          deadLine: widget.list.deadLine,
           field: fieldC.text,
           address: widget.list.address,
           info: infoC.text,
           preferential: preferentialInfoC.text,
-          isBookMark: false,
-          tag: widget.list.tag,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 
       final pref = await SharedPreferences.getInstance();

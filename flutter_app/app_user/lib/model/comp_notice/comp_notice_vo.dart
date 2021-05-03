@@ -20,6 +20,8 @@ class CompNoticeVO{
   String title;
   @JsonKey(name: "employmentAnnouncementTags")
   List<String> tag;
+  @JsonKey(name: "tagName")
+  List<String> postTag;
   @JsonKey(name: "preferentialConditions")
   String preferential;
   @JsonKey(name: "recruitmentField")
@@ -39,7 +41,8 @@ class CompNoticeVO{
       this.tag,
       this.preferential,
       this.field,
-      this.isBookMark});
+      this.isBookMark,
+      this.postTag});
 
   factory CompNoticeVO.fromJson(Map<String, dynamic> json) => _$CompNoticeVOFromJson(json);
 

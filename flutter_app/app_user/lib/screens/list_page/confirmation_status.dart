@@ -1,5 +1,7 @@
+import 'package:app_user/model/confirmation/confirmation_vo.dart';
 import 'package:app_user/model/confirmation_status_vo.dart';
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/confirmation_status_detail.dart';
 import 'package:app_user/screens/write_page/confirmation_status_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -7,7 +9,9 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../search_page.dart';
@@ -24,6 +28,7 @@ enum Year { y2018, y2019, y2020, y2021 }
 
 class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
+  RetrofitHelper helper;
 
   PanelController panelController = PanelController();
   Select _select = Select.YEAR;
@@ -33,8 +38,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   List<String> _list;
   List<String> tagList = [];
 
-  final List<ConfirmationStatusVO> confList = [];
+  List<ConfirmationVO> confList = [];
   final List<bool> checkList = [];
+  List<bool> deleteConf = [];
 
   _onCheckPressed(int index) {
     setState(() {
@@ -43,26 +49,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   }
 
   initList() {
-    for (int i = 0; i < 12; i++) {
-      if (i % 2 == 0) {
-        confList.add(ConfirmationStatusVO(
-            title: "${i}.title",
-            grade: i % 3 + 1,
-            area: "광주광역시",
-            address: "광주광역시 광산구 광주소프트웨어마이스터고등학교"));
-      } else {
-        confList.add(ConfirmationStatusVO(
-            title: "${i}.title",
-            grade: i % 3 + 1,
-            area: "광주광역시",
-            address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
-            etc:
-                "이것은 비고란 입니당앙ㄴ리;망러;밍나러;ㅣㅁㅇ나 아야아ㅇ아야아야아야어여오ㅇ요오유으이ㅣ아링ㄹ가나다라마바사아자차카타ㅠㅏ사",
-            siteUrl: "https://www.naver.com/"));
-      }
-      checkList.add(false);
-    }
-
     _list = [];
     _list.add("Google");
     _list.add("IOS");
@@ -85,6 +71,18 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     setState(() {
       widget.role = User.role;
     });
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -174,30 +172,107 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       ),
                     ),
               Expanded(
-                child: ListView.separated(
-                  itemCount: confList.length,
-                  itemBuilder: (context, index) {
-                    return buildState(context, index);
-                  },
-                  separatorBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      child: Container(
-                        height: 1,
-                        color: Colors.grey,
-                      ),
+                child: FutureBuilder(
+                  future: _getComfirmation(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    confList = snapshot.data;
+                    return ListView.separated(
+                      itemCount: confList.length,
+                      itemBuilder: (context, index) {
+                        return buildState(context, index);
+                      },
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            height: 1,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
                     );
-                  },
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                ),
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<List<ConfirmationVO>> _getComfirmation() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print(token);
+    var res = await helper.getConfList(token);
+    print("res.success: ${res.success}");
+    if (res.success) {
+      return res.list.reversed.toList();
+    } else {
+      return null;
+    }
+  }
+
+  _onDeleteConfirmation() async {
+    List<int> arr = [];
+    for (int i = 0; i < confList.length; i++) {
+      if (deleteConf[i]) {
+        arr.add(confList[i].index);
+      }
+    }
+
+    if (deleteConf.isEmpty) {
+      snackBar("삭제할 업체를 선택해주세요.", context);
+    } else {
+      var res = await showDialog(
+          context: context,
+          builder: (BuildContext context) => StdDialog(
+            msg: "선택된 공지사항을 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {
+              Navigator.pop(context, false);
+            },
+            btnName2: "삭제하기",
+            btnCall2: () async {
+              print("삭제할 업체들================================");
+              final pref = await SharedPreferences.getInstance();
+              var token = pref.getString("accessToken");
+              try {
+                for (int i = 0; i < arr.length; i++) {
+                  final res = await helper.deleteComp(
+                      token, arr[i]);
+                  if (res.success) {
+                    print("삭제함: ${res.msg}");
+                  } else {
+                    print("errorr: ${res.msg}");
+                  }
+                }
+                Navigator.pop(context, true);
+              } catch (e) {
+                print("err: ${e}");
+                Navigator.pop(context, false);
+                snackBar("이미 삭제된 취업현황입니다.", context);
+              }
+            },
+          ),
+          barrierDismissible: false);
+      if (res != null && res) {
+        setState(() {
+          _getComfirmation();
+          deleteConf.clear();
+        });
+      }
+    }
   }
 
   Widget buildState(BuildContext context, int index) {
@@ -210,19 +285,15 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => ConfirmationStatusDetail(
-                        list: confList[index],
+                        index: confList[index].index,
                       )));
         },
         child: Row(
           children: [
-            Text(
-              "${confList[index].title}",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
             Expanded(
               child: Text(
-                "/${confList[index].grade.toString()}학년",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                "${confList[index].title}",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
             Text(
@@ -242,7 +313,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ConfirmationStatusDetail(
-                                    list: confList[index],
+                                    index: confList[index].index,
                                   )));
                     },
                     child: Icon(Icons.arrow_forward_ios_rounded),
@@ -637,14 +708,14 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   }
 
   _onDeleteStatus() {
-    List<ConfirmationStatusVO> deleteComp = [];
+    List<int> arr = [];
     for (int i = 0; i < checkList.length; i++) {
       if (checkList[i]) {
-        deleteComp.add(confList[i]);
+        arr.add(confList[i].index);
       }
     }
 
-    if (deleteComp.isEmpty) {
+    if (deleteConf.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       showDialog(
@@ -657,10 +728,26 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   Navigator.pop(context);
                 },
                 btnName2: "삭제하기",
-                btnCall2: () {
+                btnCall2:() async {
                   print("삭제할 업체들================================");
-                  print(deleteComp.toString());
-                  Navigator.pop(context);
+                  final pref = await SharedPreferences.getInstance();
+                  var token = pref.getString("accessToken");
+                  try {
+                    for (int i = 0; i < arr.length; i++) {
+                      final res = await helper.deleteConf(
+                          token, arr[i]);
+                      if (res.success) {
+                        print("삭제함: ${res.msg}");
+                      } else {
+                        print("errorr: ${res.msg}");
+                      }
+                    }
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    print("err: ${e}");
+                    Navigator.pop(context, false);
+                    snackBar("이미 삭제된 공지입니다.", context);
+                  }
                 },
               ),
           barrierDismissible: false);

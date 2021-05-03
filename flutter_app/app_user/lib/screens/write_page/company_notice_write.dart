@@ -8,6 +8,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeWritePage extends StatefulWidget {
@@ -139,7 +140,8 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                                  deadLineDateC = "${selectedDate.year}년 ${selectedDate
                                      .month}월 ${selectedDate.day}일";
                                });
-                               deadLineDate = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                               final f = DateFormat("yyyy-MM-dd");
+                               deadLineDate = f.format(selectedDate);
                              }
                            },
                            child: Container(
@@ -313,12 +315,12 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
           info: infoC.text,
           preferential: preferentialInfoC.text,
           isBookMark: false,
-          tag: tagList,
+          postTag: tagList,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
-      print(vo);
+      print(vo.toJson());
       try {
         var res = await helper.postComp(token, vo.toJson());
         if (res.success) {
