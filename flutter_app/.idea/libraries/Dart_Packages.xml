@@ -282,6 +282,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_secure_storage">
+          <value>
+            <list>
+              <option value="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_secure_storage-4.2.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_test">
           <value>
             <list>
@@ -883,6 +890,7 @@
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.0/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/fixnum-0.10.11/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-2.0.1/lib" />
+      <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_secure_storage-4.2.0/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/geocoding-1.0.5/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/geocoding_platform_interface-1.0.1+1/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/glob-2.0.1/lib" />

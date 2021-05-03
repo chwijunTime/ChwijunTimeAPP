@@ -1,3 +1,5 @@
+import 'package:app_user/model/comp_notice/response_comp_notice.dart';
+import 'package:app_user/model/comp_notice/response_comp_notice_list.dart';
 import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
@@ -48,4 +50,38 @@ abstract class RetrofitHelper {
     @Path("noticeidx") int index});
 
 //endregion
+
+  //region 6. 취업공고
+  @GET("/v1/employment-announcement")
+  Future<ResponseCompNoticeList> getCompList(
+      @Header("Authorization") String token
+      );
+
+  @POST("/v1/employment-announcement")
+  Future<ResponseData> postComp(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> employmentAnnouncementSaveDto
+      );
+
+  @GET("/v1/employment-announcement/{employmentAnnouncementIdx}")
+  Future<ResponseNoticeComp> getComp(
+      @Header("Authorization") String token,
+      @Path("employmentAnnouncementIdx") int index
+      );
+
+  @PUT("/v1/employment-announcement/{employmentAnnouncementIdx}")
+  Future<ResponseData> putComp(
+      @Header("Authorization") String token,
+      @Path("employmentAnnouncementIdx") int index,
+      @Body() Map<String, dynamic> employmentAnnouncementSaveDto
+      );
+
+  @DELETE("/v1/employment-announcement/{employmentAnnouncementIdx}")
+  Future<ResponseData> deleteComp(
+      @Header("Authorization") String token,
+      @Path("employmentAnnouncementIdx") int index,
+      );
+  // endregion
+
+
 }

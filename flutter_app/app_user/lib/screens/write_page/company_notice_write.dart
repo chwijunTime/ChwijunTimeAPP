@@ -1,11 +1,14 @@
-import 'package:app_user/screens/list_page/company_notice.dart';
+import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeWritePage extends StatefulWidget {
   @override
@@ -26,6 +29,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   List<String> _list = [];
 
   DateTime selectedDate = DateTime.now();
+  RetrofitHelper helper;
 
   init() {
     _list.add("Google");
@@ -45,6 +49,18 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   void initState() {
     super.initState();
     init();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -278,7 +294,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
     );
   }
 
-  _onCreate() {
+  _onCreate() async {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
         noticeDate == "" ||
@@ -289,20 +305,31 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      CompNotice vo = CompNotice(
+      CompNoticeVO vo = CompNoticeVO(
           title: titleC.text,
-          startDate: noticeDate,
-          endDate: deadLineDate,
+          deadLine: deadLineDate,
           field: fieldC.text,
           address: addressC.text,
-          compInfo: infoC.text,
-          preferentialInfo: preferentialInfoC.text,
+          info: infoC.text,
+          preferential: preferentialInfoC.text,
           isBookMark: false,
           tag: tagList,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
       print(vo);
-      Navigator.pop(context);
+      try {
+        var res = await helper.postComp(token, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
+
     }
   }
 }

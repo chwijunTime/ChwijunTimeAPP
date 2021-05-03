@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   postLogin() async {
+    print("로그인");
     try{
       var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
       if (res.success) {

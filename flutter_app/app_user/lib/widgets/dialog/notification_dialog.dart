@@ -144,8 +144,11 @@ class _NotificationDialog extends State<NotificationDialog> {
                                 Icons.delete,
                                 size: 28,
                               ),
-                              onPressed: () {
-                                _onDeleteNoti();
+                              onPressed: () async {
+                                var res = await _onDeleteNoti();
+                                if (res != null && res == "yes") {
+                                  Navigator.pop(context, true);
+                                }
                               }),
                     ],
                   ),

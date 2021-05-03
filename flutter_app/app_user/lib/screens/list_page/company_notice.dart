@@ -1,4 +1,6 @@
+import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/company_notice_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/company_notice_write.dart';
@@ -9,14 +11,16 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CompanyNoticePage extends StatefulWidget {
   @override
   _CompanyNoticePageState createState() => _CompanyNoticePageState();
 
-  List<CompNotice> notiList = [];
+  List<CompNoticeVO> notiList = [];
   String role;
 }
 
@@ -33,6 +37,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   final titleC = TextEditingController();
   List<String> _list;
   List<String> tagList = [];
+  List<bool> deleteNoti = [];
+
+  RetrofitHelper helper;
 
   @override
   void initState() {
@@ -40,6 +47,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     init();
     searchState();
     widget.role = User.role;
+
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   void init() {
@@ -139,10 +159,15 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                         children: [
                           makeGradientBtn(
                               msg: "취업 공고 등록",
-                              onPressed: () {
+                              onPressed: () async {
                                 print("등록하자");
-                                Navigator.push(context,
+                                var res = await Navigator.push(context,
                                     MaterialPageRoute(builder: (context) => CompanyNoticeWritePage()));
+                                if (res != null && res) {
+                                  setState(() {
+                                    _getCompany();
+                                  });
+                                }
                               },
                               mode: 1,
                               icon: Icon(
@@ -193,54 +218,69 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     );
   }
 
-  Future<List<CompNotice>> _getCompany() async {
-      await Future.delayed(Duration(seconds: 3));
-      List<CompNotice> list = [];
-      for (int i = 0; i < 8; i++) {
-        list.add(CompNotice(
-            title: "${i}.title",
-            startDate: "2021.03.31",
-            endDate: "2021.04.01",
-            field: "모바일 앱, 웹",
-            address: "광주광역시 광산구 목련로 273번길 76",
-            compInfo:
-            "printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-            preferentialInfo:
-            "우대 조건 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it ",
-            isBookMark: false,
-            tag: List.generate(10, (i) => "${i}.tag")));
-      }
-      return list;
+  Future<List<CompNoticeVO>> _getCompany() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print(token);
+    var res = await helper.getCompList(token);
+    print("res.success: ${res.success}");
+    if (res.success) {
+      return res.list.reversed.toList();
+    } else {
+      return null;
+    }
   }
 
-  _onDeleteCompNotice() {
-    List<CompNotice> deleteComp = [];
+  _onDeleteCompNotice() async {
+    List<int> arr = [];
     for (int i = 0; i < widget.notiList.length; i++) {
-      if (widget.notiList[i].isBookMark) {
-        deleteComp.add(widget.notiList[i]);
+      if (deleteNoti[i]) {
+        arr.add(widget.notiList[i].index);
       }
     }
 
-    if (deleteComp.isEmpty) {
-      snackBar("삭제할 공고를 선택해주세요.", context);
+    if (deleteNoti.isEmpty) {
+      snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
-      showDialog(
+      var res = await showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-                msg: "선택된 공고를 삭제하시겠습니까?",
-                size: Size(326, 124),
-                btnName1: "아니요",
-                btnCall1: () {
-                  Navigator.pop(context);
-                },
-                btnName2: "삭제하기",
-                btnCall2: () {
-                  print("삭제할 공고들================================");
-                  print(deleteComp.toString());
-                  Navigator.pop(context);
-                },
-              ),
+            msg: "선택된 공지사항을 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {
+              Navigator.pop(context, false);
+            },
+            btnName2: "삭제하기",
+            btnCall2: () async {
+              print("삭제할 업체들================================");
+              final pref = await SharedPreferences.getInstance();
+              var token = pref.getString("accessToken");
+              try {
+                for (int i = 0; i < arr.length; i++) {
+                  final res = await helper.deleteComp(
+                       token, arr[i]);
+                  if (res.success) {
+                    print("삭제함: ${res.msg}");
+                  } else {
+                    print("errorr: ${res.msg}");
+                  }
+                }
+                Navigator.pop(context, true);
+              } catch (e) {
+                print("err: ${e}");
+                Navigator.pop(context, false);
+                snackBar("이미 삭제된 공지입니다.", context);
+              }
+            },
+          ),
           barrierDismissible: false);
+      if (res != null && res) {
+        setState(() {
+          _getCompany();
+          deleteNoti.clear();
+        });
+      }
     }
   }
 
@@ -255,7 +295,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      CompanyNoticeDetailPage(list: widget.notiList[index])));
+                      CompanyNoticeDetailPage(index: widget.notiList[index].index,)));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -304,7 +344,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 child: Container(
                   height: 60,
                   child: AutoSizeText(
-                    "${widget.notiList[index].compInfo}, ",
+                    "${widget.notiList[index].info}, ",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -346,7 +386,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "마감일: ${widget.notiList[index].endDate}",
+                          "마감일: ${widget.notiList[index].deadLine}",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -672,34 +712,5 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
               ))
           .toList();
     }
-  }
-}
-
-class CompNotice {
-  String title;
-  String startDate, endDate;
-  String field;
-  String address;
-  String compInfo;
-  String preferentialInfo;
-  String etc;
-  bool isBookMark;
-  List<String> tag;
-
-  CompNotice(
-      {@required this.title,
-      @required this.startDate,
-      @required this.endDate,
-      @required this.field,
-      @required this.address,
-      @required this.compInfo,
-      @required this.preferentialInfo,
-      this.etc = "",
-      @required this.isBookMark,
-      @required this.tag});
-
-  @override
-  String toString() {
-    return 'CompNotice{title: $title, startDate: $startDate, endDate: $endDate, field: $field, address: $address, compInfo: $compInfo, preferentialInfo: $preferentialInfo, etc: $etc, isBookMark: $isBookMark, tag: $tag}';
   }
 }

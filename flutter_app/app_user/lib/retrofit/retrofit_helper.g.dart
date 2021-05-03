@@ -168,4 +168,109 @@ class _RetrofitHelper implements RetrofitHelper {
     final value = ResponseData.fromJson(_result.data);
     return value;
   }
+
+  @override
+  Future<ResponseCompNoticeList> getCompList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-announcement',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseCompNoticeList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postComp(token, employmentAnnouncementSaveDto) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(
+        employmentAnnouncementSaveDto, 'employmentAnnouncementSaveDto');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(employmentAnnouncementSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-announcement',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseNoticeComp> getComp(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-announcement/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseNoticeComp.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putComp(
+      token, index, employmentAnnouncementSaveDto) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    ArgumentError.checkNotNull(
+        employmentAnnouncementSaveDto, 'employmentAnnouncementSaveDto');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(employmentAnnouncementSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-announcement/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> deleteComp(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-announcement/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
 }

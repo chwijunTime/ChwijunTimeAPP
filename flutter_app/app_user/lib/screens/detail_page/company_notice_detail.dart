@@ -1,22 +1,28 @@
+import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/user.dart';
-import 'package:app_user/screens/list_page/company_notice.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/modify_page/company_notice_modify.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeDetailPage extends StatefulWidget {
-  CompNotice list;
+  int index;
   Positioned position;
+  CompNoticeVO list;
 
-  CompanyNoticeDetailPage({this.list});
+  CompanyNoticeDetailPage({this.index});
 
   String role;
 
@@ -27,6 +33,19 @@ class CompanyNoticeDetailPage extends StatefulWidget {
 
 class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   LatLng latLng;
+
+  RetrofitHelper helper;
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
 
   _onBookMarkPressed() {
     setState(() {
@@ -45,6 +64,23 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   void initState() {
     super.initState();
     widget.role = User.role;
+    initRetrofit();
+  }
+
+  Future<ResponseNoticeComp> _getNotice() async {
+    final pref = await SharedPreferences.getInstance();
+    String token = pref.getString("accessToken");
+    print("index: ${widget.index}");
+    print("token: ${token}");
+    final res = await helper.getComp(token, widget.index);
+    print(res.toJson());
+    if (res.success) {
+      return res;
+    } else {
+      Navigator.pop(context);
+      snackBar("서버 에러", context);
+      print("error: ${res.msg}");
+    }
   }
 
   @override
@@ -53,294 +89,316 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
       appBar: buildAppBar("취준타임", context),
       body: Container(
         color: Colors.white,
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: [
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 15, left: 20, right: 20, bottom: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.list.title,
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          widget.role == User.user
-                              ? IconButton(
-                                  icon: widget.list.isBookMark
-                                      ? Icon(
-                                          Icons.bookmark,
-                                          size: 28,
-                                          color: Color(0xff4687FF),
-                                        )
-                                      : Icon(
-                                          Icons.bookmark_border,
-                                          size: 28,
-                                        ),
-                                  onPressed: () => _onBookMarkPressed(),
-                                )
-                              : IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: _onDeleteCompNotice),
-                        ],
+        child: FutureBuilder(
+            future: _getNotice(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                widget.list = snapshot.data;
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: [
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18)),
+                      margin: EdgeInsets.only(
+                        left: 25,
+                        right: 25,
+                        top: 25,
                       ),
-                      Text(
-                        "채용분야: ${widget.list.field}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        "공고일: ${widget.list.startDate}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        "마감일: ${widget.list.endDate}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "주소",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        widget.list.address,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 13,
-                      ),
-                      SizedBox(
-                          width: 330,
-                          height: 200,
-                          child: FutureBuilder(
-                              future: getCordinate(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData == false) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else {
-                                  return GoogleMap(
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(
-                                          latLng.latitude, latLng.longitude),
-                                      zoom: 17,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 15, left: 20, right: 20, bottom: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.list.title,
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600),
                                     ),
-                                    markers: _createMarker(),
-                                  );
-                                }
-                              }))
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "회사 설명",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      AutoSizeText(
-                        widget.list.compInfo,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        minFontSize: 18,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "우대 조건",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      AutoSizeText(
-                        widget.list.preferentialInfo,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        minFontSize: 18,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            widget.list.etc != ""
-                ? Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18)),
-                    margin: EdgeInsets.all(25),
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "기타",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            AutoSizeText(
-                              widget.list.etc,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                  ),
+                                  widget.role == User.user
+                                      ? IconButton(
+                                          icon: widget.list.isBookMark
+                                              ? Icon(
+                                                  Icons.bookmark,
+                                                  size: 28,
+                                                  color: Color(0xff4687FF),
+                                                )
+                                              : Icon(
+                                                  Icons.bookmark_border,
+                                                  size: 28,
+                                                ),
+                                          onPressed: () => _onBookMarkPressed(),
+                                        )
+                                      : IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () async {
+                                            var res = await _onDeleteCompNotice();
+                                            if (res != null && res == "yes") {
+                                              Navigator.pop(context, true);
+                                            }
+                                          }),
+                                ],
                               ),
-                              minFontSize: 18,
-                            )
-                          ],
+                              Text(
+                                "채용분야: ${widget.list.field}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              Text(
+                                "공고일: ${widget.list.startDate}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              Text(
+                                "마감일: ${widget.list.deadLine}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  )
-                : SizedBox(
-                    height: 25,
-                  ),
-            Align(
-              alignment: Alignment.center,
-              child: makeTagWidget(
-                  tag: widget.list.tag, size: Size(360, 25), mode: 1),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            widget.role == User.user
-                ? Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 30, bottom: 25),
-                      child: makeGradientBtn(
-                          msg: "해당 기업에 지원 신청",
-                          onPressed: () => print("신청"),
-                          mode: 2),
-                    ),
-                  )
-                : Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 25, right: 15, left: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          makeGradientBtn(
-                              msg: "신청한 학생 보기",
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CompanyNoticeApply(
-                                                list: widget.list)));
-                              },
-                              mode: 1,
-                              icon: Icon(
-                                Icons.search,
-                                color: Colors.white,
-                              )),
-                          makeGradientBtn(
-                              msg: "취업 공고 수정하기",
-                              onPressed: () {
-                                _onModifyCompNotice();
-                              },
-                              mode: 1,
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ))
-                        ],
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18)),
+                      margin: EdgeInsets.only(
+                        left: 25,
+                        right: 25,
+                        top: 25,
+                      ),
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "주소",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                widget.list.address,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 13,
+                              ),
+                              SizedBox(
+                                  width: 330,
+                                  height: 200,
+                                  child: FutureBuilder(
+                                      future: getCordinate(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData == false) {
+                                          return Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else {
+                                          return GoogleMap(
+                                            initialCameraPosition:
+                                                CameraPosition(
+                                              target: LatLng(latLng.latitude,
+                                                  latLng.longitude),
+                                              zoom: 17,
+                                            ),
+                                            markers: _createMarker(),
+                                          );
+                                        }
+                                      }))
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  )
-          ],
-        ),
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18)),
+                      margin: EdgeInsets.only(
+                        left: 25,
+                        right: 25,
+                        top: 25,
+                      ),
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "회사 설명",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              AutoSizeText(
+                                widget.list.info,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                minFontSize: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18)),
+                      margin: EdgeInsets.only(
+                        left: 25,
+                        right: 25,
+                        top: 25,
+                      ),
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "우대 조건",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              AutoSizeText(
+                                widget.list.preferential,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                minFontSize: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    widget.list.etc != ""
+                        ? Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            margin: EdgeInsets.all(25),
+                            child: Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "기타",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    AutoSizeText(
+                                      widget.list.etc,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      minFontSize: 18,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            height: 25,
+                          ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: makeTagWidget(
+                          tag: widget.list.tag, size: Size(360, 25), mode: 1),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    widget.role == User.user
+                        ? Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 30, bottom: 25),
+                              child: makeGradientBtn(
+                                  msg: "해당 기업에 지원 신청",
+                                  onPressed: () => print("신청"),
+                                  mode: 2),
+                            ),
+                          )
+                        : Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 25, right: 15, left: 15),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  makeGradientBtn(
+                                      msg: "신청한 학생 보기",
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CompanyNoticeApply(
+                                                        list: widget.list)));
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.search,
+                                        color: Colors.white,
+                                      )),
+                                  makeGradientBtn(
+                                      msg: "취업 공고 수정하기",
+                                      onPressed: () {
+                                        _onModifyCompNotice();
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_forward,
+                                        color: Colors.white,
+                                      ))
+                                ],
+                              ),
+                            ),
+                          )
+                  ],
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
       ),
     );
   }
@@ -349,18 +407,32 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     final result = await showDialog(
         context: context,
         builder: (BuildContext context) => StdDialog(
-              msg: "해당 취업 공고를 삭제하시겠습니까?",
-              size: Size(326, 124),
-              btnName1: "아니요",
-              btnCall1: () {
-                Navigator.pop(context, "no");
-              },
-              btnName2: "삭제하기",
-              btnCall2: () {
-                print("삭제할 list: ${widget.list}");
+            msg: "해당 취업 공고를 삭제하시겠습니까?",
+            size: Size(326, 124),
+            btnName1: "아니요",
+            btnCall1: () {
+              Navigator.pop(context, "no");
+            },
+            btnName2: "삭제하기",
+            btnCall2: () async {
+              print("삭제할 Comp: ${widget.list}");
+              final pref = await SharedPreferences.getInstance();
+              var token = pref.getString("accessToken");
+              try {
+                final res = await helper.deleteComp(
+                    token, widget.index);
+                if (res.success) {
+                  Navigator.pop(context, "yes");
+                } else {
+                  Navigator.pop(context, "no");
+                  snackBar("서버 오류", context);
+                  print("error: ${res.msg}");
+                }
+              } catch (e) {
+                print("error: ${e}");
                 Navigator.pop(context, "yes");
-              },
-            ),
+              }
+            }),
         barrierDismissible: false);
 
     if (result == "yes") {
@@ -376,9 +448,9 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                   list: widget.list,
                 )));
 
-    if (result != null) {
+    if (result != null && result) {
       setState(() {
-        widget.list = result;
+        _getNotice();
       });
     }
   }

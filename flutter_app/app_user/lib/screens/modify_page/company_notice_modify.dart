@@ -1,14 +1,17 @@
-import 'package:app_user/screens/list_page/company_notice.dart';
+import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeModifyPage extends StatefulWidget {
-  CompNotice list;
+  CompNoticeVO list;
 
   CompanyNoticeModifyPage({@required this.list});
 
@@ -22,16 +25,29 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
   var infoC = TextEditingController();
   var preferentialInfoC = TextEditingController();
   var etcC = TextEditingController();
+  RetrofitHelper helper;
 
   @override
   void initState() {
     super.initState();
     setState(() {
       fieldC.text = widget.list.field;
-      infoC.text = widget.list.compInfo;
-      preferentialInfoC.text = widget.list.preferentialInfo;
+      infoC.text = widget.list.info;
+      preferentialInfoC.text = widget.list.preferential;
       etcC.text = widget.list.etc;
     });
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -74,7 +90,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        "마감일: ${widget.list.endDate}",
+                        "마감일: ${widget.list.deadLine}",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       )
@@ -196,27 +212,40 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
     );
   }
 
-  _onModify() {
+  _onModify() async {
     if (
         fieldC.text.isEmpty ||
         infoC.text.isEmpty ||
         preferentialInfoC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      CompNotice vo = CompNotice(
+      CompNoticeVO vo = CompNoticeVO(
           title: widget.list.title,
           startDate: widget.list.startDate,
-          endDate: widget.list.endDate,
+          deadLine: widget.list.deadLine,
           field: fieldC.text,
           address: widget.list.address,
-          compInfo: infoC.text,
-          preferentialInfo: preferentialInfoC.text,
+          info: infoC.text,
+          preferential: preferentialInfoC.text,
           isBookMark: false,
           tag: widget.list.tag,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
       print(vo);
-      Navigator.pop(context, vo);
+      try {
+        var res = await helper.putComp(token, widget.list.index, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          snackBar("서버 오류", context);
+          print("eeror: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
+
     }
   }
 }

@@ -1,16 +1,11 @@
 import 'package:app_user/model/apply_vo.dart';
-import 'package:app_user/model/user.dart';
-import 'package:app_user/screens/list_page/company_notice.dart';
+import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_dialog.dart';
-import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:app_user/widgets/dialog/tag_dialog.dart';
-import 'package:app_user/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class CompanyNoticeApply extends StatefulWidget {
-  CompNotice list;
+  CompNoticeVO list;
 
   CompanyNoticeApply({@required this.list});
 
