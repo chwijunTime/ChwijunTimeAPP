@@ -1,5 +1,4 @@
 import 'package:app_user/model/confirmation/confirmation_vo.dart';
-import 'package:app_user/model/confirmation_status_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/confirmation_status_detail.dart';
@@ -145,13 +144,16 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                         children: [
                           makeGradientBtn(
                               msg: "취업 현황 등록",
-                              onPressed: () {
+                              onPressed: () async {
                                 print("등록하자");
-                                Navigator.push(
+                                var res = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             ConfirmationStatusWrite()));
+                                if (res != null && res) {
+                                  _getComfirmation();
+                                }
                               },
                               mode: 1,
                               icon: Icon(
@@ -161,7 +163,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                           makeGradientBtn(
                               msg: "선택된 현황 삭제",
                               onPressed: () {
-                                _onDeleteStatus();
+                                _onDeleteConfirmation();
                               },
                               mode: 1,
                               icon: Icon(
@@ -173,34 +175,35 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                     ),
               Expanded(
                 child: FutureBuilder(
-                  future: _getComfirmation(),
+                    future: _getComfirmation(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    confList = snapshot.data;
-                    return ListView.separated(
-                      itemCount: confList.length,
-                      itemBuilder: (context, index) {
-                        return buildState(context, index);
-                      },
-                      separatorBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: Container(
-                            height: 1,
-                            color: Colors.grey,
-                          ),
+                      if (snapshot.hasData) {
+                        confList = snapshot.data;
+                        return ListView.separated(
+                          itemCount: confList.length,
+                          itemBuilder: (context, index) {
+                            return buildState(context, index);
+                          },
+                          separatorBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20),
+                              child: Container(
+                                height: 1,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
                         );
-                      },
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
               ),
             ],
           ),
@@ -213,12 +216,16 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
     print(token);
-    var res = await helper.getConfList(token);
-    print("res.success: ${res.success}");
-    if (res.success) {
-      return res.list.reversed.toList();
-    } else {
-      return null;
+    try {
+      var res = await helper.getConfList(token);
+      print("res.success: ${res.success}");
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -236,35 +243,33 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       var res = await showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된 공지사항을 삭제하시겠습니까?",
-            size: Size(326, 124),
-            btnName1: "아니요",
-            btnCall1: () {
-              Navigator.pop(context, false);
-            },
-            btnName2: "삭제하기",
-            btnCall2: () async {
-              print("삭제할 업체들================================");
-              final pref = await SharedPreferences.getInstance();
-              var token = pref.getString("accessToken");
-              try {
-                for (int i = 0; i < arr.length; i++) {
-                  final res = await helper.deleteComp(
-                      token, arr[i]);
-                  if (res.success) {
-                    print("삭제함: ${res.msg}");
-                  } else {
-                    print("errorr: ${res.msg}");
+                msg: "선택된 취업현황을 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context, false);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () async {
+                  final pref = await SharedPreferences.getInstance();
+                  var token = pref.getString("accessToken");
+                  try {
+                    for (int i = 0; i < arr.length; i++) {
+                      final res = await helper.deleteConf(token, arr[i]);
+                      if (res.success) {
+                        Navigator.pop(context, true);
+                        print(res.toJson());
+                      } else {
+                        print("error: ${res.msg}");
+                      }
+                    }
+                  } catch (e) {
+                    print("err: ${e}");
+                    Navigator.pop(context, false);
+                    snackBar("이미 삭제된 취업현황입니다.", context);
                   }
-                }
-                Navigator.pop(context, true);
-              } catch (e) {
-                print("err: ${e}");
-                Navigator.pop(context, false);
-                snackBar("이미 삭제된 취업현황입니다.", context);
-              }
-            },
-          ),
+                },
+              ),
           barrierDismissible: false);
       if (res != null && res) {
         setState(() {
@@ -705,53 +710,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
             ))
       ],
     );
-  }
-
-  _onDeleteStatus() {
-    List<int> arr = [];
-    for (int i = 0; i < checkList.length; i++) {
-      if (checkList[i]) {
-        arr.add(confList[i].index);
-      }
-    }
-
-    if (deleteConf.isEmpty) {
-      snackBar("삭제할 업체를 선택해주세요.", context);
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => StdDialog(
-                msg: "선택된 취업현황을 삭제하시겠습니까?",
-                size: Size(326, 124),
-                btnName1: "아니요",
-                btnCall1: () {
-                  Navigator.pop(context);
-                },
-                btnName2: "삭제하기",
-                btnCall2:() async {
-                  print("삭제할 업체들================================");
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
-                  try {
-                    for (int i = 0; i < arr.length; i++) {
-                      final res = await helper.deleteConf(
-                          token, arr[i]);
-                      if (res.success) {
-                        print("삭제함: ${res.msg}");
-                      } else {
-                        print("errorr: ${res.msg}");
-                      }
-                    }
-                    Navigator.pop(context, true);
-                  } catch (e) {
-                    print("err: ${e}");
-                    Navigator.pop(context, false);
-                    snackBar("이미 삭제된 공지입니다.", context);
-                  }
-                },
-              ),
-          barrierDismissible: false);
-    }
   }
 
   searchState() {

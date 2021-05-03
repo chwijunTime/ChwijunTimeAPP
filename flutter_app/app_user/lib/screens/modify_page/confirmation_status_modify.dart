@@ -1,16 +1,19 @@
-import 'package:app_user/model/confirmation_status_vo.dart';
+import 'package:app_user/model/confirmation/confirmation_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../search_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusModify extends StatefulWidget {
-  ConfirmationStatusVO list;
+  ConfirmationVO list;
+  int index;
 
-  ConfirmationStatusModify({@required this.list});
+  ConfirmationStatusModify({@required this.index});
 
   @override
   _ConfirmationStatusModifyState createState() =>
@@ -18,6 +21,8 @@ class ConfirmationStatusModify extends StatefulWidget {
 }
 
 class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
   var siteUrl = TextEditingController();
 
@@ -28,6 +33,18 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
       titleC.text = widget.list.title;
       siteUrl.text = widget.list.siteUrl;
     });
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -54,7 +71,6 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${widget.list.grade}학년"),
                       Text(
                         "지역: ${widget.list.area}",
                         style: TextStyle(
@@ -144,20 +160,30 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
     );
   }
 
-  onStatusModify() {
+  onStatusModify() async {
     if (titleC.text.isEmpty || siteUrl.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      var conf = ConfirmationStatusVO(
+      var vo = ConfirmationVO(
           title: titleC.text,
-          grade: widget.list.grade,
           area: widget.list.area,
           siteUrl: siteUrl.text,
           address: widget.list.address,
           etc: widget.list.etc);
-      print(conf.toString());
 
-      Navigator.pop(context, conf);
+      try {
+        final pref = await SharedPreferences.getInstance();
+        var token = pref.getString("accessToken");
+        var res = await helper.putConf(token, widget.index, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          snackBar("서버 에러", context);
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
     }
   }
 }

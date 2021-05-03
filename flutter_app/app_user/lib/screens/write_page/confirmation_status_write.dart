@@ -1,11 +1,14 @@
-import 'package:app_user/model/confirmation_status_vo.dart';
+import 'package:app_user/model/confirmation/confirmation_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import '../search_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusWrite extends StatefulWidget {
   @override
@@ -19,9 +22,44 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
   var addressC = TextEditingController();
   var siteUrl = TextEditingController();
   var etcC = TextEditingController();
-  var grade = "1학년";
+  var classNumberC = TextEditingController();
 
-  List<String> gradeList = ['1학년', '2학년', '3학년'];
+  List<String> _list = [];
+  List<String> tagList = [];
+
+  RetrofitHelper helper;
+
+  init() {
+    _list.add("Google");
+    _list.add("IOS");
+    _list.add("Android");
+    _list.add("Dart");
+    _list.add("Flutter");
+    _list.add("Python");
+    _list.add("React");
+    _list.add("Xamarin");
+    _list.add("Kotlin");
+    _list.add("Java");
+    _list.add("RxAndroid");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,41 +69,29 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
         color: Colors.white,
         child: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 24),
-              child: buildTextField("업체명", titleC),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: Row(
-                children: [
-                  makeDropDownBtn(
-                      valueList: gradeList,
-                      hint: "학년",
-                      selectedValue: grade,
-                      onSetState: (value) {
-                        setState(() {
-                          grade = value;
-                        });
-                      }),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: buildTextField("회사 사이트 주소", siteUrl),
-                  ),
-                ],
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              margin: EdgeInsets.only(
+                left: 25,
+                right: 25,
+                top: 25,
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("지역명", areaC),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField(
-                "상세 주소",
-                addressC,
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    buildTextField("업체명", titleC, deco: false),
+                    buildTextField("학번", classNumberC, deco: false),
+                    buildTextField("회사 사이트 주소", siteUrl, deco: false),
+                    buildTextField("지역명", areaC, deco: false),
+                    buildTextField(
+                      "상세 주소",
+                      addressC, deco: false
+                    ),
+                  ],
+                ),
               ),
             ),
             Card(
@@ -98,10 +124,38 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 15,),
+            Padding(
+              padding: const EdgeInsets.only(left: 100, right: 100),
+              child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
+                final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SearchPage(
+                              list: _list,
+                            )));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
+                print("tagList: $tagList");
+              }, mode: 2),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15, left: 15),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: makeTagWidget(
+                      tag: tagList, size: Size(360, 27), mode: 1)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Padding(
               padding:
-                  EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
+              EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
               child: makeGradientBtn(
                   msg: "등록하기",
                   onPressed: () {
@@ -113,26 +167,47 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     color: Colors.white,
                   )),
             ),
-            SizedBox(height: 20,)
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),
     );
   }
 
-  onReviewPost() {
+  onReviewPost() async {
     if (titleC.text.isEmpty ||
         siteUrl.text.isEmpty ||
         addressC.text.isEmpty ||
         areaC.text.isEmpty ||
-        grade.isEmpty) {
+        classNumberC.text.isEmpty ||
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      int gra = int.parse(grade.substring(0,1));
-      var conf = ConfirmationStatusVO(title: titleC.text, grade: gra, area: areaC.text, siteUrl: siteUrl.text, address: addressC.text, etc: etcC.text);
-      print(conf.toString());
+      var vo = ConfirmationVO(
+          title: titleC.text,
+          area: areaC.text,
+          siteUrl: siteUrl.text,
+          address: addressC.text,
+          etc: etcC.text,
+          classNumber: classNumberC.text,
+          postTag: tagList);
+      try {
+        final pref = await SharedPreferences.getInstance();
+        var token = pref.getString("accessToken");
+        var res = await helper.postConf(token, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          snackBar("서버오류", context);
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
 
-      Navigator.pop(context);
+
     }
   }
 }

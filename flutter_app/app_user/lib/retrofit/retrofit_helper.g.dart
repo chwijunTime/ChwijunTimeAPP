@@ -9,7 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://3.34.42.52:8080/';
+    baseUrl ??= 'http://3.35.207.173:8080/';
   }
 
   final Dio _dio;
@@ -263,6 +263,110 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
         '/v1/employment-announcement/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseConfirmationList> getConfList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseConfirmationList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postConf(token, employmentConfirmationIdx) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(
+        employmentConfirmationIdx, 'employmentConfirmationIdx');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(employmentConfirmationIdx ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseConfirmation> getConf(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseConfirmation.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putConf(token, index, employmentConfirmationIdx) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    ArgumentError.checkNotNull(
+        employmentConfirmationIdx, 'employmentConfirmationIdx');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(employmentConfirmationIdx ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> deleteConf(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
