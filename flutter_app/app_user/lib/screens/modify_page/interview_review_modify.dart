@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 
 class InterviewReviewModify extends StatefulWidget {
   ReviewVO list;
+  int index;
 
-  InterviewReviewModify({@required this.list});
+  InterviewReviewModify({@required this.index});
 
   @override
   _InterviewReviewModifyState createState() => _InterviewReviewModifyState();

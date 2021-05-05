@@ -1,10 +1,14 @@
+import 'package:app_user/model/company_review/review_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewWrite extends StatefulWidget {
   @override
@@ -12,6 +16,8 @@ class InterviewReviewWrite extends StatefulWidget {
 }
 
 class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String strDate = "지원날짜";
@@ -45,6 +51,18 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   void initState() {
     super.initState();
     initList();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -76,7 +94,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                     width: 10,
                   ),
                   Expanded(
-                    child: buildTextField("비용", priceC, type: TextInputType.number),
+                    child: buildTextField("비용", priceC,
+                        type: TextInputType.number),
                   ),
                 ],
               ),
@@ -93,25 +112,25 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                   if (picked != null) {
                     setState(() {
                       selectedDate = picked;
-                      strDate = "${selectedDate.year}년 ${selectedDate
-                          .month}월 ${selectedDate.day}일";
+                      strDate =
+                          "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
                     });
-                    date = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                    date =
+                        "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
                   }
                 },
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(5))),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       strDate,
                       style: TextStyle(
                           fontSize: 16,
-                          color: strDate == "지원날짜" ? Colors.grey : Colors
-                              .black),
+                          color:
+                              strDate == "지원날짜" ? Colors.grey : Colors.black),
                     ),
                   ),
                 ),
@@ -175,20 +194,23 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 100, right: 100),
-              child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(
-                          list: _list,
-                        )));
-                setState(() {
-                  if (result != null) {
-                    tagList = result;
-                  }
-                });
-                print("tagList: $tagList");
-              }, mode: 2),
+              child: makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchPage(
+                                  list: _list,
+                                )));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 2),
             ),
             Align(
                 alignment: Alignment.center,
@@ -214,7 +236,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
     );
   }
 
-  onReviewPost() {
+  onReviewPost() async {
     print(
         "${titleC.text}, ${grade}, ${strDate}, ${addressC.text}, ${priceC.text}, ${reviewC.text}, ${questionC.text}, ${tagList.toString()}");
 
@@ -226,6 +248,30 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
         questionC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
+    } else {
+      ReviewVO vo = ReviewVO(
+          address: addressC.text,
+          price: int.parse(priceC.text),
+          applyDate: strDate,
+          question: questionC.text,
+          title: titleC.text,
+          review: reviewC.text,
+          tag: tagList);
+
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      print("token: ${token}");
+      try {
+        var res = await helper.postReview(token, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          snackBar("서버에러", context);
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
     }
   }
 }

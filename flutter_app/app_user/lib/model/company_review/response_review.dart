@@ -8,7 +8,7 @@ class ResponseReview{
   @JsonKey(name: "code")
   int code;
   @JsonKey(name: 'data')
-  List<ReviewVO> data;
+  ReviewVO data;
   @JsonKey(name: 'msg')
   String msg;
   @JsonKey(name: 'success')

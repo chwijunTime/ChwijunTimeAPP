@@ -7,7 +7,7 @@ class ReviewVO {
   @JsonKey(name: "companyAddress")
   String address;
   @JsonKey(name: "companyCost")
-  String price;
+  int price;
   @JsonKey(name: "companyDateofApplication")
   String applyDate;
   @JsonKey(name: "companyFrequentlyAskedQuestions")

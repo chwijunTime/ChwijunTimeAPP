@@ -9,7 +9,7 @@ part of 'review_vo.dart';
 ReviewVO _$ReviewVOFromJson(Map<String, dynamic> json) {
   return ReviewVO(
     address: json['companyAddress'] as String,
-    price: json['companyCost'] as String,
+    price: json['companyCost'] as int,
     applyDate: json['companyDateofApplication'] as String,
     question: json['companyFrequentlyAskedQuestions'] as String,
     title: json['companyName'] as String,

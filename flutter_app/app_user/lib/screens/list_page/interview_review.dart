@@ -1,5 +1,6 @@
-import 'package:app_user/model/review_vo.dart';
+import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -7,8 +8,10 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class InterviewReviewPage extends StatefulWidget {
@@ -23,6 +26,7 @@ enum Year { y2018, y2019, y2020, y2021 }
 
 class _InterviewReviewPageState extends State<InterviewReviewPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
+  RetrofitHelper helper;
 
   PanelController panelController = PanelController();
 
@@ -31,6 +35,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   final titleC = TextEditingController();
   List<String> _list;
   List<String> tagList = [];
+  List<bool> deleteNoti = [];
 
   Select _select = Select.YEAR;
   Year _year = Year.y2021;
@@ -42,6 +47,18 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     init();
     searchState();
     widget.role = User.role;
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   void init() {
@@ -74,7 +91,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
               "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
           tag: List.generate(5, (index) => "${index}.태그"),
           applyDate: "2021.03.21",
-          grade: (i % 3) + 1,
           price: i * 1000,
           isFavorite: false,
           address: "광주광역시 광산구 목련로 273번길",
@@ -140,8 +156,13 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                     Padding(
                       padding: EdgeInsets.only(right: 25),
                       child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewWrite()));
+                        onPressed: () async {
+                          var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewWrite()));
+                          if (res != null && res) {
+                            setState(() {
+                              _getReview();
+                            });
+                          }
                         },
                         child: Container(
                           width: 60,
@@ -175,11 +196,28 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 ),
                 Expanded(
                   child: Align(
-                    child: ListView.builder(
-                        itemCount: compList.length,
-                        itemBuilder: (context, index) {
-                          return buildItemCompany(context, index);
-                        }),
+                    child: FutureBuilder(
+                      future: _getReview(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          var result = snapshot.data as List<ReviewVO>;
+                          compList = result;
+                          for (int i = 0; i < compList.length; i++) {
+                            compList[i].isFavorite = false;
+                            deleteNoti.add(compList[i].isFavorite);
+                          }
+                          return ListView.builder(
+                              itemCount: compList.length,
+                              itemBuilder: (context, index) {
+                                return buildItemCompany(context, index);
+                              });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }
+                    ),
                   ),
                 )
               ],
@@ -200,7 +238,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
               context,
               MaterialPageRoute(
                   builder: (countext) => InterviewReviewDetail(
-                        list: compList[index],
+                        index: compList[index].index,
                       )));
         },
         child: Padding(
@@ -284,6 +322,22 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
         ),
       ),
     );
+  }
+
+  Future<List<ReviewVO>> _getReview() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getReviewList(token);
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget buildSlidingPanel({

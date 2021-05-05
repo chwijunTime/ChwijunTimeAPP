@@ -9,10 +9,9 @@ part of 'response_review.dart';
 ResponseReview _$ResponseReviewFromJson(Map<String, dynamic> json) {
   return ResponseReview(
     code: json['code'] as int,
-    data: (json['data'] as List)
-        ?.map((e) =>
-            e == null ? null : ReviewVO.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    data: json['data'] == null
+        ? null
+        : ReviewVO.fromJson(json['data'] as Map<String, dynamic>),
     msg: json['msg'] as String,
     success: json['success'] as bool,
   );
