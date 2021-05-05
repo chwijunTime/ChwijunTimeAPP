@@ -1,5 +1,7 @@
 import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/comp_notice/response_comp_notice_list.dart';
+import 'package:app_user/model/company_review/response_review.dart';
+import 'package:app_user/model/company_review/response_review_list.dart';
 import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
 import 'package:app_user/model/notice/response_notice.dart';
@@ -27,6 +29,31 @@ abstract class RetrofitHelper {
   Future<ResponseData> postEmailCheck(
       @Query("email", encoded: true) String email);
 
+  //endregion
+
+  //region 4. 면접 후기 및 회사 후기
+  @GET("/v1/companyreview")
+  Future<ResponseReviewList> getReviewList(
+      @Header("Authorization") String token
+      );
+
+  @POST("/v1/companyreview")
+  Future<ResponseData> postReview(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body
+      );
+
+  @GET("/v1/companyreview/{companyreviewIdx}")
+  Future<ResponseReview> getReview(
+      @Header("Authorization") String token,
+      @Path("companyreviewIdx") int index
+      );
+
+  @DELETE("/v1/companyreview/{companyreviewIdx}")
+  Future<ResponseData> deleteReview(
+      @Header("Authorization") String token,
+      @Path("companyreviewIdx") int index
+      );
   //endregion
 
   //region 5. 공지사항
