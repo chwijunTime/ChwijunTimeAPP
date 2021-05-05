@@ -8,6 +8,8 @@ import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
 import 'package:app_user/model/response_login.dart';
+import 'package:app_user/model/tag/response_tag.dart';
+import 'package:app_user/model/tag/response_tag_list.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:retrofit/retrofit.dart';
@@ -29,6 +31,38 @@ abstract class RetrofitHelper {
   Future<ResponseData> postEmailCheck(
       @Query("email", encoded: true) String email);
 
+  //endregion
+
+  //region 2. 태그
+  @GET("/v1/tag")
+  Future<ResponseTagList> getTagList(
+      @Header("Authorization") String token
+      );
+
+  @POST("/v1/tag")
+  Future<ResponseData> postTag(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body
+      );
+
+  @GET("/v1/tag/{tagIdx}")
+  Future<ResponseTag> getTag(
+      @Header("Authorization") String token,
+      @Path("tagIdx") int index
+      );
+
+  @PUT("/v1/tag/{tagIdx}")
+  Future<ResponseTag> putTag(
+      @Header("Authorization") String token,
+      @Path("tagIdx") int index,
+      @Body() Map<String, dynamic> body
+      );
+
+  @DELETE("/v1/tag/{tagIdx}")
+  Future<ResponseData> deleteTag(
+      @Header("Authorization") String token,
+      @Path("tagIdx") int index,
+      );
   //endregion
 
   //region 4. 면접 후기 및 회사 후기
