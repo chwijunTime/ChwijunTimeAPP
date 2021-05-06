@@ -1,14 +1,13 @@
-import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/model/contracting_company/contracting_vo.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
-import '../search_page.dart';
-
 class ContractingCompanyModify extends StatefulWidget {
-  final CompanyVO list;
+  final ContractingVO list;
 
   ContractingCompanyModify({@required this.list});
 
@@ -42,8 +41,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     super.initState();
     init();
     infoC.text = widget.list.info;
-    priceC.text =
-        (widget.list.maxSalary + widget.list.minSalary / 2).toStringAsFixed(0);
+    priceC.text = widget.list.salary;
     tagList = widget.list.tag;
   }
 
@@ -168,7 +166,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     if (priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      widget.list.maxSalary = int.parse(priceC.text);
+      widget.list.salary = priceC.text;
       widget.list.info = infoC.text;
       widget.list.tag = tagList;
       Navigator.pop(context, widget.list);

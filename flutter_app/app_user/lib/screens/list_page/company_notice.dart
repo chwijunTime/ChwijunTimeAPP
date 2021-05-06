@@ -200,6 +200,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     }
                     else {
                       widget.notiList = snapshot.data;
+                      for(int i=0; i<widget.notiList.length; i++) {
+                        widget.notiList[i].isBookMark = false;
+                      }
                       return ListView.builder(
                         itemCount: widget.notiList.length,
                         itemBuilder: (context, index) {
@@ -366,11 +369,13 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Row(
-                      children: List.generate(2, (indextag) {
+                      children: List.generate(widget.notiList[index].tag.length<2 ? 1 : 2, (indextag) {
                         return buildItemTag(
                             widget.notiList[index].tag, indextag);
                       }),
                     ),
+                    widget.notiList[index].tag.length < 2 ?
+                        SizedBox() :
                     Container(
                       padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                       margin: EdgeInsets.only(right: 8),

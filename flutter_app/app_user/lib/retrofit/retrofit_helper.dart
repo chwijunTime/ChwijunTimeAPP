@@ -4,6 +4,8 @@ import 'package:app_user/model/company_review/response_review.dart';
 import 'package:app_user/model/company_review/response_review_list.dart';
 import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
+import 'package:app_user/model/contracting_company/response_contracting.dart';
+import 'package:app_user/model/contracting_company/response_contracting_list.dart';
 import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
@@ -62,6 +64,31 @@ abstract class RetrofitHelper {
   Future<ResponseData> deleteTag(
       @Header("Authorization") String token,
       @Path("tagIdx") int index,
+      );
+  //endregion
+
+  //region 3. 협약 업체
+  @GET("/v1/contracting-company")
+  Future<ResponseContractingList> getContList(
+      @Header("Authorization") String token,
+      );
+
+  @POST("/v1/contracting-company")
+  Future<ResponseData> postCont(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> vo
+      );
+
+  @GET("/v1/contracting-company/{companyidx}")
+  Future<ResponseContracting> getCont(
+      @Header("Authorization") String token,
+      @Path("companyidx") int index
+      );
+
+  @DELETE("/v1/contracting-company/{companyidx}")
+  Future<ResponseData> deleteCont(
+      @Header("Authorization") String token,
+      @Path("companyidx") int index
       );
   //endregion
 

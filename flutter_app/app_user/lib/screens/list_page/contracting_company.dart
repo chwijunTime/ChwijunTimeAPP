@@ -1,5 +1,6 @@
-import 'package:app_user/model/company_vo.dart';
+import 'package:app_user/model/contracting_company/contracting_vo.dart';
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/contracting_company_write.dart';
@@ -9,6 +10,7 @@ import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,10 +28,11 @@ enum Year { y2018, y2019, y2020, y2021 }
 
 class _ContractingCompPageState extends State<ContractingCompPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
+  RetrofitHelper helper;
 
   PanelController panelController = PanelController();
 
-  List<CompanyVO> compList = [];
+  List<ContractingVO> contractingList = [];
   final tagC = TextEditingController();
   final titleC = TextEditingController();
   List<String> _list;
@@ -41,10 +44,21 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   @override
   void initState() {
     super.initState();
-    _listSetting();
     init();
     searchState();
     widget.role = User.role;
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   void init() {
@@ -64,23 +78,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
 
   _onHeartPressed(int index) {
     setState(() {
-      compList[index].isFavorite = !compList[index].isFavorite;
+      contractingList[index].isFavorite = !contractingList[index].isFavorite;
     });
-  }
-
-  void _listSetting() {
-    for (int i = 1; i <= 8; i++) {
-      compList.add(CompanyVO(
-          title: "${i}. 업체명",
-          info:
-              "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
-          tag: List.generate(5, (index) => "${index}.태그"),
-          minSalary: i * 1000,
-          maxSalary: i * 1000 + 500,
-          isFavorite: false,
-          address: "광주광역시 광산구 목련로",
-          field: "모바일 앱, 웹"));
-    }
   }
 
   @override
@@ -161,13 +160,17 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           children: [
                             makeGradientBtn(
                                 msg: "협약 업체 등록",
-                                onPressed: () {
-                                  print("등록하자");
-                                  Navigator.push(
+                                onPressed: () async {
+                                  var res = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               ContractingCompanyWrite()));
+                                  if (res!=null && res) {
+                                    setState(() {
+                                      _getContractingList();
+                                    });
+                                  }
                                 },
                                 mode: 1,
                                 icon: Icon(
@@ -189,11 +192,26 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       ),
                 Expanded(
                   child: Align(
-                    child: ListView.builder(
-                        itemCount: compList.length,
-                        itemBuilder: (context, index) {
-                          return buildItemCompany(context, index);
-                        }),
+                    child: FutureBuilder(
+                      future: _getContractingList(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          contractingList = snapshot.data;
+                          for (int i=0; i<contractingList.length; i++) {
+                            contractingList[i].isFavorite = false;
+                          }
+                          return ListView.builder(
+                              itemCount: contractingList.length,
+                              itemBuilder: (context, index) {
+                                return buildItemCompany(context, index);
+                              });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }
+                    ),
                   ),
                 )
               ],
@@ -202,20 +220,41 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         ));
   }
 
+  Future<List<ContractingVO>> _getContractingList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getContList(token);
+      print("res.success: ${res.success}");
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
+    }
+  }
+
   Widget buildItemCompany(BuildContext context, int index) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
-        onTap: () {
-          print("눌림");
-          Navigator.push(
+        onTap: () async {
+          var res = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (countext) => ContractingCompanyDetailPage(
-                        list: compList[index],
+                        index: contractingList[index].index,
                       )));
+          if (res!=null && res) {
+            setState(() {
+              _getContractingList();
+            });
+          }
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -226,14 +265,14 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${compList[index].title}",
+                      "${contractingList[index].title}",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   widget.role == User.user
                       ? IconButton(
-                          icon: compList[index].isFavorite
+                          icon: contractingList[index].isFavorite
                               ? Icon(
                                   Icons.favorite,
                                   size: 28,
@@ -246,7 +285,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           onPressed: () => _onHeartPressed(index),
                         )
                       : IconButton(
-                          icon: compList[index].isFavorite
+                          icon: contractingList[index].isFavorite
                               ? Icon(
                                   Icons.check_box_outlined,
                                   size: 28,
@@ -262,7 +301,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${compList[index].info}",
+                  "${contractingList[index].info}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -272,7 +311,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   children: [
                     Row(
                       children: List.generate(2, (indextag) {
-                        return buildItemTag(compList[index].tag, indextag);
+                        return buildItemTag(contractingList[index].tag, indextag);
                       }),
                     ),
                     Container(
@@ -285,7 +324,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           )),
                       child: Center(
                         child: Text(
-                          "외 ${compList[index].tag.length - 2}개",
+                          "외 ${contractingList[index].tag.length - 2}개",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
@@ -295,7 +334,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "평균: ${compList[index].minSalary}~${compList[index].maxSalary}",
+                          "평균: ${contractingList[index].salary}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -701,10 +740,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   }
 
   _onDeleteCompany() {
-    List<CompanyVO> deleteComp = [];
-    for (int i = 0; i < compList.length; i++) {
-      if (compList[i].isFavorite) {
-        deleteComp.add(compList[i]);
+    List<int> deleteComp = [];
+    for (int i = 0; i < contractingList.length; i++) {
+      if (contractingList[i].isFavorite) {
+        deleteComp.add(contractingList[i].index);
       }
     }
 
@@ -719,10 +758,23 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             btnName1: "아니요",
             btnCall1: () {Navigator.pop(context);},
             btnName2: "삭제하기",
-            btnCall2: () {
-              print("삭제할 업체들================================");
-              print(deleteComp.toString());
-              Navigator.pop(context);
+            btnCall2: () async {
+              final pref = await SharedPreferences.getInstance();
+              var token = pref.getString("accessToken");
+              print("token: ${token}");
+              try {
+                for (int i = 0; i < deleteComp.length; i++) {
+                  var res = await helper.deleteCont(token, deleteComp[i]);
+                  if (res.success) {
+                    print("삭제함: ${res.msg}");
+                  } else {
+                    print("errorr: ${res.msg}");
+                  }
+                }
+                Navigator.pop(context, true);
+              } catch (e) {
+                print(e);
+              }
             },),
           barrierDismissible: false);
     }

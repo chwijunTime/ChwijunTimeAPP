@@ -1,10 +1,13 @@
+import 'package:app_user/model/contracting_company/contracting_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractingCompanyWrite extends StatefulWidget {
   @override
@@ -13,6 +16,8 @@ class ContractingCompanyWrite extends StatefulWidget {
 }
 
 class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
   var fieldC = TextEditingController();
   var addressC = TextEditingController();
@@ -39,6 +44,18 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   void initState() {
     super.initState();
     init();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -60,7 +77,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                     borderRadius: BorderRadius.circular(18)),
                 elevation: 5,
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.only(right: 15.0, left: 15, bottom: 15, top: 10),
                   child: Column(
                     children: [
                       buildTextField("업체명", titleC,
@@ -93,20 +110,23 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 100, right: 100),
-                child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                  final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SearchPage(
-                            list: _list,
-                          )));
-                  setState(() {
-                    if (result != null) {
-                      tagList = result;
-                    }
-                  });
-                  print("tagList: $tagList");
-                }, mode: 2),
+                child: makeBtn(
+                    msg: "태그 선택하러 가기",
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage(
+                                    list: _list,
+                                  )));
+                      setState(() {
+                        if (result != null) {
+                          tagList = result;
+                        }
+                      });
+                      print("tagList: $tagList");
+                    },
+                    mode: 2),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
@@ -138,7 +158,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
     );
   }
 
-  onContractingPost() {
+  onContractingPost() async {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
         addressC.text.isEmpty ||
@@ -147,7 +167,28 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      Navigator.pop(context);
+      ContractingVO vo = ContractingVO(
+          field: fieldC.text,
+          info: infoC.text,
+          address: addressC.text,
+          salary: priceC.text,
+          title: titleC.text,
+          postTag: tagList);
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      print("token: ${token}");
+      try {
+        var res = await helper.postCont(token, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          snackBar(res.msg, context);
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print(e);
+      }
+
     }
   }
 }
