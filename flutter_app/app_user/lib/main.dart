@@ -15,6 +15,7 @@ import 'package:app_user/screens/list_page/tip_storage.dart';
 import 'package:app_user/screens/login_page.dart';
 import 'package:app_user/screens/main_page.dart';
 import 'package:app_user/screens/my_page/my_page.dart';
+import 'package:app_user/screens/splash.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -33,7 +34,7 @@ class UserApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ChwijunTimeApp",
-      initialRoute: "/login",
+      initialRoute: "/splash",
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -46,6 +47,7 @@ class UserApp extends StatelessWidget {
       ),
       routes: {
         "/": (context) => MainPage(),
+        "/splash": (context) => SplashPage(),
         "/login": (context) => LoginPage(),
         "/join": (context) => JoinPage(),
         "/success_join": (context) => SuccessJoinPage(),
