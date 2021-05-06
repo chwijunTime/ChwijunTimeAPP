@@ -1,4 +1,4 @@
-import 'package:app_user/model/review_vo.dart';
+import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -23,7 +23,6 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
   var priceC = TextEditingController();
   var reviewC = TextEditingController();
   var questionC = TextEditingController();
-  var grade = "1학년";
 
   @override
   void initState() {
@@ -64,44 +63,20 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        "${widget.list.grade}학년",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    widget.list.applyDate,
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          widget.list.applyDate,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             Padding(
@@ -199,7 +174,6 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
     } else {
       ReviewVO vo = ReviewVO(
           title: widget.list.title,
-          grade: widget.list.grade,
           applyDate: widget.list.applyDate,
           address: addressC.text,
           price: int.parse(priceC.text),

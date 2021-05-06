@@ -3,11 +3,11 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewWrite extends StatefulWidget {
@@ -26,9 +26,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   var priceC = TextEditingController();
   var reviewC = TextEditingController();
   var questionC = TextEditingController();
-  var grade = "1학년";
 
-  List<String> gradeList = ['1학년', '2학년', '3학년'];
   List<String> tagList = [];
 
   List<String> _list = [];
@@ -79,26 +77,13 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: Row(
-                children: [
-                  makeDropDownBtn(
-                      valueList: gradeList,
-                      hint: "학년",
-                      selectedValue: grade,
-                      onSetState: (value) {
-                        setState(() {
-                          grade = value;
-                        });
-                      }),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: buildTextField("비용", priceC,
-                        type: TextInputType.number),
-                  ),
-                ],
-              ),
+              child: buildTextField("주소", addressC,
+                  type: TextInputType.text),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
+              child: buildTextField("비용", priceC,
+                  type: TextInputType.number),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
@@ -115,8 +100,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                       strDate =
                           "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
                     });
-                    date =
-                        "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                    final f = DateFormat("yyyy-MM-dd");
+                    date = f.format(selectedDate);
                   }
                 },
                 child: Container(
@@ -124,7 +109,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(15),
                     child: Text(
                       strDate,
                       style: TextStyle(
@@ -237,9 +222,16 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   }
 
   onReviewPost() async {
-    print(
-        "${titleC.text}, ${grade}, ${strDate}, ${addressC.text}, ${priceC.text}, ${reviewC.text}, ${questionC.text}, ${tagList.toString()}");
+    ReviewVO vo = ReviewVO(
+        address: addressC.text,
+        price: int.parse(priceC.text),
+        applyDate: date,
+        question: questionC.text,
+        title: titleC.text,
+        review: reviewC.text,
+        tag: tagList);
 
+    print(vo.toJson());
     if (titleC.text.isEmpty ||
         date == "" ||
         addressC.text.isEmpty ||
@@ -252,11 +244,11 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
       ReviewVO vo = ReviewVO(
           address: addressC.text,
           price: int.parse(priceC.text),
-          applyDate: strDate,
+          applyDate: date,
           question: questionC.text,
           title: titleC.text,
           review: reviewC.text,
-          tag: tagList);
+          postTag: tagList);
 
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
@@ -266,7 +258,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
         if (res.success) {
           Navigator.pop(context, true);
         } else {
-          snackBar("서버에러", context);
+          snackBar(res.msg, context);
           print("error: ${res.msg}");
         }
       } catch (e) {

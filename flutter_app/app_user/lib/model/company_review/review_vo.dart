@@ -18,6 +18,8 @@ class ReviewVO {
   int index;
   @JsonKey(name: "companyReviewTags")
   List<String> tag;
+  @JsonKey(name: "tagName")
+  List<String> postTag;
   @JsonKey(name: "companyReviews")
   String review;
 
@@ -32,11 +34,13 @@ class ReviewVO {
       this.title,
       this.index,
       this.tag,
+      this.postTag,
       this.review,
       this.isFavorite,
       this.isMine});
 
-  factory ReviewVO.fromJson(Map<String, dynamic> json) => _$ReviewVOFromJson(json);
+  factory ReviewVO.fromJson(Map<String, dynamic> json) =>
+      _$ReviewVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReviewVOToJson(this);
 }
