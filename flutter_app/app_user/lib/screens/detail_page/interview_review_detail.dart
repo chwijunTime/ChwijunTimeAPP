@@ -1,6 +1,7 @@
 import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/modify_page/interview_review_modify.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
@@ -66,8 +67,10 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
       body: Container(
         color: Colors.white,
         child: FutureBuilder(
+          future: _getReview(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
+              widget.list = snapshot.data;
               return ListView(
                 children: [
                   Card(
@@ -344,9 +347,21 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                 Navigator.pop(context, "no");
               },
               btnName2: "삭제하기",
-              btnCall2: () {
-                print("삭제할 list: ${widget.list}");
-                Navigator.pop(context, "yes");
+              btnCall2: () async {
+                final pref = await SharedPreferences.getInstance();
+                var token = pref.getString("accessToken");
+                print("token: ${token}");
+                try {
+                  var res = await helper.deleteReview(token, widget.list.index);
+                  if (res.success) {
+                    Navigator.pop(context, "yes");
+                  } else {
+                    snackBar("서버 오류", context);
+                    print("error: ${res.msg}");
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
             ),
         barrierDismissible: false);

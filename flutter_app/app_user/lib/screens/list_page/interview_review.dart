@@ -35,7 +35,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   final titleC = TextEditingController();
   List<String> _list;
   List<String> tagList = [];
-  List<bool> deleteNoti = [];
 
   Select _select = Select.YEAR;
   Year _year = Year.y2021;
@@ -204,7 +203,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                           compList = result;
                           for (int i = 0; i < compList.length; i++) {
                             compList[i].isFavorite = false;
-                            deleteNoti.add(compList[i].isFavorite);
                           }
                           return ListView.builder(
                               itemCount: compList.length,
