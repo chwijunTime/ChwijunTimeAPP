@@ -179,6 +179,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         confList = snapshot.data;
+                        for(int i=0; i<confList.length; i++) {
+                          checkList.add(false);
+                        }
                         return ListView.separated(
                           itemCount: confList.length,
                           itemBuilder: (context, index) {
@@ -218,7 +221,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     print(token);
     try {
       var res = await helper.getConfList(token);
-      print("res.success: ${res.success}");
       if (res.success) {
         return res.list.reversed.toList();
       } else {
