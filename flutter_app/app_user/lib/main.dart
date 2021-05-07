@@ -19,15 +19,8 @@ import 'package:app_user/screens/splash.dart';
 import 'package:app_user/screens/success_join_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
-  runApp(UserApp());
-  var prefs = await SharedPreferences.getInstance();
-  var role = prefs.getString("role") ?? "user";
-  print("role, main: ${role}");
-  User.role = role;
-}
+void main() => runApp(UserApp());
 
 class UserApp extends StatelessWidget {
   @override
