@@ -77,7 +77,8 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                     borderRadius: BorderRadius.circular(18)),
                 elevation: 5,
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0, left: 15, bottom: 15, top: 10),
+                  padding: const EdgeInsets.only(
+                      right: 15.0, left: 15, bottom: 15, top: 10),
                   child: Column(
                     children: [
                       buildTextField("업체명", titleC,
@@ -116,9 +117,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                       final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SearchPage(
-                                    list: _list,
-                                  )));
+                              builder: (context) => SearchPage()));
                       setState(() {
                         if (result != null) {
                           tagList = result;
@@ -188,7 +187,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
       } catch (e) {
         print(e);
       }
-
     }
   }
 }

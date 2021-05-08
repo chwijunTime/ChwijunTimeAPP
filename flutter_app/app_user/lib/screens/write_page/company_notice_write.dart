@@ -88,82 +88,88 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: LayoutBuilder(
-                   builder:  (BuildContext context, BoxConstraints constraints) {
-                     return Column(
-                       children: [
-                         buildTextField("업체명", titleC, deco: false),
-                         buildTextField("채용분야", fieldC, deco: false),
-                         buildTextField("주소", addressC, deco: false),
-                         GestureDetector(
-                           onTap: () async {
-                             final DateTime picked = await showDatePicker(
-                                 context: context,
-                                 initialDate: selectedDate,
-                                 firstDate: DateTime(2000),
-                                 lastDate: DateTime(2050));
-                             if (picked != null) {
-                               setState(() {
-                                 selectedDate = picked;
-                                 noticeDateC = "${selectedDate.year}년 ${selectedDate
-                                     .month}월 ${selectedDate.day}일";
-                               });
-                               noticeDate = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-                             }
-                           },
-                           child: Container(
-                             decoration: BoxDecoration(
-                               border: Border(
-                                 bottom: BorderSide(
-                                   color: Colors.grey,
-                                   width: 1
-                                 )
-                               )
-                             ),
-                             width: constraints.maxWidth,
-                             child: Padding(
-                               padding: const EdgeInsets.only(top: 10, bottom: 10),
-                               child: Text(noticeDateC, style: TextStyle(color: noticeDateC == "공고일" ? Colors.grey: Colors.black, fontSize: 16),),
-                             ),
-                           ),
-                         ),
-                         GestureDetector(
-                           onTap: () async {
-                             final DateTime picked = await showDatePicker(
-                                 context: context,
-                                 initialDate: selectedDate,
-                                 firstDate: DateTime(2000),
-                                 lastDate: DateTime(2050));
-                             if (picked != null) {
-                               setState(() {
-                                 selectedDate = picked;
-                                 deadLineDateC = "${selectedDate.year}년 ${selectedDate
-                                     .month}월 ${selectedDate.day}일";
-                               });
-                               final f = DateFormat("yyyy-MM-dd");
-                               deadLineDate = f.format(selectedDate);
-                             }
-                           },
-                           child: Container(
-                             decoration: BoxDecoration(
-                                 border: Border(
-                                     bottom: BorderSide(
-                                         color: Colors.grey,
-                                         width: 1
-                                     )
-                                 )
-                             ),
-                             width: constraints.maxWidth,
-                             child: Padding(
-                               padding: const EdgeInsets.only(top: 10, bottom: 10),
-                               child: Text(deadLineDateC, style: TextStyle(color: deadLineDateC == "마감일" ? Colors.grey: Colors.black, fontSize: 16),),
-                             ),
-                           ),
-                         ),
-                       ],
-                     );
-                   }
-                ),
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return Column(
+                    children: [
+                      buildTextField("업체명", titleC, deco: false),
+                      buildTextField("채용분야", fieldC, deco: false),
+                      buildTextField("주소", addressC, deco: false),
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime picked = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2050));
+                          if (picked != null) {
+                            setState(() {
+                              selectedDate = picked;
+                              noticeDateC =
+                                  "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
+                            });
+                            noticeDate =
+                                "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Colors.grey, width: 1))),
+                          width: constraints.maxWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                              noticeDateC,
+                              style: TextStyle(
+                                  color: noticeDateC == "공고일"
+                                      ? Colors.grey
+                                      : Colors.black,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime picked = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2050));
+                          if (picked != null) {
+                            setState(() {
+                              selectedDate = picked;
+                              deadLineDateC =
+                                  "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
+                            });
+                            final f = DateFormat("yyyy-MM-dd");
+                            deadLineDate = f.format(selectedDate);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Colors.grey, width: 1))),
+                          width: constraints.maxWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                              deadLineDateC,
+                              style: TextStyle(
+                                  color: deadLineDateC == "마감일"
+                                      ? Colors.grey
+                                      : Colors.black,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
               ),
             ),
             Card(
@@ -254,20 +260,19 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 100, right: 100),
-              child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(
-                          list: _list,
-                        )));
-                setState(() {
-                  if (result != null) {
-                    tagList = result;
-                  }
-                });
-                print("tagList: $tagList");
-              }, mode: 2),
+              child: makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 2),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15, left: 15),
@@ -300,7 +305,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
         noticeDate == "" ||
-        deadLineDate == ""||
+        deadLineDate == "" ||
         addressC.text.isEmpty ||
         infoC.text.isEmpty ||
         preferentialInfoC.text.isEmpty ||
@@ -331,7 +336,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
       } catch (e) {
         print(e);
       }
-
     }
   }
 }

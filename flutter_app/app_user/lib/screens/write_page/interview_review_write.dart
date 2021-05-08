@@ -77,13 +77,11 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("주소", addressC,
-                  type: TextInputType.text),
+              child: buildTextField("주소", addressC, type: TextInputType.text),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("비용", priceC,
-                  type: TextInputType.number),
+              child: buildTextField("비용", priceC, type: TextInputType.number),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
@@ -182,12 +180,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
               child: makeBtn(
                   msg: "태그 선택하러 가기",
                   onPressed: () async {
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchPage(
-                                  list: _list,
-                                )));
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
                     setState(() {
                       if (result != null) {
                         tagList = result;

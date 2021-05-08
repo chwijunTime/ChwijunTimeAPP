@@ -85,12 +85,17 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                       ),
                       Row(
                         children: [
-                          Expanded(flex: 2, child: buildTextField("반", classC, type: TextInputType.number)),
+                          Expanded(
+                              flex: 2,
+                              child: buildTextField("반", classC,
+                                  type: TextInputType.number)),
                           SizedBox(
                             width: 10,
                           ),
                           Expanded(
-                              flex: 3, child: buildTextField("번호", numberC, type: TextInputType.number))
+                              flex: 3,
+                              child: buildTextField("번호", numberC,
+                                  type: TextInputType.number))
                         ],
                       ),
                       SizedBox(
@@ -104,9 +109,7 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                               final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SearchPage(
-                                            list: _list,
-                                          )));
+                                      builder: (context) => SearchPage()));
                               setState(() {
                                 if (result != null) {
                                   tagList = result;

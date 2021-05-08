@@ -1,5 +1,3 @@
-import 'package:app_user/model/notice/member_vo.dart';
-import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/notice/s_notice_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -68,23 +66,27 @@ class _NotificationWriteState extends State<NotificationWrite> {
           child: Column(
             children: [
               buildTextField("제목", titleC),
-              SizedBox(height: 24,),
-              buildTextField("공지사항 내용을 입력해주세요.", contentsC, maxLine: 16, maxLength: 1000),
-              SizedBox(height: 24,),
-              makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(
-                          list: _list,
-                        )));
-                setState(() {
-                  if (result != null) {
-                    tagList = result;
-                  }
-                });
-                print("tagList: $tagList");
-              }, mode: 1),
+              SizedBox(
+                height: 24,
+              ),
+              buildTextField("공지사항 내용을 입력해주세요.", contentsC,
+                  maxLine: 16, maxLength: 1000),
+              SizedBox(
+                height: 24,
+              ),
+              makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 1),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
                 child: Align(
@@ -92,7 +94,9 @@ class _NotificationWriteState extends State<NotificationWrite> {
                     child: makeTagWidget(
                         tag: tagList, size: Size(360, 27), mode: 1)),
               ),
-              SizedBox(height: 19,),
+              SizedBox(
+                height: 19,
+              ),
               makeGradientBtn(
                   msg: "등록하기",
                   onPressed: () {
@@ -111,7 +115,7 @@ class _NotificationWriteState extends State<NotificationWrite> {
   }
 
   _onNotificationPost() async {
-    if(titleC.text.isEmpty || contentsC.text.isEmpty || tagList.isEmpty) {
+    if (titleC.text.isEmpty || contentsC.text.isEmpty || tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       SNoticeVO vo = SNoticeVO(title: titleC.text, content: contentsC.text);
@@ -125,10 +129,9 @@ class _NotificationWriteState extends State<NotificationWrite> {
         } else {
           print("error: ${res.msg}");
         }
-      } catch(e) {
+      } catch (e) {
         print("error: ${e}");
       }
-
     }
   }
 }

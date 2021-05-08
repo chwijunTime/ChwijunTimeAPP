@@ -94,9 +94,7 @@ class _NotificationModifyState extends State<NotificationModify> {
                         final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SearchPage(
-                                      list: _list,
-                                    )));
+                                builder: (context) => SearchPage()));
                         setState(() {
                           if (result.isEmpty) {
                             tagList = [];

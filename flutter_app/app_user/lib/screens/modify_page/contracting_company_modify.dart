@@ -57,7 +57,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
           child: Padding(
             padding: const EdgeInsets.only(right: 24, left: 24),
             child: ListView(children: [
-              SizedBox(height: 24,),
+              SizedBox(
+                height: 24,
+              ),
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18)),
@@ -119,20 +121,21 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 100, right: 100),
-                child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                  final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SearchPage(
-                            list: _list,
-                          )));
-                  setState(() {
-                    if (result != null) {
-                      tagList = result;
-                    }
-                  });
-                  print("tagList: $tagList");
-                }, mode: 2),
+                child: makeBtn(
+                    msg: "태그 선택하러 가기",
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage()));
+                      setState(() {
+                        if (result != null) {
+                          tagList = result;
+                        }
+                      });
+                      print("tagList: $tagList");
+                    },
+                    mode: 2),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
@@ -154,7 +157,9 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     Icons.arrow_forward,
                     color: Colors.white,
                   )),
-              SizedBox(height: 24,),
+              SizedBox(
+                height: 24,
+              ),
             ]),
           ),
         ),

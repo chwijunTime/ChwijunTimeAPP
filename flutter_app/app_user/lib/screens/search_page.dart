@@ -1,18 +1,21 @@
+import 'package:app_user/model/tag/tag_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends StatefulWidget {
-  List<String> list = [];
-
-  SearchPage({@required this.list});
-
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+  List<TagVO> list = [];
+  RetrofitHelper helper;
+
   Widget appBarTitle = new Text(
     "Search Sample",
     style: new TextStyle(color: Colors.white),
@@ -23,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
   );
   final key = new GlobalKey<ScaffoldState>();
   final TextEditingController _searchQuery = new TextEditingController();
-  List<String> tagList= [];
+  List<String> tagList = [];
   bool _IsSearching;
   String _searchText = "";
 
@@ -51,7 +54,18 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _IsSearching = false;
-    print("list: ${widget.list}");
+    print("list: ${list}");
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -62,33 +76,56 @@ class _SearchPageState extends State<SearchPage> {
         body: buildDropDownTextField());
   }
 
+  Future<List<TagVO>> _getTagList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getTagList(token);
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
+    }
+  }
+
   List<ListTile> _buildSearchList() {
     if (_searchText.isEmpty) {
-      return widget.list.map((contact) => ListTile(title: Text(contact))).toList();
+      return list
+          .map((contact) => ListTile(title: Text(contact.name)))
+          .toList();
     } else {
       List<String> _searchList = [];
-      for (int i = 0; i < widget.list.length; i++) {
-        String name = widget.list.elementAt(i);
+      for (int i = 0; i < list.length; i++) {
+        String name = list.elementAt(i).name;
         if (name.toLowerCase().contains(_searchText.toLowerCase())) {
           _searchList.add(name);
         }
       }
-      return _searchList.length != 0 ? _searchList
-          .map((contact) => ListTile(
-                title: Text(contact),
-                onTap: () {
-                  if (!tagList.contains(contact)) {
-                    setState(() {
-                      tagList.add(contact);
-                    });
-                  } else {
-                    snackBar("중복된 태그입니다.", context);
-                    print("중복된 태그입니다ㅣ");
-                  }
-                },
-              ))
-          .toList() :
-      List.generate(1, (index) => ListTile(title: Text("검색된 태그가 없습니다."),)).toList();
+      return _searchList.length != 0
+          ? _searchList
+              .map((contact) => ListTile(
+                    title: Text(contact),
+                    onTap: () {
+                      if (!tagList.contains(contact)) {
+                        setState(() {
+                          tagList.add(contact);
+                        });
+                      } else {
+                        snackBar("중복된 태그입니다.", context);
+                        print("중복된 태그입니다ㅣ");
+                      }
+                    },
+                  ))
+              .toList()
+          : List.generate(
+              1,
+              (index) => ListTile(
+                    title: Text("검색된 태그가 없습니다."),
+                  )).toList();
     }
   }
 
@@ -96,41 +133,60 @@ class _SearchPageState extends State<SearchPage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(34,16,34,16),
+          padding: const EdgeInsets.fromLTRB(34, 16, 34, 16),
           child: buildTextField("Tag", _searchQuery),
         ),
         Expanded(
           child: _IsSearching
-              ? SizedBox(
+              ? FutureBuilder(
+                  future: _getTagList(),
+                  builder: (BuildContext context, AsyncSnapshot snapsnot) {
+                    if (snapsnot.hasData) {
+                      list = snapsnot.data;
+                      return SizedBox(
+                        child: Card(
+                          margin: EdgeInsets.only(left: 34, right: 34),
+                          elevation: 5,
+                          child: ListView(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            children: _buildSearchList(),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            Text("태그를 불러오는 중...")
+                          ],
+                        ),
+                      );
+                    }
+                  })
+              : SizedBox(
                   child: Card(
                     margin: EdgeInsets.only(left: 34, right: 34),
                     elevation: 5,
-                    child: ListView(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      children: _buildSearchList(),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "태그 검색어를 입력해주세요!",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w800),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          CircularProgressIndicator()
+                        ],
+                      ),
                     ),
                   ),
-                )
-              : SizedBox(
-            child: Card(
-              margin: EdgeInsets.only(left: 34, right: 34),
-              elevation: 5,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("태그 검색어를 입력해주세요!",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800
-                    ),),
-                    SizedBox(height: 20,),
-                    CircularProgressIndicator()
-                  ],
                 ),
-              ),
-            ),
-          ),
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
@@ -181,7 +237,9 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        SizedBox(height: 25,),
+        SizedBox(
+          height: 25,
+        ),
       ],
     );
   }

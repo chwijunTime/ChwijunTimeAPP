@@ -126,12 +126,8 @@ class _CounselingApplyDetailState extends State<CounselingApplyDetail> {
             ),
             GestureDetector(
               onTap: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(
-                              list: _list,
-                            )));
+                final result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
                 setState(() {
                   tagList = result;
                   if (tagList == null) tagList = [];

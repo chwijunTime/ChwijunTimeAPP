@@ -3,7 +3,6 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -86,10 +85,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     buildTextField("학번", classNumberC, deco: false),
                     buildTextField("회사 사이트 주소", siteUrl, deco: false),
                     buildTextField("지역명", areaC, deco: false),
-                    buildTextField(
-                      "상세 주소",
-                      addressC, deco: false
-                    ),
+                    buildTextField("상세 주소", addressC, deco: false),
                   ],
                 ),
               ),
@@ -124,24 +120,24 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 100, right: 100),
-              child: makeBtn(msg: "태그 선택하러 가기", onPressed: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            SearchPage(
-                              list: _list,
-                            )));
-                setState(() {
-                  if (result != null) {
-                    tagList = result;
-                  }
-                });
-                print("tagList: $tagList");
-              }, mode: 2),
+              child: makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 2),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15, left: 15),
@@ -155,7 +151,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
             ),
             Padding(
               padding:
-              EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
+                  EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
               child: makeGradientBtn(
                   msg: "등록하기",
                   onPressed: () {
@@ -206,8 +202,6 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
       } catch (e) {
         print(e);
       }
-
-
     }
   }
 }
