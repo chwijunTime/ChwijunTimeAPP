@@ -1,5 +1,4 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
-import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/company_notice_detail.dart';
@@ -10,7 +9,6 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +34,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   Year _year = Year.y2021;
   final tagC = TextEditingController();
   final titleC = TextEditingController();
-  List<String> _list;
+  List<String> _list = [];
   List<String> tagList = [];
   List<bool> deleteNoti = [];
 
@@ -45,7 +43,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   @override
   void initState() {
     super.initState();
-    init();
     searchState();
     widget.role = User.role;
 
@@ -61,21 +58,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           return status < 500;
         }));
     helper = RetrofitHelper(dio);
-  }
-
-  void init() {
-    _list = [];
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
   }
 
   searchState() {
@@ -162,8 +144,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                               msg: "취업 공고 등록",
                               onPressed: () async {
                                 print("등록하자");
-                                var res = await Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => CompanyNoticeWritePage()));
+                                var res = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CompanyNoticeWritePage()));
                                 if (res != null && res) {
                                   setState(() {
                                     _getCompany();
@@ -190,30 +175,27 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     ),
               Expanded(
                 child: FutureBuilder(
-                  future: _getCompany(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    else {
-                      widget.notiList = snapshot.data;
-                      for(int i=0; i<widget.notiList.length; i++) {
-                        widget.notiList[i].isBookMark = false;
+                    future: _getCompany(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        widget.notiList = snapshot.data;
+                        for (int i = 0; i < widget.notiList.length; i++) {
+                          widget.notiList[i].isBookMark = false;
+                        }
+                        return ListView.builder(
+                          itemCount: widget.notiList.length,
+                          itemBuilder: (context, index) {
+                            return buildItemCompany(context, index);
+                          },
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                        );
                       }
-                      return ListView.builder(
-                        itemCount: widget.notiList.length,
-                        itemBuilder: (context, index) {
-                          return buildItemCompany(context, index);
-                        },
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                      );
-                    }
-                  }
-                ),
+                    }),
               )
             ],
           ),
@@ -253,35 +235,34 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       var res = await showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된 공지사항을 삭제하시겠습니까?",
-            size: Size(326, 124),
-            btnName1: "아니요",
-            btnCall1: () {
-              Navigator.pop(context, false);
-            },
-            btnName2: "삭제하기",
-            btnCall2: () async {
-              print("삭제할 업체들================================");
-              final pref = await SharedPreferences.getInstance();
-              var token = pref.getString("accessToken");
-              try {
-                for (int i = 0; i < arr.length; i++) {
-                  final res = await helper.deleteComp(
-                       token, arr[i]);
-                  if (res.success) {
-                    print("삭제함: ${res.msg}");
-                  } else {
-                    print("errorr: ${res.msg}");
+                msg: "선택된 공지사항을 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context, false);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () async {
+                  print("삭제할 업체들================================");
+                  final pref = await SharedPreferences.getInstance();
+                  var token = pref.getString("accessToken");
+                  try {
+                    for (int i = 0; i < arr.length; i++) {
+                      final res = await helper.deleteComp(token, arr[i]);
+                      if (res.success) {
+                        print("삭제함: ${res.msg}");
+                      } else {
+                        print("errorr: ${res.msg}");
+                      }
+                    }
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    print("err: ${e}");
+                    Navigator.pop(context, false);
+                    snackBar("이미 삭제된 공지입니다.", context);
                   }
-                }
-                Navigator.pop(context, true);
-              } catch (e) {
-                print("err: ${e}");
-                Navigator.pop(context, false);
-                snackBar("이미 삭제된 공지입니다.", context);
-              }
-            },
-          ),
+                },
+              ),
           barrierDismissible: false);
       if (res != null && res) {
         setState(() {
@@ -302,8 +283,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      CompanyNoticeDetailPage(index: widget.notiList[index].index,)));
+                  builder: (context) => CompanyNoticeDetailPage(
+                        index: widget.notiList[index].index,
+                      )));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -369,29 +351,31 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Row(
-                      children: List.generate(widget.notiList[index].tag.length<2 ? 1 : 2, (indextag) {
+                      children: List.generate(
+                          widget.notiList[index].tag.length < 2 ? 1 : 2,
+                          (indextag) {
                         return buildItemTag(
                             widget.notiList[index].tag, indextag);
                       }),
                     ),
-                    widget.notiList[index].tag.length < 2 ?
-                        SizedBox() :
-                    Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${widget.notiList[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
+                    widget.notiList[index].tag.length < 2
+                        ? SizedBox()
+                        : Container(
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${widget.notiList[index].tag.length - 2}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
@@ -572,63 +556,33 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     return Column(
       children: [
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", tagC, autoFocus: false),
-        ),
-        SingleChildScrollView(
-          child: Container(
-            height: 220,
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 0),
-                      color: Colors.black54,
-                      blurRadius: 10,
-                      spreadRadius: 2)
-                ],
-                color: Colors.white),
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              children: _buildSearchList(),
-            ),
-          ),
+          padding: const EdgeInsets.only(left: 100, right: 100),
+          child: makeBtn(
+              msg: "태그 선택하러 가기",
+              onPressed: () async {
+                final result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
+                print("tagList: $tagList");
+              },
+              mode: 2),
         ),
         SizedBox(
-          height: 5,
+          height: 15,
         ),
-        SizedBox(
-            height: 58,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "태그",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Container(
-                  height: 1,
-                  width: 360,
-                  color: Colors.grey[500],
-                  margin: EdgeInsets.only(bottom: 5, top: 5),
-                ),
-                SizedBox(
-                  width: 360,
-                  height: 22,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: tagList.length,
-                      itemBuilder: (context, index) {
-                        return buildModifyItemTag(tagList, index);
-                      }),
-                )
-              ],
-            )),
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15),
+          child: Align(
+              alignment: Alignment.center,
+              child: makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
+        ),
         SizedBox(
           height: 5,
         ),

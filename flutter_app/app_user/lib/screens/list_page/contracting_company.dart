@@ -35,7 +35,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   List<ContractingVO> contractingList = [];
   final tagC = TextEditingController();
   final titleC = TextEditingController();
-  List<String> _list;
+  List<String> _list = [];
   List<String> tagList = [];
 
   Select _select = Select.YEAR;
@@ -44,7 +44,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   @override
   void initState() {
     super.initState();
-    init();
     searchState();
     widget.role = User.role;
     initRetrofit();
@@ -61,21 +60,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     helper = RetrofitHelper(dio);
   }
 
-  void init() {
-    _list = [];
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   _onHeartPressed(int index) {
     setState(() {
       contractingList[index].isFavorite = !contractingList[index].isFavorite;
@@ -86,7 +70,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scafforldkey,
-        drawer: buildDrawer(context, ),
+        drawer: buildDrawer(
+          context,
+        ),
         appBar: buildAppBar("취준타임", context),
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>
@@ -166,7 +152,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               ContractingCompanyWrite()));
-                                  if (res!=null && res) {
+                                  if (res != null && res) {
                                     setState(() {
                                       _getContractingList();
                                     });
@@ -193,25 +179,25 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 Expanded(
                   child: Align(
                     child: FutureBuilder(
-                      future: _getContractingList(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          contractingList = snapshot.data;
-                          for (int i=0; i<contractingList.length; i++) {
-                            contractingList[i].isFavorite = false;
+                        future: _getContractingList(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            contractingList = snapshot.data;
+                            for (int i = 0; i < contractingList.length; i++) {
+                              contractingList[i].isFavorite = false;
+                            }
+                            return ListView.builder(
+                                itemCount: contractingList.length,
+                                itemBuilder: (context, index) {
+                                  return buildItemCompany(context, index);
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          return ListView.builder(
-                              itemCount: contractingList.length,
-                              itemBuilder: (context, index) {
-                                return buildItemCompany(context, index);
-                              });
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }
-                    ),
+                        }),
                   ),
                 )
               ],
@@ -250,7 +236,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   builder: (countext) => ContractingCompanyDetailPage(
                         index: contractingList[index].index,
                       )));
-          if (res!=null && res) {
+          if (res != null && res) {
             setState(() {
               _getContractingList();
             });
@@ -311,7 +297,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   children: [
                     Row(
                       children: List.generate(2, (indextag) {
-                        return buildItemTag(contractingList[index].tag, indextag);
+                        return buildItemTag(
+                            contractingList[index].tag, indextag);
                       }),
                     ),
                     Container(
@@ -527,63 +514,33 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     return Column(
       children: [
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", tagC, autoFocus: false),
-        ),
-        SingleChildScrollView(
-          child: Container(
-            height: 220,
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 0),
-                      color: Colors.black54,
-                      blurRadius: 10,
-                      spreadRadius: 2)
-                ],
-                color: Colors.white),
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              children: _buildSearchList(),
-            ),
-          ),
+          padding: const EdgeInsets.only(left: 100, right: 100),
+          child: makeBtn(
+              msg: "태그 선택하러 가기",
+              onPressed: () async {
+                final result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
+                print("tagList: $tagList");
+              },
+              mode: 2),
         ),
         SizedBox(
-          height: 5,
+          height: 15,
         ),
-        SizedBox(
-            height: 58,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "태그",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Container(
-                  height: 1,
-                  width: 360,
-                  color: Colors.grey[500],
-                  margin: EdgeInsets.only(bottom: 5, top: 5),
-                ),
-                SizedBox(
-                  width: 360,
-                  height: 22,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: tagList.length,
-                      itemBuilder: (context, index) {
-                        return buildModifyItemTag(tagList, index);
-                      }),
-                )
-              ],
-            )),
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15),
+          child: Align(
+              alignment: Alignment.center,
+              child: makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
+        ),
         SizedBox(
           height: 5,
         ),
@@ -747,35 +704,38 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       }
     }
 
-    if(deleteComp.isEmpty) {
+    if (deleteComp.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       showDialog(
           context: context,
           builder: (BuildContext context) => StdDialog(
-            msg: "선택된 협약 업체를 삭제하시겠습니까?",
-            size: Size(326, 124),
-            btnName1: "아니요",
-            btnCall1: () {Navigator.pop(context);},
-            btnName2: "삭제하기",
-            btnCall2: () async {
-              final pref = await SharedPreferences.getInstance();
-              var token = pref.getString("accessToken");
-              print("token: ${token}");
-              try {
-                for (int i = 0; i < deleteComp.length; i++) {
-                  var res = await helper.deleteCont(token, deleteComp[i]);
-                  if (res.success) {
-                    print("삭제함: ${res.msg}");
-                  } else {
-                    print("errorr: ${res.msg}");
+                msg: "선택된 협약 업체를 삭제하시겠습니까?",
+                size: Size(326, 124),
+                btnName1: "아니요",
+                btnCall1: () {
+                  Navigator.pop(context);
+                },
+                btnName2: "삭제하기",
+                btnCall2: () async {
+                  final pref = await SharedPreferences.getInstance();
+                  var token = pref.getString("accessToken");
+                  print("token: ${token}");
+                  try {
+                    for (int i = 0; i < deleteComp.length; i++) {
+                      var res = await helper.deleteCont(token, deleteComp[i]);
+                      if (res.success) {
+                        print("삭제함: ${res.msg}");
+                      } else {
+                        print("errorr: ${res.msg}");
+                      }
+                    }
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    print(e);
                   }
-                }
-                Navigator.pop(context, true);
-              } catch (e) {
-                print(e);
-              }
-            },),
+                },
+              ),
           barrierDismissible: false);
     }
   }

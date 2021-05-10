@@ -2,18 +2,18 @@ import 'package:app_user/model/confirmation/confirmation_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/confirmation_status_detail.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/confirmation_status_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import '../search_page.dart';
 
 class ConfirmationStatusPage extends StatefulWidget {
   String role;
@@ -34,7 +34,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   Year _year = Year.y2021;
   final tagC = TextEditingController();
   final titleC = TextEditingController();
-  List<String> _list;
+  List<String> _list = [];
   List<String> tagList = [];
 
   List<ConfirmationVO> confList = [];
@@ -47,25 +47,9 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     });
   }
 
-  initList() {
-    _list = [];
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   @override
   void initState() {
     super.initState();
-    initList();
     searchState();
     setState(() {
       widget.role = User.role;
@@ -517,63 +501,33 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     return Column(
       children: [
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", tagC, autoFocus: false),
-        ),
-        SingleChildScrollView(
-          child: Container(
-            height: 220,
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 0),
-                      color: Colors.black54,
-                      blurRadius: 10,
-                      spreadRadius: 2)
-                ],
-                color: Colors.white),
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              children: _buildSearchList(),
-            ),
-          ),
+          padding: const EdgeInsets.only(left: 100, right: 100),
+          child: makeBtn(
+              msg: "태그 선택하러 가기",
+              onPressed: () async {
+                final result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
+                print("tagList: $tagList");
+              },
+              mode: 2),
         ),
         SizedBox(
-          height: 5,
+          height: 15,
         ),
-        SizedBox(
-            height: 58,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "태그",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Container(
-                  height: 1,
-                  width: 360,
-                  color: Colors.grey[500],
-                  margin: EdgeInsets.only(bottom: 5, top: 5),
-                ),
-                SizedBox(
-                  width: 360,
-                  height: 22,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: tagList.length,
-                      itemBuilder: (context, index) {
-                        return buildModifyItemTag(tagList, index);
-                      }),
-                )
-              ],
-            )),
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15),
+          child: Align(
+              alignment: Alignment.center,
+              child: makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
+        ),
         SizedBox(
           height: 5,
         ),
