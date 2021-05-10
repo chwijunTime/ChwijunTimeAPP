@@ -140,9 +140,9 @@ class _SearchPageState extends State<SearchPage> {
           child: _IsSearching
               ? FutureBuilder(
                   future: _getTagList(),
-                  builder: (BuildContext context, AsyncSnapshot snapsnot) {
-                    if (snapsnot.hasData) {
-                      list = snapsnot.data;
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      list = snapshot.data;
                       return SizedBox(
                         child: Card(
                           margin: EdgeInsets.only(left: 34, right: 34),
@@ -154,13 +154,26 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                       );
                     } else {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(),
-                            Text("태그를 불러오는 중...")
-                          ],
+                      return SizedBox(
+                        child: Card(
+                          margin: EdgeInsets.only(left: 34, right: 34),
+                          elevation: 5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "태그를 불러오는 중...",
+                                  style: TextStyle(
+                                      fontSize: 18, fontWeight: FontWeight.w800),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                CircularProgressIndicator(),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     }

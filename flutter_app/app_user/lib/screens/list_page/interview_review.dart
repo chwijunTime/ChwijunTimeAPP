@@ -2,6 +2,7 @@ import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -33,7 +34,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   List<ReviewVO> compList = [];
   final tagC = TextEditingController();
   final titleC = TextEditingController();
-  List<String> _list;
+  List<String> _list = [];
   List<String> tagList = [];
 
   Select _select = Select.YEAR;
@@ -42,8 +43,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   @override
   void initState() {
     super.initState();
-    _listSetting();
-    init();
     searchState();
     widget.role = User.role;
     initRetrofit();
@@ -60,42 +59,10 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     helper = RetrofitHelper(dio);
   }
 
-  void init() {
-    _list = [];
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   _onHeartPressed(int index) {
     setState(() {
       compList[index].isFavorite = !compList[index].isFavorite;
     });
-  }
-
-  void _listSetting() {
-    for (int i = 1; i <= 8; i++) {
-      compList.add(ReviewVO(
-          isMine: i % 2 == 0,
-          title: "${i}. 업체명",
-          review:
-              "${i}. content printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scr",
-          tag: List.generate(5, (index) => "${index}.태그"),
-          applyDate: "2021.03.21",
-          price: i * 1000,
-          isFavorite: false,
-          address: "광주광역시 광산구 목련로 273번길",
-          question:
-              "질문1, 이런 질문이 나왔어요 신기하더라구요 아니... 그런 질문은 생각도 못했어요 하지만 생각해 보니 그 질문은 이 길을 가는데 적합한 사람인지 확인하기 위해 참 좋던 질문이더라구용"));
-    }
   }
 
   @override
@@ -103,7 +70,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     return Scaffold(
         key: scafforldkey,
         drawer: buildDrawer(context),
-        appBar: buildAppBar("취준타임" , context),
+        appBar: buildAppBar("취준타임", context),
         body: SlidingUpPanel(
           panelBuilder: (scrollController) =>
               buildSlidingPanel(scrollController: scrollController),
@@ -156,7 +123,11 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                       padding: EdgeInsets.only(right: 25),
                       child: FloatingActionButton(
                         onPressed: () async {
-                          var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => InterviewReviewWrite()));
+                          var res = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      InterviewReviewWrite()));
                           if (res != null && res) {
                             setState(() {
                               _getReview();
@@ -196,26 +167,26 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 Expanded(
                   child: Align(
                     child: FutureBuilder(
-                      future: _getReview(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          var result = snapshot.data as List<ReviewVO>;
-                          compList = result;
-                          for (int i = 0; i < compList.length; i++) {
-                            compList[i].isFavorite = false;
+                        future: _getReview(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            var result = snapshot.data as List<ReviewVO>;
+                            compList = result;
+                            for (int i = 0; i < compList.length; i++) {
+                              compList[i].isFavorite = false;
+                            }
+                            return ListView.builder(
+                                itemCount: compList.length,
+                                itemBuilder: (context, index) {
+                                  return buildItemCompany(context, index);
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          return ListView.builder(
-                              itemCount: compList.length,
-                              itemBuilder: (context, index) {
-                                return buildItemCompany(context, index);
-                              });
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }
-                    ),
+                        }),
                   ),
                 )
               ],
@@ -511,65 +482,36 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
 
   Widget selectTagWidget() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", tagC, autoFocus: false),
-        ),
-        SingleChildScrollView(
-          child: Container(
-            height: 220,
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 0),
-                      color: Colors.black54,
-                      blurRadius: 10,
-                      spreadRadius: 2)
-                ],
-                color: Colors.white),
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              children: _buildSearchList(),
-            ),
-          ),
+          padding: const EdgeInsets.only(left: 100, right: 100),
+          child: makeBtn(
+              msg: "태그 선택하러 가기",
+              onPressed: () async {
+                final result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+                setState(() {
+                  if (result != null) {
+                    tagList = result;
+                  }
+                });
+                print("tagList: $tagList");
+              },
+              mode: 2),
         ),
         SizedBox(
-          height: 5,
+          height: 15,
         ),
-        SizedBox(
-            height: 58,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "태그",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Container(
-                  height: 1,
-                  width: 360,
-                  color: Colors.grey[500],
-                  margin: EdgeInsets.only(bottom: 5, top: 5),
-                ),
-                SizedBox(
-                  width: 360,
-                  height: 22,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: tagList.length,
-                      itemBuilder: (context, index) {
-                        return buildModifyItemTag(tagList, index);
-                      }),
-                )
-              ],
-            )),
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15),
+          child: Align(
+              alignment: Alignment.center,
+              child: makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
+        ),
         SizedBox(
           height: 5,
         ),
