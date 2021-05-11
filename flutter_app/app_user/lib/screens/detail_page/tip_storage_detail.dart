@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 
 class TipStorageDetail extends StatefulWidget {
   TipVO list;
+  int index;
 
-
-  TipStorageDetail({@required this.list});
+  TipStorageDetail({@required this.index});
 
   @override
   _TipStorageDetailState createState() => _TipStorageDetailState();

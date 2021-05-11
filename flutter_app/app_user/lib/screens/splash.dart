@@ -33,6 +33,8 @@ class _SplashPageState extends State<SplashPage> {
       msg = "완료!";
     });
     await Future.delayed(Duration(milliseconds: 500));
+    token = "1";
+    role = "2";
     if (token != null && role != null) {
       Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
     } else {

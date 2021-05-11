@@ -8,6 +8,7 @@ class CounselingVO {
   String user;
   List<String> tag;
   bool done;
+  int index;
 
   CounselingVO(
       {@required this.date,
@@ -16,10 +17,11 @@ class CounselingVO {
       this.reason,
       @required this.tag,
       this.user,
-      this.done});
+      this.done,
+      this.index});
 
   @override
   String toString() {
-    return 'CounselingVO{date: $date, time: $time, place: $place, reason: $reason, tag: $tag, user: $user, done: $done}';
+    return 'CounselingVO{date: $date, time: $time, place: $place, reason: $reason, tag: $tag, user: $user, done: $done, index: $index}';
   }
 }

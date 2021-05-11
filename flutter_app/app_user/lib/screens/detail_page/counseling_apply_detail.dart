@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 
 class CounselingApplyDetail extends StatefulWidget {
   CounselingVO list;
+  int index;
 
-  CounselingApplyDetail({this.list});
+  CounselingApplyDetail({this.index});
 
   @override
   _CounselingApplyDetailState createState() => _CounselingApplyDetailState();

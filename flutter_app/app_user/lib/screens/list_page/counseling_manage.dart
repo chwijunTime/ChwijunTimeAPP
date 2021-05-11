@@ -153,7 +153,7 @@ class _CounselingManageState extends State<CounselingManage> {
         showDialog(
             context: context,
             builder: (BuildContext context) =>
-                CounselingDialog(list: counList[index]));
+                CounselingDialog(index: counList[index].index));
       },
       child: Card(
           shape: RoundedRectangleBorder(

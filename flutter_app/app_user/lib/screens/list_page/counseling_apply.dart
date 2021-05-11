@@ -16,6 +16,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
   initList() {
     for (int i = 0; i < 10; i++) {
       counList.add(CounselingVO(
+        index: i,
           date: "2021.03.2${i}",
           time: "0${i}.30.PM",
           place: "취진부 상담실",
@@ -128,7 +129,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) =>
-                            CounselingApplyDetail(list: counList[index],)));
+                            CounselingApplyDetail(index: counList[index].index,)));
                   })
             ],
           ),

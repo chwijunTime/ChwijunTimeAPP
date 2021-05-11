@@ -176,7 +176,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageDetail(list: list[index])));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageDetail(index: list[index].index)));
         },
         child: Padding(
           padding: EdgeInsets.all(15),

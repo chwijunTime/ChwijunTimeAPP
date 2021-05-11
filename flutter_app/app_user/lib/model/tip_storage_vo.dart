@@ -5,6 +5,12 @@ class TipVO {
   String address;
   String tip;
   bool isMine;
+  int index;
 
-  TipVO({@required this.title, @required this.address, @required this.tip, this.isMine});
+  TipVO(
+      {@required this.title,
+      @required this.address,
+      @required this.tip,
+      this.isMine,
+      this.index});
 }

@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 
 class CounselingDialog extends StatefulWidget {
   CounselingVO list;
+  int index;
 
-  CounselingDialog({@required this.list});
+  CounselingDialog({@required this.index});
 
   @override
   _CounselingDialogState createState() => _CounselingDialogState();
