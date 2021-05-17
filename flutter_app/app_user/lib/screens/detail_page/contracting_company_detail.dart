@@ -33,13 +33,6 @@ class _ContractingCompanyDetailPageState
   RetrofitHelper helper;
   LatLng latLng;
 
-  _onBookMarkPressed() {
-    setState(() {
-      widget.list.isFavorite = !widget.list.isFavorite;
-      print(widget.list.isFavorite);
-    });
-  }
-
   Future<LatLng> getCordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
@@ -104,19 +97,7 @@ class _ContractingCompanyDetailPageState
                                 ),
                               ),
                               widget.role == User.user
-                                  ? IconButton(
-                                      icon: widget.list.isFavorite
-                                          ? Icon(
-                                              Icons.favorite,
-                                              size: 28,
-                                              color: Colors.red,
-                                            )
-                                          : Icon(
-                                              Icons.favorite_border_outlined,
-                                              size: 28,
-                                            ),
-                                      onPressed: () => _onBookMarkPressed(),
-                                    )
+                                  ? SizedBox()
                                   : IconButton(
                                       icon: Icon(
                                         Icons.delete,
