@@ -17,7 +17,6 @@ ContractingVO _$ContractingVOFromJson(Map<String, dynamic> json) {
     tag: (json['contractingCompanyTags'] as List)
         ?.map((e) => e as String)
         ?.toList(),
-    isFavorite: json['isFavorite'] as bool,
     postTag: (json['tagName'] as List)?.map((e) => e as String)?.toList(),
   );
 }
@@ -32,5 +31,4 @@ Map<String, dynamic> _$ContractingVOToJson(ContractingVO instance) =>
       'contractingCompanyName': instance.title,
       'contractingCompanyTags': instance.tag,
       'tagName': instance.postTag,
-      'isFavorite': instance.isFavorite,
     };

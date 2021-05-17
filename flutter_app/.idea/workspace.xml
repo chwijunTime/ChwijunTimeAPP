@@ -21,15 +21,11 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/model/counseling_vo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/counseling_vo.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/model/tip_storage_vo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/tip_storage_vo.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/contracting_company/contracting_vo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/contracting_company/contracting_vo.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/contracting_company/contracting_vo.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/contracting_company/contracting_vo.g.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/counseling_apply_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/counseling_apply_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/counseling_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/counseling_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/join_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/join_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +54,7 @@
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app_user/android/app/src/main/res/drawable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="flutter.settings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
@@ -118,30 +114,30 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="804" y="162" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.824@0.0.1536.824" timestamp="1620281962305" />
-    <state x="636" y="100" width="808" height="630" key="AVDManager" timestamp="1619571553842">
+    <state x="636" y="100" width="808" height="630" key="AVDManager" timestamp="1621218086108">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="636" y="100" width="808" height="630" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1619571553842" />
+    <state x="636" y="100" width="808" height="630" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1621218086108" />
     <state x="821" y="170" key="FileChooserDialogImpl" timestamp="1620721718499">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="821" y="170" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1620721718499" />
-    <state width="973" height="195" key="GridCell.Tab.0.bottom" timestamp="1620647229778">
+    <state width="944" height="195" key="GridCell.Tab.0.bottom" timestamp="1621218081877">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="973" height="195" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1620647229778" />
-    <state width="973" height="195" key="GridCell.Tab.0.center" timestamp="1620647229778">
+    <state width="944" height="195" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1621218081877" />
+    <state width="944" height="195" key="GridCell.Tab.0.center" timestamp="1621218081877">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="973" height="195" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1620647229778" />
-    <state width="973" height="195" key="GridCell.Tab.0.left" timestamp="1620647229777">
+    <state width="944" height="195" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1621218081877" />
+    <state width="944" height="195" key="GridCell.Tab.0.left" timestamp="1621218081877">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="973" height="195" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1620647229777" />
-    <state width="973" height="195" key="GridCell.Tab.0.right" timestamp="1620647229778">
+    <state width="944" height="195" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1621218081877" />
+    <state width="944" height="195" key="GridCell.Tab.0.right" timestamp="1621218081877">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="973" height="195" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1620647229778" />
+    <state width="944" height="195" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1621218081877" />
     <state x="549" y="60" key="SettingsEditor" timestamp="1619571553209">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

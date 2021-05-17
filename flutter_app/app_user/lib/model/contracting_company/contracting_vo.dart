@@ -21,8 +21,6 @@ class ContractingVO {
   @JsonKey(name: "tagName")
   List<String> postTag;
 
-  bool isFavorite;
-
 
   ContractingVO(
       {this.field,
@@ -32,7 +30,6 @@ class ContractingVO {
       this.index,
       this.title,
       this.tag,
-      this.isFavorite,
       this.postTag});
 
   factory ContractingVO.fromJson(Map<String, dynamic> json) => _$ContractingVOFromJson(json);

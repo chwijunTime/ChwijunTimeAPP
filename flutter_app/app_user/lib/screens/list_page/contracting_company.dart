@@ -37,6 +37,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   final titleC = TextEditingController();
   List<String> _list = [];
   List<String> tagList = [];
+  List<bool> deleteList = [];
 
   Select _select = Select.YEAR;
   Year _year = Year.y2021;
@@ -60,9 +61,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     helper = RetrofitHelper(dio);
   }
 
-  _onHeartPressed(int index) {
+  _onCheckPressed(int index) {
     setState(() {
-      contractingList[index].isFavorite = !contractingList[index].isFavorite;
+      deleteList[index] = !deleteList[index];
     });
   }
 
@@ -96,45 +97,27 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(26),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "취준타임",
-                            style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0x832B8AC0)),
-                          ),
-                          Text(
-                            "협약업체",
-                            style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black),
-                          )
-                        ],
+                Padding(
+                  padding: EdgeInsets.all(26),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
                       ),
-                    ),
-                    widget.role == User.user
-                        ? Padding(
-                            padding: const EdgeInsets.only(right: 26),
-                            child: makeGradientBtn(
-                                msg: "좋아요 모아보기",
-                                onPressed: () {},
-                                mode: 1,
-                                icon: Icon(
-                                  Icons.favorite,
-                                  color: Colors.white,
-                                )),
-                          )
-                        : SizedBox()
-                  ],
+                      Text(
+                        "협약업체",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      )
+                    ],
+                  ),
                 ),
                 widget.role == User.user
                     ? SizedBox()
@@ -185,7 +168,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                           if (snapshot.hasData) {
                             contractingList = snapshot.data;
                             for (int i = 0; i < contractingList.length; i++) {
-                              contractingList[i].isFavorite = false;
+                              deleteList.add(false);
                             }
                             return ListView.builder(
                                 itemCount: contractingList.length,
@@ -257,21 +240,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                     ),
                   ),
                   widget.role == User.user
-                      ? IconButton(
-                          icon: contractingList[index].isFavorite
-                              ? Icon(
-                                  Icons.favorite,
-                                  size: 28,
-                                  color: Colors.red,
-                                )
-                              : Icon(
-                                  Icons.favorite_border_outlined,
-                                  size: 28,
-                                ),
-                          onPressed: () => _onHeartPressed(index),
-                        )
+                      ? SizedBox()
                       : IconButton(
-                          icon: contractingList[index].isFavorite
+                          icon: deleteList[index]
                               ? Icon(
                                   Icons.check_box_outlined,
                                   size: 28,
@@ -281,7 +252,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                   Icons.check_box_outline_blank,
                                   size: 28,
                                 ),
-                          onPressed: () => _onHeartPressed(index)),
+                          onPressed: () => _onCheckPressed(index)),
                 ],
               ),
               Padding(
@@ -699,7 +670,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   _onDeleteCompany() {
     List<int> deleteComp = [];
     for (int i = 0; i < contractingList.length; i++) {
-      if (contractingList[i].isFavorite) {
+      if (deleteList[i]) {
         deleteComp.add(contractingList[i].index);
       }
     }
