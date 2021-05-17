@@ -15,9 +15,7 @@ class JoinPage extends StatefulWidget {
 class _JoinPageState extends State<JoinPage> {
   var passwordC = TextEditingController();
   var rePasswordC = TextEditingController();
-  var phoneC = TextEditingController();
   var stIDC = TextEditingController();
-  var nameC = TextEditingController();
   var emailC = TextEditingController();
 
   bool checkEmail = false;
@@ -107,17 +105,8 @@ class _JoinPageState extends State<JoinPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    buildTextField("Phone Number", phoneC,
-                        type: TextInputType.phone),
-                    SizedBox(
-                      height: 20,
-                    ),
                     buildTextField("Student ID (ex 3210)", stIDC,
                         type: TextInputType.number),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    buildTextField("Name", nameC),
                     SizedBox(
                       height: 10,
                     ),
@@ -263,9 +252,7 @@ class _JoinPageState extends State<JoinPage> {
     if (emailC.text.isEmpty ||
         passwordC.text.isEmpty ||
         rePasswordC.text.isEmpty ||
-        phoneC.text.isEmpty ||
-        stIDC.text.isEmpty ||
-        nameC.text.isEmpty) {
+        stIDC.text.isEmpty ) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
