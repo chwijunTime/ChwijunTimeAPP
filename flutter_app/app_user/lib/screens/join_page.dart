@@ -18,8 +18,6 @@ class _JoinPageState extends State<JoinPage> {
   var stIDC = TextEditingController();
   var emailC = TextEditingController();
 
-  bool checkEmail = false;
-
   RetrofitHelper helper;
 
   @override
@@ -38,7 +36,7 @@ class _JoinPageState extends State<JoinPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
           child: AppBar(
             backgroundColor: Colors.white,
@@ -79,21 +77,14 @@ class _JoinPageState extends State<JoinPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 34, left: 34),
-                child: ListView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
                       height: 20,
                     ),
                     buildTextField("Email", emailC,
-                        type: TextInputType.emailAddress, disable: checkEmail),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: makeBtn(
-                          msg: checkEmail ? "다른 이메일" : "중복확인", onPressed: checkEmail ? _onReTry : _onEmailCheck, mode: 2),
-                    ),
+                        type: TextInputType.emailAddress),
                     SizedBox(
                       height: 15,
                     ),
@@ -199,55 +190,6 @@ class _JoinPageState extends State<JoinPage> {
     );
   }
 
-  _onReTry() {
-    setState(() {
-      checkEmail = !checkEmail;
-    });
-  }
-
-  _onEmailCheck() async {
-    if (emailC.text == "") {
-      snackBar("이메일을 입력해주세요.", context);
-    } else if (!RegExp(
-            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-        .hasMatch(emailC.text)) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return RichAlertDialog(
-              alertTitle: richTitle("입력 에러"),
-              alertSubtitle:
-                  richSubtitle("이메일 형식으로 입력해주세요. '[    ]@[   ].[   ]' 형식"),
-              alertType: RichAlertType.ERROR,
-              actions: [
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "확인",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.orange[800],
-                )
-              ],
-            );
-          });
-    } else {
-      var res = await helper.postEmailCheck(emailC.text);
-      print("ress: ${res.toJson()}");
-      if (res.success) {
-        snackBar("사용가능한 이메일 입니다.", context);
-        setState(() {
-          checkEmail = true;
-        });
-      } else {
-        print("msg: ${res.msg}");
-        snackBar("중복된 이메일 입니다.", context);
-      }
-    }
-  }
-
   _onJoin() async {
     if (emailC.text.isEmpty ||
         passwordC.text.isEmpty ||
@@ -274,10 +216,7 @@ class _JoinPageState extends State<JoinPage> {
               ],
             );
           });
-    } else if (!checkEmail) {
-      snackBar("이메일 중복확인을 완료해주세요!", context);
-    }
-    else if (passwordC.text != rePasswordC.text) {
+    } else if (passwordC.text != rePasswordC.text) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
