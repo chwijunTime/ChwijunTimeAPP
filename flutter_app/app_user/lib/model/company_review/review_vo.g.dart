@@ -17,7 +17,6 @@ ReviewVO _$ReviewVOFromJson(Map<String, dynamic> json) {
     tag: (json['companyReviewTags'] as List)?.map((e) => e as String)?.toList(),
     postTag: (json['tagName'] as List)?.map((e) => e as String)?.toList(),
     review: json['companyReviews'] as String,
-    isFavorite: json['isFavorite'] as bool,
     isMine: json['isMine'] as bool,
   );
 }
@@ -32,6 +31,5 @@ Map<String, dynamic> _$ReviewVOToJson(ReviewVO instance) => <String, dynamic>{
       'companyReviewTags': instance.tag,
       'tagName': instance.postTag,
       'companyReviews': instance.review,
-      'isFavorite': instance.isFavorite,
       'isMine': instance.isMine,
     };

@@ -59,12 +59,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
     helper = RetrofitHelper(dio);
   }
 
-  _onHeartPressed(int index) {
-    setState(() {
-      compList[index].isFavorite = !compList[index].isFavorite;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,9 +167,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                           if (snapshot.hasData) {
                             var result = snapshot.data as List<ReviewVO>;
                             compList = result;
-                            for (int i = 0; i < compList.length; i++) {
-                              compList[i].isFavorite = false;
-                            }
                             return ListView.builder(
                                 itemCount: compList.length,
                                 itemBuilder: (context, index) {
@@ -215,29 +206,10 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${compList[index].title}",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  IconButton(
-                    icon: compList[index].isFavorite
-                        ? Icon(
-                            Icons.favorite,
-                            size: 28,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.favorite_border_outlined,
-                            size: 28,
-                          ),
-                    onPressed: () => _onHeartPressed(index),
-                  ),
-                ],
+              Text(
+                "${compList[index].title}",
+                style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),

@@ -23,7 +23,6 @@ class ReviewVO {
   @JsonKey(name: "companyReviews")
   String review;
 
-  bool isFavorite;
   bool isMine;
 
   ReviewVO(
@@ -36,7 +35,6 @@ class ReviewVO {
       this.tag,
       this.postTag,
       this.review,
-      this.isFavorite,
       this.isMine});
 
   factory ReviewVO.fromJson(Map<String, dynamic> json) =>
