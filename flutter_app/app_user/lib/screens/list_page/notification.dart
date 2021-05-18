@@ -163,9 +163,7 @@ class _NotificationPageState extends State<NotificationPage> {
                             var result = snapshot.data as List<NotificationVO>;
                             noticeList = result;
                             for (int i = 0; i < noticeList.length; i++) {
-                              noticeList[i].isFavorite = false;
-                              noticeList[i].tag = ["욍", "이건", "태그"];
-                              deleteNoti.add(noticeList[i].isFavorite);
+                              deleteNoti.add(false);
                             }
                             return ListView.builder(
                                 itemCount: noticeList.length,
@@ -297,45 +295,17 @@ class _NotificationPageState extends State<NotificationPage> {
                 ),
               ),
               SizedBox(
-                height: 22,
-                child: Row(
-                  children: [
-                    Row(
-                      children: List.generate(2, (indextag) {
-                        return buildItemTag(list[index].tag, indextag);
-                      }),
+                child: Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "등록일: ${strDate}",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400),
                     ),
-                    list[index].tag.length - 2 != 0
-                        ? Container(
-                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                            margin: EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.blue[400],
-                                )),
-                            child: Center(
-                              child: Text(
-                                "외 ${list[index].tag.length - 2}개",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          )
-                        : SizedBox(),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "등록일: ${strDate}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
               )
             ],
@@ -353,7 +323,7 @@ class _NotificationPageState extends State<NotificationPage> {
       }
     }
 
-    if (deleteNoti.isEmpty) {
+    if (arr.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       var res = await showDialog(

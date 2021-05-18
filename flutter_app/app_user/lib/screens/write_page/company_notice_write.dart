@@ -319,7 +319,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
           address: addressC.text,
           info: infoC.text,
           preferential: preferentialInfoC.text,
-          isBookMark: false,
           postTag: tagList,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 

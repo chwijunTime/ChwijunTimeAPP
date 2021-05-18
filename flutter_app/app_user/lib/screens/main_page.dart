@@ -30,12 +30,6 @@ class _MainPageState extends State<MainPage> {
 
   List<NotificationVO> notiList = [];
 
-  _onHeartPressed(int index) {
-    setState(() {
-      notiList[index].isFavorite = !notiList[index].isFavorite;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -121,10 +115,6 @@ class _MainPageState extends State<MainPage> {
                   if (snapshot.hasData) {
                     var result = snapshot.data as List<NotificationVO>;
                     notiList = result;
-                    for (int i=0; i< notiList.length; i++) {
-                      notiList[i].isFavorite = false;
-                      notiList[i].tag = ["욍", "이건","태그"];
-                    }
                     return ListView.builder(
                       itemCount: notiList.length,
                       itemBuilder: (context, index) {
@@ -182,29 +172,10 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${notiList[index].title}",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  widget.role == User.user ? IconButton(
-                    icon: notiList[index].isFavorite
-                        ? Icon(
-                            Icons.favorite,
-                            size: 28,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.favorite_border_outlined,
-                            size: 28,
-                          ),
-                    onPressed: () => _onHeartPressed(index),
-                  ) : SizedBox(),
-                ],
+              Text(
+                "${notiList[index].title}",
+                style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
@@ -224,64 +195,21 @@ class _MainPageState extends State<MainPage> {
               ),
               SizedBox(
                 height: 22,
-                child: Row(
-                  children: [
-                    Row(
-                      children: List.generate(2, (indextag) {
-                        return buildItemTag(indextag);
-                      }),
+                child: Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "등록일: ${strDate}",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400),
                     ),
-                    notiList[index].tag.length-2 !=0 ? Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${notiList[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ): SizedBox(),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "등록일: ${strDate}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
               )
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildItemTag(int index) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-      margin: EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Colors.blue[400],
-          )),
-      child: Center(
-        child: Text(
-          "#${notiList[index].tag[index] == null ? "없음" : notiList[index].tag[index].isEmpty}",
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         ),
       ),
     );

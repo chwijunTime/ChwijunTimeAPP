@@ -180,7 +180,6 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
           review: reviewC.text,
           question: questionC.text,
           tag: widget.list.tag,
-          isFavorite: widget.list.isFavorite,
           isMine: widget.list.isMine);
       Navigator.pop(context, vo);
     }

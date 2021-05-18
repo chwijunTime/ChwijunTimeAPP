@@ -27,9 +27,6 @@ class CompNoticeVO{
   @JsonKey(name: "recruitmentField")
   String field;
 
-  bool isBookMark;
-
-
   CompNoticeVO(
       {this.startDate,
       this.deadLine,
@@ -41,7 +38,6 @@ class CompNoticeVO{
       this.tag,
       this.preferential,
       this.field,
-      this.isBookMark,
       this.postTag});
 
   factory CompNoticeVO.fromJson(Map<String, dynamic> json) => _$CompNoticeVOFromJson(json);

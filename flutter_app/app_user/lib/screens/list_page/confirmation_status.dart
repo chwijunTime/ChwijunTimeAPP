@@ -38,8 +38,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   List<String> tagList = [];
 
   List<ConfirmationVO> confList = [];
-  final List<bool> checkList = [];
-  List<bool> deleteConf = [];
+  List<bool> checkList = [];
 
   _onCheckPressed(int index) {
     setState(() {
@@ -218,12 +217,12 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   _onDeleteConfirmation() async {
     List<int> arr = [];
     for (int i = 0; i < confList.length; i++) {
-      if (deleteConf[i]) {
+      if (checkList[i]) {
         arr.add(confList[i].index);
       }
     }
 
-    if (deleteConf.isEmpty) {
+    if (arr.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       var res = await showDialog(
@@ -260,7 +259,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       if (res != null && res) {
         setState(() {
           _getComfirmation();
-          deleteConf.clear();
+          checkList.clear();
         });
       }
     }

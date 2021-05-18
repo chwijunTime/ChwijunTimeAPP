@@ -15,25 +15,17 @@ class NotificationVO {
   MemberVO memberVO;
   @JsonKey(name: "noticeIdx")
   int index;
-  bool isFavorite;
-  List<String> tag;
 
   NotificationVO(
-      { this.title,
-        this.content,
-        this.date,
-        this.isFavorite = false,
-        this.tag,
-      this.memberVO,
-      this.index});
-
+      {this.title, this.content, this.date, this.memberVO, this.index});
 
   @override
   String toString() {
-    return 'NotificationVO{title: $title, content: $content, date: $date, memberVO: $memberVO, index: $index, isFavorite: $isFavorite, tag: $tag}';
+    return 'NotificationVO{title: $title, content: $content, date: $date, memberVO: $memberVO, index: $index}';
   }
 
-  factory NotificationVO.fromJson(Map<String, dynamic> json) => _$NotificationVOFromJson(json);
+  factory NotificationVO.fromJson(Map<String, dynamic> json) =>
+      _$NotificationVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$NotificationVOToJson(this);
 }

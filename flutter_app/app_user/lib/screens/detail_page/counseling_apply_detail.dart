@@ -19,28 +19,7 @@ class CounselingApplyDetail extends StatefulWidget {
 class _CounselingApplyDetailState extends State<CounselingApplyDetail> {
   var reasonC = TextEditingController();
 
-  List<String> _list = [];
   List<String> tagList = [];
-
-  initList() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initList();
-  }
 
   @override
   Widget build(BuildContext context) {

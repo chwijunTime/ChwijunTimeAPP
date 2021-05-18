@@ -77,8 +77,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
 
   _onBookMarkPressed(int index) {
     setState(() {
-      widget.notiList[index].isBookMark = !widget.notiList[index].isBookMark;
-      print(widget.notiList[index].isBookMark);
+      deleteNoti[index] = !deleteNoti[index];
     });
   }
 
@@ -184,7 +183,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       } else {
                         widget.notiList = snapshot.data;
                         for (int i = 0; i < widget.notiList.length; i++) {
-                          widget.notiList[i].isBookMark = false;
+                          deleteNoti.add(false);
                         }
                         return ListView.builder(
                           itemCount: widget.notiList.length,
@@ -229,7 +228,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       }
     }
 
-    if (deleteNoti.isEmpty) {
+    if (arr.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
     } else {
       var res = await showDialog(
@@ -302,21 +301,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     ),
                   ),
                   widget.role == User.user
-                      ? IconButton(
-                          icon: widget.notiList[index].isBookMark
-                              ? Icon(
-                                  Icons.bookmark,
-                                  size: 28,
-                                  color: Color(0xff4687FF),
-                                )
-                              : Icon(
-                                  Icons.bookmark_border,
-                                  size: 28,
-                                ),
-                          onPressed: () => _onBookMarkPressed(index),
-                        )
+                      ? SizedBox()
                       : IconButton(
-                          icon: widget.notiList[index].isBookMark
+                          icon: deleteNoti[index]
                               ? Icon(
                                   Icons.check_box_outlined,
                                   size: 28,

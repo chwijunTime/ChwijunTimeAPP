@@ -11,8 +11,6 @@ NotificationVO _$NotificationVOFromJson(Map<String, dynamic> json) {
     title: json['title'] as String,
     content: json['content'] as String,
     date: json['createDated'] as String,
-    isFavorite: json['isFavorite'] as bool,
-    tag: (json['tag'] as List)?.map((e) => e as String)?.toList(),
     memberVO: json['member'] == null
         ? null
         : MemberVO.fromJson(json['member'] as Map<String, dynamic>),
@@ -27,6 +25,4 @@ Map<String, dynamic> _$NotificationVOToJson(NotificationVO instance) =>
       'createDated': instance.date,
       'member': instance.memberVO,
       'noticeIdx': instance.index,
-      'isFavorite': instance.isFavorite,
-      'tag': instance.tag,
     };

@@ -20,7 +20,6 @@ CompNoticeVO _$CompNoticeVOFromJson(Map<String, dynamic> json) {
         ?.toList(),
     preferential: json['preferentialConditions'] as String,
     field: json['recruitmentField'] as String,
-    isBookMark: json['isBookMark'] as bool,
     postTag: (json['tagName'] as List)?.map((e) => e as String)?.toList(),
   );
 }
@@ -38,5 +37,4 @@ Map<String, dynamic> _$CompNoticeVOToJson(CompNoticeVO instance) =>
       'tagName': instance.postTag,
       'preferentialConditions': instance.preferential,
       'recruitmentField': instance.field,
-      'isBookMark': instance.isBookMark,
     };

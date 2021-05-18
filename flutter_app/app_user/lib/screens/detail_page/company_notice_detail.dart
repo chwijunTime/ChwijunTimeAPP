@@ -47,12 +47,6 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     helper = RetrofitHelper(dio);
   }
 
-  _onBookMarkPressed() {
-    setState(() {
-      widget.list.isBookMark = !widget.list.isBookMark;
-      print(widget.list.isBookMark);
-    });
-  }
 
   Future<LatLng> getCordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
@@ -125,19 +119,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                     ),
                                   ),
                                   widget.role == User.user
-                                      ? IconButton(
-                                          icon: widget.list.isBookMark
-                                              ? Icon(
-                                                  Icons.bookmark,
-                                                  size: 28,
-                                                  color: Color(0xff4687FF),
-                                                )
-                                              : Icon(
-                                                  Icons.bookmark_border,
-                                                  size: 28,
-                                                ),
-                                          onPressed: () => _onBookMarkPressed(),
-                                        )
+                                      ? SizedBox()
                                       : IconButton(
                                           icon: Icon(Icons.delete),
                                           onPressed: () async {

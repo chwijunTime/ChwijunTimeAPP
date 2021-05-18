@@ -72,12 +72,6 @@ class _NotificationDialog extends State<NotificationDialog> {
     }
   }
 
-  _onHeartPressed() {
-    setState(() {
-      widget.list.isFavorite = !widget.list.isFavorite;
-    });
-  }
-
   dialogContent(BuildContext context) {
     return Container(
       width: widget.size.width,
@@ -108,7 +102,6 @@ class _NotificationDialog extends State<NotificationDialog> {
             if (snapshot.hasData) {
               var result = snapshot.data as ResponseNotice;
               widget.list = result.data;
-              widget.list.tag = ["욍", "이건", "태그"];
               print("widget: ${widget.list}");
               return Column(
                 mainAxisSize: MainAxisSize.max,
@@ -126,19 +119,7 @@ class _NotificationDialog extends State<NotificationDialog> {
                         ),
                       ),
                       widget.role == User.user
-                          ? IconButton(
-                              icon: widget.list.isFavorite
-                                  ? Icon(
-                                      Icons.favorite,
-                                      size: 28,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border_outlined,
-                                      size: 28,
-                                    ),
-                              onPressed: () => _onHeartPressed(),
-                            )
+                          ? SizedBox()
                           : IconButton(
                               icon: Icon(
                                 Icons.delete,
@@ -168,13 +149,6 @@ class _NotificationDialog extends State<NotificationDialog> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Align(
-                      alignment: Alignment.bottomCenter,
-                      child: makeTagWidget(
-                          tag: widget.list.tag, size: Size(360, 50), mode: 2)),
                   SizedBox(
                     height: 20,
                   ),
