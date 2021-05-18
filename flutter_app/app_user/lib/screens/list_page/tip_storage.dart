@@ -1,7 +1,9 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/tip_storage_vo.dart';
 import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/write_page/tip_storage_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -13,16 +15,17 @@ class TipStoragePage extends StatefulWidget {
 
 class _TipStoragePageState extends State<TipStoragePage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
+  final _scrollController = ScrollController();
 
   List<TipVO> tipList = [];
   final titleC = TextEditingController();
   String _searchText = "";
   bool _IsSearching;
+  int itemCount = Consts.showItemCount;
 
   @override
   void initState() {
     super.initState();
-    _listSetting();
     _IsSearching = false;
 
     titleC.addListener(() {
@@ -39,16 +42,44 @@ class _TipStoragePageState extends State<TipStoragePage> {
         });
       }
     });
+
+    _scrollController.addListener(_scrollListener);
   }
 
-  void _listSetting() {
-    for (int i = 0; i < 8; i++) {
-      tipList.add(TipVO(
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    titleC.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != tipList.length) {
+          if ((tipList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount += tipList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
+  }
+
+  Future<List<TipVO>> getTipList() async {
+    await Future.delayed(Duration(seconds: 2));
+    List<TipVO> list = [];
+    for (int i = 0; i < 52; i++) {
+      list.add(TipVO(
           title: "${i + 1}.업체명",
           address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
           tip: "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요",
-      isMine: i%2==0));
+          isMine: i % 2 == 0));
     }
+    return list;
   }
 
   @override
@@ -92,7 +123,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
                   padding: EdgeInsets.only(right: 25),
                   child: FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageWrite()));
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => TipStorageWrite()));
                     },
                     child: Container(
                       width: 60,
@@ -128,15 +160,60 @@ class _TipStoragePageState extends State<TipStoragePage> {
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                 child: buildTextField("꿀팁 제목", titleC, autoFocus: false)),
             Expanded(
-              child: Align(
-                child: _IsSearching
-                    ? buildSearchList()
-                    : ListView.builder(
-                        itemCount: tipList.length,
-                        itemBuilder: (context, index) {
-                          return buildItemTip(
-                              context, index, tipList);
-                        }),
+              child: FutureBuilder(
+                  future: getTipList(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      tipList = snapshot.data;
+                      return Align(
+                        child: _IsSearching
+                            ? buildSearchList()
+                            : ListView.builder(
+                            controller: _scrollController,
+                            itemCount: itemCount + 1,
+                            itemBuilder: (context, index) {
+                              if (index == itemCount) {
+                                if (index == tipList.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: makeGradientBtn(msg: "맨 처음으로",
+                                        onPressed: () {
+                                          _scrollController.animateTo(
+                                              _scrollController.position
+                                                  .minScrollExtent,
+                                              duration: Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.elasticOut);
+                                        },
+                                        mode: 1,
+                                        icon: Icon(Icons.arrow_upward,
+                                          color: Colors.white,)),
+                                  );
+                                } else {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                return buildItemTip(
+                                    context, index, tipList);
+                              }
+                            }),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }
               ),
             )
           ],
@@ -168,15 +245,15 @@ class _TipStoragePageState extends State<TipStoragePage> {
     }
   }
 
-  Widget buildItemTip(
-      BuildContext context, int index, List<TipVO> list) {
+  Widget buildItemTip(BuildContext context, int index, List<TipVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageDetail(index: list[index].index)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>
+              TipStorageDetail(index: list[index].index)));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -186,7 +263,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
               Text(
                 "${list[index].title}",
                 style:
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
