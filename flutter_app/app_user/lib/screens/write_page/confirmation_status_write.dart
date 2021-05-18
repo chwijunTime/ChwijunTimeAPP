@@ -81,7 +81,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     buildTextField("회사 사이트 주소", siteUrl, deco: false),
                     buildTextField("지역명", areaC, deco: false),
                     buildTextField("상세 주소", addressC, deco: false),
-                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number),
+                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number, deco: false),
                   ],
                 ),
               ),

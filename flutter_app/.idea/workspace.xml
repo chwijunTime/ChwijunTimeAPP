@@ -21,21 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/company_notice.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/company_notice.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/interview_review.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/interview_review.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/company_notice_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/company_notice_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/contracting_company_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/contracting_company_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/tip_storage_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/tip_storage_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/text_field.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/text_field.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
