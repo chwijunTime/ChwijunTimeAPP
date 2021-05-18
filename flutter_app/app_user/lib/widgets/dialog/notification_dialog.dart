@@ -1,3 +1,4 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/user.dart';
@@ -227,11 +228,4 @@ class _NotificationDialog extends State<NotificationDialog> {
       Navigator.pop(context);
     }
   }
-}
-
-class Consts {
-  Consts._();
-
-  static const double padding = 30.0;
-  static const double avataRadius = 60.0;
 }
