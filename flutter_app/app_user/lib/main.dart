@@ -1,4 +1,3 @@
-import 'package:app_user/model/user.dart';
 import 'package:app_user/screens/find_acount_page.dart';
 import 'package:app_user/screens/join_page.dart';
 import 'package:app_user/screens/list_page/company_notice.dart';

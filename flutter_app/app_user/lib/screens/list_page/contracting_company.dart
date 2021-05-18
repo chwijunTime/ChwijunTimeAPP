@@ -1,3 +1,4 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/contracting_company/contracting_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
@@ -14,7 +15,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ContractingCompPage extends StatefulWidget {
   String role;
@@ -23,31 +23,46 @@ class ContractingCompPage extends StatefulWidget {
   _ContractingCompPageState createState() => _ContractingCompPageState();
 }
 
-enum Select { YEAR, TAG, TITLE }
-enum Year { y2018, y2019, y2020, y2021 }
-
 class _ContractingCompPageState extends State<ContractingCompPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
   RetrofitHelper helper;
-
-  PanelController panelController = PanelController();
+  final _scrollController = ScrollController();
 
   List<ContractingVO> contractingList = [];
-  final tagC = TextEditingController();
   final titleC = TextEditingController();
-  List<String> _list = [];
-  List<String> tagList = [];
   List<bool> deleteList = [];
-
-  Select _select = Select.YEAR;
-  Year _year = Year.y2021;
+  var itemCount = Consts.showItemCount;
 
   @override
   void initState() {
     super.initState();
-    searchState();
     widget.role = User.role;
     initRetrofit();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != contractingList.length) {
+          if ((contractingList.length - itemCount) ~/ Consts.showItemCount <=
+              0) {
+            itemCount += contractingList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
   }
 
   initRetrofit() {
@@ -70,123 +85,149 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scafforldkey,
-        drawer: buildDrawer(
-          context,
-        ),
-        appBar: buildAppBar("취준타임", context),
-        body: SlidingUpPanel(
-          panelBuilder: (scrollController) =>
-              buildSlidingPanel(scrollController: scrollController),
-          controller: panelController,
-          minHeight: 80,
-          maxHeight: 600,
-          backdropEnabled: true,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-          margin: EdgeInsets.only(left: 2, right: 2),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, -2),
-                blurRadius: 10,
-                spreadRadius: 2)
-          ],
-          body: Container(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(26),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "취준타임",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0x832B8AC0)),
-                      ),
-                      Text(
-                        "협약업체",
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black),
-                      )
-                    ],
+      key: scafforldkey,
+      drawer: buildDrawer(
+        context,
+      ),
+      appBar: buildAppBar("취준타임", context),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(26),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "취준타임",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0x832B8AC0)),
                   ),
-                ),
-                widget.role == User.user
-                    ? SizedBox()
-                    : Padding(
-                        padding: const EdgeInsets.only(
-                            right: 26, left: 26, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            makeGradientBtn(
-                                msg: "협약 업체 등록",
-                                onPressed: () async {
-                                  var res = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ContractingCompanyWrite()));
-                                  if (res != null && res) {
-                                    setState(() {
-                                      _getContractingList();
-                                    });
-                                  }
-                                },
-                                mode: 1,
-                                icon: Icon(
-                                  Icons.note_add,
-                                  color: Colors.white,
-                                )),
-                            makeGradientBtn(
-                                msg: "선택된 업체 삭제",
-                                onPressed: () {
-                                  _onDeleteCompany();
-                                },
-                                mode: 1,
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
-                                ))
-                          ],
-                        ),
-                      ),
-                Expanded(
-                  child: Align(
-                    child: FutureBuilder(
-                        future: _getContractingList(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            contractingList = snapshot.data;
-                            for (int i = 0; i < contractingList.length; i++) {
-                              deleteList.add(false);
-                            }
-                            return ListView.builder(
-                                itemCount: contractingList.length,
-                                itemBuilder: (context, index) {
-                                  return buildItemCompany(context, index);
-                                });
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        }),
-                  ),
-                )
-              ],
+                  Text(
+                    "협약업체",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black),
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+            widget.role == User.admin
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(right: 26, left: 26, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        makeGradientBtn(
+                            msg: "협약 업체 등록",
+                            onPressed: () async {
+                              var res = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ContractingCompanyWrite()));
+                              if (res != null && res) {
+                                setState(() {
+                                  _getContractingList();
+                                });
+                              }
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.note_add,
+                              color: Colors.white,
+                            )),
+                        makeGradientBtn(
+                            msg: "선택된 업체 삭제",
+                            onPressed: () {
+                              _onDeleteCompany();
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ))
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                    child: buildTextField("협약 업체명, 지역", titleC,
+                        autoFocus: false,
+                        icon: Icon(Icons.search), textInput: (String key) {
+                      print("호잇: ${key}");
+                    })),
+            Expanded(
+              child: Align(
+                child: FutureBuilder(
+                    future: _getContractingList(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        contractingList = snapshot.data;
+                        for (int i = 0; i < contractingList.length; i++) {
+                          deleteList.add(false);
+                        }
+                        return ListView.builder(
+                            controller: _scrollController,
+                            itemCount: itemCount + 1,
+                            itemBuilder: (context, index) {
+                              if (index == itemCount) {
+                                if (index == contractingList.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: makeGradientBtn(
+                                        msg: "맨 처음으로",
+                                        onPressed: () {
+                                          _scrollController.animateTo(
+                                              _scrollController
+                                                  .position.minScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.elasticOut);
+                                        },
+                                        mode: 1,
+                                        icon: Icon(
+                                          Icons.arrow_upward,
+                                          color: Colors.white,
+                                        )),
+                                  );
+                                } else {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                return buildItemCompany(context, index);
+                              }
+                            });
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Future<List<ContractingVO>> _getContractingList() async {
@@ -308,363 +349,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         ),
       ),
     );
-  }
-
-  Widget buildSlidingPanel({
-    @required ScrollController scrollController,
-  }) =>
-      Panel(scrollController);
-
-  Widget Panel(ScrollController scrollController) {
-    return ListView(
-      padding: EdgeInsets.all(16),
-      controller: scrollController,
-      children: [
-        Text(
-          '협약업체 검색하기',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: Row(children: [
-              Radio(
-                value: Select.YEAR,
-                groupValue: _select,
-                onChanged: (value) {
-                  setState(() {
-                    _select = value;
-                  });
-                },
-              ),
-              Text(
-                "년도별 검색하기",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ])),
-            Expanded(
-                child: Row(children: [
-              Radio(
-                value: Select.TAG,
-                groupValue: _select,
-                onChanged: (value) {
-                  setState(() {
-                    _select = value;
-                  });
-                },
-              ),
-              Text(
-                "태그별 검색하기",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ])),
-          ],
-        ),
-        Row(children: [
-          Radio(
-            value: Select.TITLE,
-            groupValue: _select,
-            onChanged: (value) {
-              setState(() {
-                _select = value;
-              });
-            },
-          ),
-          Text(
-            "업체명 검색하기",
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          ),
-        ]),
-        SizedBox(
-          height: 15,
-        ),
-        if (_select == Select.YEAR) selectYearWidget(),
-        if (_select == Select.TAG) selectTagWidget(),
-        if (_select == Select.TITLE) selectTitleWidget(),
-      ],
-    );
-  }
-
-  Widget selectYearWidget() {
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: 10, right: 10),
-          height: 1,
-          color: Colors.grey,
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Center(
-          child: Text(
-            "년도를 선택하세요",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        ListTile(
-          leading: Radio(
-            value: Year.y2018,
-            groupValue: _year,
-            onChanged: (value) {
-              setState(() {
-                _year = value;
-              });
-            },
-          ),
-          title: Text("2018"),
-        ),
-        ListTile(
-          leading: Radio(
-            value: Year.y2019,
-            groupValue: _year,
-            onChanged: (value) {
-              setState(() {
-                _year = value;
-              });
-            },
-          ),
-          title: Text("2019"),
-        ),
-        ListTile(
-          leading: Radio(
-            value: Year.y2020,
-            groupValue: _year,
-            onChanged: (value) {
-              setState(() {
-                _year = value;
-              });
-            },
-          ),
-          title: Text("2020"),
-        ),
-        ListTile(
-          leading: Radio(
-            value: Year.y2021,
-            groupValue: _year,
-            onChanged: (value) {
-              setState(() {
-                _year = value;
-              });
-            },
-          ),
-          title: Text("2021"),
-        ),
-        SizedBox(
-          height: 100,
-        ),
-        makeGradientBtn(
-            msg: "조회하기",
-            onPressed: () {
-              print("눌려버림");
-              panelController.close();
-            },
-            mode: 4,
-            icon: Icon(
-              Icons.check,
-              color: Colors.white,
-            ))
-      ],
-    );
-  }
-
-  bool _IsSearching = false;
-
-  Widget selectTagWidget() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 15,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 100, right: 100),
-          child: makeBtn(
-              msg: "태그 선택하러 가기",
-              onPressed: () async {
-                final result = await Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SearchPage()));
-                setState(() {
-                  if (result != null) {
-                    tagList = result;
-                  }
-                });
-                print("tagList: $tagList");
-              },
-              mode: 2),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 15, left: 15),
-          child: Align(
-              alignment: Alignment.center,
-              child: makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        makeGradientBtn(
-            msg: "조회하기",
-            onPressed: () {
-              print("눌려버림");
-              panelController.close();
-            },
-            mode: 4,
-            icon: Icon(
-              Icons.check,
-              color: Colors.white,
-            ))
-      ],
-    );
-  }
-
-  Widget buildModifyItemTag(List<String> tag, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          tagList.removeAt(index);
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-        margin: EdgeInsets.only(right: 8),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.blue[400],
-            )),
-        child: Row(
-          children: [
-            Text(
-              "#${tagList[index]}",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-            ),
-            Icon(
-              Icons.highlight_remove_rounded,
-              size: 10,
-              color: Colors.red,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<ListTile> _buildSearchList() {
-    if (tagC.text.isEmpty) {
-      return _list
-          .map((contact) => ListTile(
-                title: Text(contact),
-                onTap: () {
-                  print("눌림");
-                  print(contact);
-                  if (!tagList.contains(contact)) {
-                    setState(() {
-                      tagList.add(contact);
-                    });
-                  } else {
-                    scafforldkey.currentState
-                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-                  }
-                },
-              ))
-          .toList();
-    } else {
-      List<String> _searchList = [];
-      for (int i = 0; i < _list.length; i++) {
-        String name = _list.elementAt(i);
-        if (name.toLowerCase().contains(tagC.text.toLowerCase())) {
-          _searchList.add(name);
-        }
-      }
-      return _searchList
-          .map((contact) => ListTile(
-                title: Text(contact),
-                onTap: () {
-                  print("눌림");
-                  print(contact);
-                  if (!tagList.contains(contact)) {
-                    setState(() {
-                      tagList.add(contact);
-                    });
-                  } else {
-                    scafforldkey.currentState
-                        .showSnackBar(SnackBar(content: Text("중복된 태그입니다.")));
-                  }
-                },
-              ))
-          .toList();
-    }
-  }
-
-  Widget selectTitleWidget() {
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: 10, right: 10),
-          height: 1,
-          color: Colors.grey,
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Center(
-          child: Text(
-            "업체명을 입력해주세요.",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: buildTextField("TAG", titleC, autoFocus: false),
-        ),
-        SizedBox(
-          height: 250,
-        ),
-        makeGradientBtn(
-            msg: "조회하기",
-            onPressed: () {
-              print("titleC = ${titleC.text}");
-              panelController.close();
-            },
-            mode: 4,
-            icon: Icon(
-              Icons.check,
-              color: Colors.white,
-            ))
-      ],
-    );
-  }
-
-  searchState() {
-    tagC.addListener(() {
-      print(_IsSearching);
-      if (tagC.text.isEmpty) {
-        setState(() {
-          _IsSearching = false;
-        });
-      } else {
-        setState(() {
-          _IsSearching = true;
-        });
-      }
-    });
   }
 
   _onDeleteCompany() {

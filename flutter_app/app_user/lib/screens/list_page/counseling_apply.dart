@@ -1,8 +1,10 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/counseling_vo.dart';
 import 'package:app_user/screens/detail_page/counseling_apply_detail.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class CounselingApplyPage extends StatefulWidget {
@@ -12,10 +14,16 @@ class CounselingApplyPage extends StatefulWidget {
 
 class _CounselingApplyPageState extends State<CounselingApplyPage> {
   List<CounselingVO> counList = [];
+  final _scrollController = ScrollController();
+  int itemCount = Consts.showItemCount;
 
-  initList() {
-    for (int i = 0; i < 10; i++) {
-      counList.add(CounselingVO(
+  final titleC = TextEditingController();
+
+  Future<List<CounselingVO>> getCounselingList() async {
+    await Future.delayed(Duration(seconds: 1));
+    List<CounselingVO> list = [];
+    for (int i = 0; i < 33; i++) {
+      list.add(CounselingVO(
         index: i,
           date: "2021.03.2${i}",
           time: "0${i}.30.PM",
@@ -23,12 +31,37 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
           reason: "아니 이유 그런게 필요한가요?",
           tag: List.generate(5, (index) => "text${index}")));
     }
+
+    return list;
   }
 
   @override
   void initState() {
     super.initState();
-    initList();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    titleC.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != counList.length) {
+          if ((counList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount += counList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -36,20 +69,6 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
     return Scaffold(
       appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
-      floatingActionButton: FloatingActionButton.extended(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5))),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        label: makeGradientBtn(
-            msg: "내가 신청한 상담 보러가기",
-            onPressed: () {},
-            mode: 4,
-            icon: Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-            )),
-      ),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -77,14 +96,66 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 ],
               ),
             ),
+            Padding(
+                padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                child: buildTextField("상담 제목", titleC,
+                    autoFocus: false,
+                    icon: Icon(Icons.search), textInput: (String key) {
+                      print(key);
+                    })),
             Expanded(
-              child: ListView.builder(
-                itemCount: counList.length,
-                itemBuilder: (context, index) {
-                  return buildCounseling(context, index);
+              child: FutureBuilder(
+                future: getCounselingList(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    counList = snapshot.data;
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: itemCount +1,
+                      itemBuilder: (context, index) {
+                        if (index == itemCount) {
+                          if (index == counList.length) {
+                            return Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: makeGradientBtn(msg: "맨 처음으로",
+                                  onPressed: () {
+                                    _scrollController.animateTo(
+                                        _scrollController.position
+                                            .minScrollExtent,
+                                        duration: Duration(
+                                            milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                  },
+                                  mode: 1,
+                                  icon: Icon(Icons.arrow_upward,
+                                    color: Colors.white,)),
+                            );
+                          } else {
+                            return Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          return buildCounseling(context, index);
+                        }
+                      },
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
                 },
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
               ),
             ),
           ],

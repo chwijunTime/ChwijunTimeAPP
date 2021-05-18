@@ -1,7 +1,11 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/apply_vo.dart';
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class CompanyNoticeApply extends StatefulWidget {
@@ -14,11 +18,53 @@ class CompanyNoticeApply extends StatefulWidget {
 }
 
 class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
+  RetrofitHelper helper;
   List<ApplyVO> applyList = [];
+
+  final titleC = TextEditingController();
+  final _scrollController = ScrollController();
+  int itemCount = Consts.showItemCount;
 
   @override
   void initState() {
     super.initState();
+    initRetrofit();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != applyList.length) {
+          if ((applyList.length - itemCount) ~/ Consts.showItemCount <=
+              0) {
+            itemCount += applyList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -60,9 +106,39 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
                       );
                     } else {
                       return ListView.separated(
-                        itemCount: applyList.length,
+                        controller: _scrollController,
+                        itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
-                          return buildTag(context, index);
+                          if (index == itemCount) {
+                            if (index == applyList.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(20),
+                                child: makeGradientBtn(
+                                    msg: "맨 처음으로",
+                                    onPressed: () {
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    },
+                                    mode: 1,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.white,
+                                    )),
+                              );
+                            } else {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          } else {
+                            return buildItemApply(context, index);
+                          }
                         },
                         separatorBuilder: (context, index) {
                           return Padding(
@@ -99,7 +175,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   }
 
 
-  Widget buildTag(BuildContext context, int index) {
+  Widget buildItemApply(BuildContext context, int index) {
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),

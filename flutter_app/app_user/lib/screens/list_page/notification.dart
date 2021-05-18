@@ -1,3 +1,4 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
@@ -27,9 +28,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
   List<NotificationVO> noticeList = [];
   List<bool> deleteNoti = [];
-  final titleC = TextEditingController();
-  String _searchText = "";
-  bool _IsSearching;
+  final _scrollController = ScrollController();
+  int itemCount = Consts.showItemCount;
 
   RetrofitHelper helper;
 
@@ -38,22 +38,30 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
     initRetrofit();
     widget.role = User.role;
-    _IsSearching = false;
+    _scrollController.addListener(_scrollListener);
+  }
 
-    titleC.addListener(() {
-      if (titleC.text.isEmpty) {
-        setState(() {
-          _IsSearching = false;
-          _searchText = "";
-        });
-      } else {
-        setState(() {
-          _IsSearching = true;
-          _searchText = titleC.text;
-          print("searchtext = $_searchText, searchQuery.text = ${titleC.text}");
-        });
-      }
-    });
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != noticeList.length) {
+          if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount += noticeList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
   }
 
   _onHeartPressed(int index) {
@@ -107,9 +115,7 @@ class _NotificationPageState extends State<NotificationPage> {
               ),
             ),
             widget.role == User.user
-                ? Padding(
-                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                    child: buildTextField("공지사항 제목", titleC, autoFocus: false))
+                ? SizedBox()
                 : Padding(
                     padding:
                         const EdgeInsets.only(right: 26, left: 26, bottom: 10),
@@ -153,9 +159,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   ),
             Expanded(
               child: Align(
-                child: _IsSearching
-                    ? buildSearchList()
-                    : FutureBuilder(
+                child: FutureBuilder(
                         future: _getNotice(),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
@@ -166,10 +170,47 @@ class _NotificationPageState extends State<NotificationPage> {
                               deleteNoti.add(false);
                             }
                             return ListView.builder(
-                                itemCount: noticeList.length,
+                              controller: _scrollController,
+                                itemCount: itemCount + 1,
                                 itemBuilder: (context, index) {
-                                  return buildItemNotification(
-                                      context, index, noticeList);
+                                  if (index == itemCount) {
+                                    if (index == noticeList.length) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: makeGradientBtn(
+                                            msg: "맨 처음으로",
+                                            onPressed: () {
+                                              _scrollController.animateTo(
+                                                  _scrollController
+                                                      .position.minScrollExtent,
+                                                  duration:
+                                                  Duration(milliseconds: 200),
+                                                  curve: Curves.elasticOut);
+                                            },
+                                            mode: 1,
+                                            icon: Icon(
+                                              Icons.arrow_upward,
+                                              color: Colors.white,
+                                            )),
+                                      );
+                                    } else {
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(18)),
+                                        elevation: 5,
+                                        margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                        child: Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(Consts.padding),
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return buildItemNotification(context, index, noticeList);
+                                  }
                                 });
                           } else {
                             return Center(
@@ -195,29 +236,6 @@ class _NotificationPageState extends State<NotificationPage> {
       return res.list.reversed.toList();
     } else {
       return null;
-    }
-  }
-
-  Widget buildSearchList() {
-    if (_searchText.isEmpty) {
-      return ListView.builder(
-          itemCount: noticeList.length,
-          itemBuilder: (context, index) {
-            return buildItemNotification(context, index, noticeList);
-          });
-    } else {
-      List<NotificationVO> _searchList = [];
-      for (int i = 0; i < noticeList.length; i++) {
-        String name = noticeList[i].title;
-        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-          _searchList.add(noticeList[i]);
-        }
-      }
-      return ListView.builder(
-          itemCount: _searchList.length,
-          itemBuilder: (context, index) {
-            return buildItemNotification(context, index, _searchList);
-          });
     }
   }
 

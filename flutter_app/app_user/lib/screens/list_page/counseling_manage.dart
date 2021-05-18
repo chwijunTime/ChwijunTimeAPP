@@ -19,7 +19,6 @@ class _CounselingManageState extends State<CounselingManage> {
 
   PanelController panelController = PanelController();
   final _scrollController = ScrollController();
-  var tagC = TextEditingController();
   final titleC = TextEditingController();
 
   List<CounselingVO> counList = [];
@@ -52,6 +51,7 @@ class _CounselingManageState extends State<CounselingManage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    titleC.dispose();
     super.dispose();
   }
 

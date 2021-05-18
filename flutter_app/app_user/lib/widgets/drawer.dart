@@ -110,7 +110,7 @@ Widget buildDrawer(BuildContext context) {
             context: context),
         role == User.user
             ? customListTile(
-                title: "태그 추가 요청",
+                title: "태그 추가 요청하기",
                 leading: Icon(Icons.tag, color: Colors.grey, size: 28),
                 page: "",
                 context: context)

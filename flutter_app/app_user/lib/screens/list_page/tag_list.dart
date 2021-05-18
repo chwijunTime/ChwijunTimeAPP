@@ -1,3 +1,4 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
@@ -24,6 +25,40 @@ class _TagListState extends State<TagList> {
   List<TagVO> tagList = [];
   List<bool> deleteTag = [];
 
+  int itemCount = Consts.showItemCount;
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.role = User.role;
+    initRetrofit();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != tagList.length) {
+          if ((tagList.length - itemCount) ~/ Consts.showItemCount <=
+              0) {
+            itemCount += tagList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
+  }
+
   initRetrofit() {
     Dio dio = Dio(BaseOptions(
         connectTimeout: 5 * 1000,
@@ -33,13 +68,6 @@ class _TagListState extends State<TagList> {
           return status < 500;
         }));
     helper = RetrofitHelper(dio);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.role = User.role;
-    initRetrofit();
   }
 
   _onCheckPressed(int index) {
@@ -140,9 +168,39 @@ class _TagListState extends State<TagList> {
                       deleteTag.add(false);
                     }
                     return ListView.separated(
-                      itemCount: tagList.length,
+                      controller: _scrollController,
+                      itemCount: itemCount + 1,
                       itemBuilder: (context, index) {
-                        return buildTag(context, index);
+                        if (index == itemCount) {
+                          if (index == tagList.length) {
+                            return Padding(
+                              padding: EdgeInsets.all(20),
+                              child: makeGradientBtn(
+                                  msg: "맨 처음으로",
+                                  onPressed: () {
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                  },
+                                  mode: 1,
+                                  icon: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.white,
+                                  )),
+                            );
+                          } else {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                        } else {
+                          return buildTag(context, index);
+                        }
                       },
                       separatorBuilder: (context, index) {
                         return Padding(
