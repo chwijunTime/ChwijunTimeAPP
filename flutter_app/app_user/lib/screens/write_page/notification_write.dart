@@ -17,30 +17,20 @@ class NotificationWrite extends StatefulWidget {
 class _NotificationWriteState extends State<NotificationWrite> {
   var titleC = TextEditingController();
   var contentsC = TextEditingController();
-  List<String> tagList = [];
-  List<String> _list = [];
 
   RetrofitHelper helper;
-
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
 
   @override
   void initState() {
     super.initState();
-    init();
     initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    contentsC.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -72,29 +62,6 @@ class _NotificationWriteState extends State<NotificationWrite> {
               buildTextField("공지사항 내용을 입력해주세요.", contentsC,
                   maxLine: 16, maxLength: 1000),
               SizedBox(
-                height: 24,
-              ),
-              makeBtn(
-                  msg: "태그 선택하러 가기",
-                  onPressed: () async {
-                    final result = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SearchPage()));
-                    setState(() {
-                      if (result != null) {
-                        tagList = result;
-                      }
-                    });
-                    print("tagList: $tagList");
-                  },
-                  mode: 1),
-              Padding(
-                padding: const EdgeInsets.only(right: 15, left: 15),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: makeTagWidget(
-                        tag: tagList, size: Size(360, 27), mode: 1)),
-              ),
-              SizedBox(
                 height: 19,
               ),
               makeGradientBtn(
@@ -115,7 +82,7 @@ class _NotificationWriteState extends State<NotificationWrite> {
   }
 
   _onNotificationPost() async {
-    if (titleC.text.isEmpty || contentsC.text.isEmpty || tagList.isEmpty) {
+    if (titleC.text.isEmpty || contentsC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       SNoticeVO vo = SNoticeVO(title: titleC.text, content: contentsC.text);

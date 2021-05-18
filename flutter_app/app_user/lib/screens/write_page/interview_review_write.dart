@@ -29,27 +29,21 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
 
   List<String> tagList = [];
 
-  List<String> _list = [];
-
-  initList() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   @override
   void initState() {
     super.initState();
-    initList();
     initRetrofit();
+  }
+
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    addressC.dispose();
+    priceC.dispose();
+    reviewC.dispose();
+    questionC.dispose();
+    super.dispose();
   }
 
   initRetrofit() {

@@ -14,6 +14,14 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
   var tipC = TextEditingController();
 
   @override
+  void dispose() {
+    titleC.dispose();
+    addressC.dispose();
+    tipC.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar("취준타임", context),

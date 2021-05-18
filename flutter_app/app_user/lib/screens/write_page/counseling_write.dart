@@ -1,7 +1,6 @@
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class CounselingWrite extends StatefulWidget {
@@ -10,8 +9,6 @@ class CounselingWrite extends StatefulWidget {
 }
 
 class _CounselingWriteState extends State<CounselingWrite> {
-  var placeC = TextEditingController();
-
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   String strDate = "날짜";
@@ -116,10 +113,6 @@ class _CounselingWriteState extends State<CounselingWrite> {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
-                        ),
-                        buildTextField("장소", placeC),
-                        SizedBox(
                           height: 30,
                         ),
                         makeGradientBtn(
@@ -139,7 +132,7 @@ class _CounselingWriteState extends State<CounselingWrite> {
   }
 
   _onCounselingWrite() {
-    if (date == "" || time == "" || placeC.text.isEmpty) {
+    if (date == "" || time == "") {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       Navigator.pop(context);
