@@ -128,7 +128,7 @@ class _CounselingManageState extends State<CounselingManage> {
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                 child: buildTextField("키워드 검색", titleC,
                     autoFocus: false,
-                    icon: Icon(Icons.search), textInput: (String key) {
+                    prefixIcon: Icon(Icons.search), textInput: (String key) {
                   print("호잇: ${key}");
                 })),
             Expanded(

@@ -159,7 +159,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 EdgeInsets.only(right: 33, left: 33, bottom: 26),
                 child: buildTextField("회사 이름", titleC,
                     autoFocus: false,
-                    icon: Icon(Icons.search), textInput: (String key) {
+                    prefixIcon: Icon(Icons.search), textInput: (String key) {
                       print("호잇: ${key}");
                     }))
                 : SizedBox(),

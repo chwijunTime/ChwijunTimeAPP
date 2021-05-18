@@ -118,7 +118,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                     padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                     child: buildTextField("회사 이름, 기수, 지역", titleC,
                         autoFocus: false,
-                        icon: Icon(Icons.search), textInput: (String key) {
+                        prefixIcon: Icon(Icons.search), textInput: (String key) {
                       print(key);
                     }))
                 : Padding(

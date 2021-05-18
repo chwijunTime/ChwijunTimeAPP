@@ -19,38 +19,33 @@ class CompanyNoticeWritePage extends StatefulWidget {
 class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   var titleC = TextEditingController();
   var fieldC = TextEditingController();
-  String noticeDateC = "공고일";
-  String deadLineDateC = "마감일";
-  String noticeDate, deadLineDate = "";
-  var addressC = TextEditingController();
   var infoC = TextEditingController();
   var preferentialInfoC = TextEditingController();
+  var addressC = TextEditingController();
+  String deadLineDateC = "마감일";
   var etcC = TextEditingController();
+  String deadLineDate = "";
+
   List<String> tagList = [];
-  List<String> _list = [];
 
   DateTime selectedDate = DateTime.now();
   RetrofitHelper helper;
 
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   @override
   void initState() {
     super.initState();
-    init();
     initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    fieldC.dispose();
+    infoC.dispose();
+    preferentialInfoC.dispose();
+    addressC.dispose();
+    etcC.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -95,42 +90,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                       buildTextField("업체명", titleC, deco: false),
                       buildTextField("채용분야", fieldC, deco: false),
                       buildTextField("주소", addressC, deco: false),
-                      GestureDetector(
-                        onTap: () async {
-                          final DateTime picked = await showDatePicker(
-                              context: context,
-                              initialDate: selectedDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2050));
-                          if (picked != null) {
-                            setState(() {
-                              selectedDate = picked;
-                              noticeDateC =
-                                  "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
-                            });
-                            noticeDate =
-                                "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Colors.grey, width: 1))),
-                          width: constraints.maxWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            child: Text(
-                              noticeDateC,
-                              style: TextStyle(
-                                  color: noticeDateC == "공고일"
-                                      ? Colors.grey
-                                      : Colors.black,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
                       GestureDetector(
                         onTap: () async {
                           final DateTime picked = await showDatePicker(
@@ -304,7 +263,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   _onCreate() async {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
-        noticeDate == "" ||
         deadLineDate == "" ||
         addressC.text.isEmpty ||
         infoC.text.isEmpty ||

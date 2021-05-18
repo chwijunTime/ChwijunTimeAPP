@@ -160,7 +160,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                     padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                     child: buildTextField("협약 업체명, 지역", titleC,
                         autoFocus: false,
-                        icon: Icon(Icons.search), textInput: (String key) {
+                        prefixIcon: Icon(Icons.search), textInput: (String key) {
                       print("호잇: ${key}");
                     })),
             Expanded(

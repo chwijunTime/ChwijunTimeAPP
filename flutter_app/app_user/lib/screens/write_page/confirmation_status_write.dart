@@ -18,35 +18,30 @@ class ConfirmationStatusWrite extends StatefulWidget {
 class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
   var titleC = TextEditingController();
   var areaC = TextEditingController();
+  var stdNameC = TextEditingController();
+  var generationC = TextEditingController();
   var addressC = TextEditingController();
   var siteUrl = TextEditingController();
-  var etcC = TextEditingController();
-  var classNumberC = TextEditingController();
 
-  List<String> _list = [];
   List<String> tagList = [];
 
   RetrofitHelper helper;
 
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
-
   @override
   void initState() {
     super.initState();
-    init();
     initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    areaC.dispose();
+    stdNameC.dispose();
+    generationC.dispose();
+    addressC.dispose();
+    siteUrl.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -82,41 +77,12 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                 child: Column(
                   children: [
                     buildTextField("업체명", titleC, deco: false),
-                    buildTextField("학번", classNumberC, deco: false),
+                    buildTextField("학생 이름", stdNameC, deco: false),
                     buildTextField("회사 사이트 주소", siteUrl, deco: false),
                     buildTextField("지역명", areaC, deco: false),
                     buildTextField("상세 주소", addressC, deco: false),
+                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number),
                   ],
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "비고",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      buildTextField("비고를 적어주세요!", etcC,
-                          maxLine: 8, maxLength: 150)
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -177,7 +143,8 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
         siteUrl.text.isEmpty ||
         addressC.text.isEmpty ||
         areaC.text.isEmpty ||
-        classNumberC.text.isEmpty ||
+        stdNameC.text.isEmpty ||
+        generationC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
@@ -186,8 +153,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
           area: areaC.text,
           siteUrl: siteUrl.text,
           address: addressC.text,
-          etc: etcC.text,
-          classNumber: classNumberC.text,
+          // TODO: Confirmation 채우기
           postTag: tagList);
       try {
         final pref = await SharedPreferences.getInstance();

@@ -20,31 +20,28 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
 
   var titleC = TextEditingController();
   var fieldC = TextEditingController();
+  var areaC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
   List<String> tagList = [];
-  List<String> _list = [];
-
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
 
   @override
   void initState() {
     super.initState();
-    init();
     initRetrofit();
+  }
+
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    fieldC.dispose();
+    areaC..dispose();
+    addressC.dispose();
+    priceC.dispose();
+    infoC.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -84,6 +81,8 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
                       buildTextField("사업분야", fieldC,
+                          deco: false, autoFocus: false),
+                      buildTextField("지역", areaC,
                           deco: false, autoFocus: false),
                       buildTextField("주소", addressC,
                           deco: false, autoFocus: false),
@@ -163,6 +162,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
         addressC.text.isEmpty ||
         priceC.text.isEmpty ||
         infoC.text.isEmpty ||
+        areaC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
@@ -172,6 +172,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
           address: addressC.text,
           salary: priceC.text,
           title: titleC.text,
+          // Todo: ContractingVO에 area 추가해야함
           postTag: tagList);
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

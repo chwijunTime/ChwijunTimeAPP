@@ -100,7 +100,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                 child: buildTextField("상담 제목", titleC,
                     autoFocus: false,
-                    icon: Icon(Icons.search), textInput: (String key) {
+                    prefixIcon: Icon(Icons.search), textInput: (String key) {
                       print(key);
                     })),
             Expanded(
