@@ -19,29 +19,11 @@ class _TipStoragePageState extends State<TipStoragePage> {
 
   List<TipVO> tipList = [];
   final titleC = TextEditingController();
-  String _searchText = "";
-  bool _IsSearching;
   int itemCount = Consts.showItemCount;
 
   @override
   void initState() {
     super.initState();
-    _IsSearching = false;
-
-    titleC.addListener(() {
-      if (titleC.text.isEmpty) {
-        setState(() {
-          _IsSearching = false;
-          _searchText = "";
-        });
-      } else {
-        setState(() {
-          _IsSearching = true;
-          _searchText = titleC.text;
-          print("searchtext = $_searchText, searchQuery.text = ${titleC.text}");
-        });
-      }
-    });
 
     _scrollController.addListener(_scrollListener);
   }
@@ -76,7 +58,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
       list.add(TipVO(
           title: "${i + 1}.업체명",
           address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
-          tip: "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요",
+          tip:
+              "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요",
           isMine: i % 2 == 0));
     }
     return list;
@@ -123,8 +106,10 @@ class _TipStoragePageState extends State<TipStoragePage> {
                   padding: EdgeInsets.only(right: 25),
                   child: FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => TipStorageWrite()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TipStorageWrite()));
                     },
                     child: Container(
                       width: 60,
@@ -158,7 +143,11 @@ class _TipStoragePageState extends State<TipStoragePage> {
             ),
             Padding(
                 padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("꿀팁 제목", titleC, autoFocus: false)),
+                child: buildTextField("꿀팁 제목", titleC,
+                    autoFocus: false,
+                    icon: Icon(Icons.search), textInput: (String key) {
+                  print(key);
+                })),
             Expanded(
               child: FutureBuilder(
                   future: getTipList(),
@@ -166,9 +155,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                     if (snapshot.hasData) {
                       tipList = snapshot.data;
                       return Align(
-                        child: _IsSearching
-                            ? buildSearchList()
-                            : ListView.builder(
+                        child: ListView.builder(
                             controller: _scrollController,
                             itemCount: itemCount + 1,
                             itemBuilder: (context, index) {
@@ -176,22 +163,27 @@ class _TipStoragePageState extends State<TipStoragePage> {
                                 if (index == tipList.length) {
                                   return Padding(
                                     padding: EdgeInsets.all(Consts.padding),
-                                    child: makeGradientBtn(msg: "맨 처음으로",
+                                    child: makeGradientBtn(
+                                        msg: "맨 처음으로",
                                         onPressed: () {
                                           _scrollController.animateTo(
-                                              _scrollController.position
-                                                  .minScrollExtent,
-                                              duration: Duration(
-                                                  milliseconds: 200),
+                                              _scrollController
+                                                  .position.minScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 200),
                                               curve: Curves.elasticOut);
                                         },
                                         mode: 1,
-                                        icon: Icon(Icons.arrow_upward,
-                                          color: Colors.white,)),
+                                        icon: Icon(
+                                          Icons.arrow_upward,
+                                          color: Colors.white,
+                                        )),
                                   );
                                 } else {
                                   return Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
@@ -203,8 +195,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                                   );
                                 }
                               } else {
-                                return buildItemTip(
-                                    context, index, tipList);
+                                return buildItemTip(context, index, tipList);
                               }
                             }),
                       );
@@ -213,36 +204,12 @@ class _TipStoragePageState extends State<TipStoragePage> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                  }
-              ),
+                  }),
             )
           ],
         ),
       ),
     );
-  }
-
-  Widget buildSearchList() {
-    if (_searchText.isEmpty) {
-      return ListView.builder(
-          itemCount: tipList.length,
-          itemBuilder: (context, index) {
-            return buildItemTip(context, index, tipList);
-          });
-    } else {
-      List<TipVO> _searchList = [];
-      for (int i = 0; i < tipList.length; i++) {
-        String name = tipList[i].title;
-        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-          _searchList.add(tipList[i]);
-        }
-      }
-      return ListView.builder(
-          itemCount: _searchList.length,
-          itemBuilder: (context, index) {
-            return buildItemTip(context, index, _searchList);
-          });
-    }
   }
 
   Widget buildItemTip(BuildContext context, int index, List<TipVO> list) {
@@ -252,8 +219,11 @@ class _TipStoragePageState extends State<TipStoragePage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              TipStorageDetail(index: list[index].index)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      TipStorageDetail(index: list[index].index)));
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -262,8 +232,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
             children: [
               Text(
                 "${list[index].title}",
-                style:
-                TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
