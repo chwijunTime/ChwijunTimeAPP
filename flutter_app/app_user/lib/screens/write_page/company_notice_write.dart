@@ -23,9 +23,8 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   var preferentialInfoC = TextEditingController();
   var addressC = TextEditingController();
   String deadLineDateC = "마감일";
-  var etcC = TextEditingController();
   String deadLineDate = "";
-
+  var etcC = TextEditingController();
   List<String> tagList = [];
 
   DateTime selectedDate = DateTime.now();
@@ -263,7 +262,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   _onCreate() async {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
-        deadLineDate == "" ||
+        deadLineDate == deadLineDateC ||
         addressC.text.isEmpty ||
         infoC.text.isEmpty ||
         preferentialInfoC.text.isEmpty ||

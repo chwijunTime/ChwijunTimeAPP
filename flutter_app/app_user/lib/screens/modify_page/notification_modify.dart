@@ -35,6 +35,13 @@ class _NotificationModifyState extends State<NotificationModify> {
     });
   }
 
+  @override
+  void dispose() {
+    titleC.dispose();
+    contentsC.dispose();
+    super.dispose();
+  }
+
   initRetrofit() {
     Dio dio = Dio(BaseOptions(
         connectTimeout: 5 * 1000,

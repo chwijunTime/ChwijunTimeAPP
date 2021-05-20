@@ -26,7 +26,6 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   var priceC = TextEditingController();
   var reviewC = TextEditingController();
   var questionC = TextEditingController();
-
   List<String> tagList = [];
 
   @override

@@ -24,6 +24,18 @@ class _TagDialogState extends State<TagDialog> {
 
   var titleC = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    super.dispose();
+  }
+
   initRetrofit() {
     Dio dio = Dio(BaseOptions(
         connectTimeout: 5 * 1000,
@@ -33,12 +45,6 @@ class _TagDialogState extends State<TagDialog> {
           return status < 500;
         }));
     helper = RetrofitHelper(dio);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
   }
 
   @override

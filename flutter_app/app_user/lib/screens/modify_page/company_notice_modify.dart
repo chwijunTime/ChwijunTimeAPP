@@ -8,6 +8,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeModifyPage extends StatefulWidget {
@@ -21,11 +22,18 @@ class CompanyNoticeModifyPage extends StatefulWidget {
 }
 
 class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
+  RetrofitHelper helper;
+
+  var titleC = TextEditingController();
   var fieldC = TextEditingController();
   var infoC = TextEditingController();
   var preferentialInfoC = TextEditingController();
+  var addressC = TextEditingController();
+  String deadLineDateC = "마감일";
+  String deadLineDate = "";
+  DateTime selectedDate = DateTime.now();
   var etcC = TextEditingController();
-  RetrofitHelper helper;
+  List<String> tagList = [];
 
   @override
   void initState() {
@@ -37,6 +45,17 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
       etcC.text = widget.list.etc;
     });
     initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    fieldC.dispose();
+    infoC.dispose();
+    preferentialInfoC.dispose();
+    addressC.dispose();
+    etcC.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -67,36 +86,59 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
               elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(left: 25, right: 25),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              margin: EdgeInsets.only(
+                left: 25,
+                right: 25,
+                top: 25,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return Column(
                     children: [
-                      Text(
-                        widget.list.title,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w700),
+                      buildTextField("업체명", titleC, deco: false),
+                      buildTextField("채용분야", fieldC, deco: false),
+                      buildTextField("주소", addressC, deco: false),
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime picked = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2050));
+                          if (picked != null) {
+                            setState(() {
+                              selectedDate = picked;
+                              deadLineDateC =
+                                  "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
+                            });
+                            final f = DateFormat("yyyy-MM-dd");
+                            deadLineDate = f.format(selectedDate);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Colors.grey, width: 1))),
+                          width: constraints.maxWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                              deadLineDateC,
+                              style: TextStyle(
+                                  color: deadLineDateC == "마감일"
+                                      ? Colors.grey
+                                      : Colors.black,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
                       ),
-                      Text(
-                        "주소: ${widget.list.address}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        "공고일: ${widget.list.startDate}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        "마감일: ${widget.list.deadLine}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      )
                     ],
-                  ),
-                ),
+                  );
+                }),
               ),
             ),
             Card(
@@ -186,11 +228,27 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.only(left: 100, right: 100),
+              child: makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 2),
+            ),
+            Padding(
               padding: const EdgeInsets.only(right: 15, left: 15),
               child: Align(
                   alignment: Alignment.center,
                   child: makeTagWidget(
-                      tag: widget.list.tag, size: Size(360, 27), mode: 1)),
+                      tag: tagList, size: Size(360, 27), mode: 1)),
             ),
             SizedBox(
               height: 30,
@@ -213,16 +271,20 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
   }
 
   _onModify() async {
-    if (
+    if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
+        deadLineDate == "" ||
+        addressC.text.isEmpty ||
         infoC.text.isEmpty ||
-        preferentialInfoC.text.isEmpty) {
+        preferentialInfoC.text.isEmpty ||
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       CompNoticeVO vo = CompNoticeVO(
-          title: widget.list.title,
+          title: titleC.text,
           field: fieldC.text,
-          address: widget.list.address,
+          deadLine: deadLineDate,
+          address: addressC.text,
           info: infoC.text,
           preferential: preferentialInfoC.text,
           etc: etcC.text.isEmpty ? "" : etcC.text);
@@ -241,7 +303,6 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
       } catch (e) {
         print(e);
       }
-
     }
   }
 }

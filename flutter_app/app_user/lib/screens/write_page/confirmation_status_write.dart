@@ -22,7 +22,6 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
   var generationC = TextEditingController();
   var addressC = TextEditingController();
   var siteUrl = TextEditingController();
-
   List<String> tagList = [];
 
   RetrofitHelper helper;

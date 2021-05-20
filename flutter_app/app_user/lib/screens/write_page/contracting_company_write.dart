@@ -19,7 +19,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   RetrofitHelper helper;
 
   var titleC = TextEditingController();
-  var fieldC = TextEditingController();
   var areaC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
@@ -36,7 +35,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   @override
   void dispose() {
     titleC.dispose();
-    fieldC.dispose();
     areaC..dispose();
     addressC.dispose();
     priceC.dispose();
@@ -79,8 +77,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                   child: Column(
                     children: [
                       buildTextField("업체명", titleC,
-                          deco: false, autoFocus: false),
-                      buildTextField("사업분야", fieldC,
                           deco: false, autoFocus: false),
                       buildTextField("지역", areaC,
                           deco: false, autoFocus: false),
@@ -158,7 +154,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
 
   onContractingPost() async {
     if (titleC.text.isEmpty ||
-        fieldC.text.isEmpty ||
         addressC.text.isEmpty ||
         priceC.text.isEmpty ||
         infoC.text.isEmpty ||
@@ -167,12 +162,11 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       ContractingVO vo = ContractingVO(
-          field: fieldC.text,
           info: infoC.text,
           address: addressC.text,
           salary: priceC.text,
           title: titleC.text,
-          // Todo: ContractingVO에 area 추가해야함
+          // Todo: ContractingVO에 area 추가해야함, field 삭제해야함
           postTag: tagList);
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

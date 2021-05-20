@@ -24,6 +24,12 @@ class _TipStorageModifyState extends State<TipStorageModify> {
   }
 
   @override
+  void dispose() {
+    tipC.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar("취준타임", context),

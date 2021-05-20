@@ -17,32 +17,32 @@ class ContractingCompanyModify extends StatefulWidget {
 }
 
 class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
+  var titleC = TextEditingController();
+  var areaC = TextEditingController();
+  var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
   var tagList = [];
-  List<String> _list = [];
-
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
 
   @override
   void initState() {
     super.initState();
-    init();
     infoC.text = widget.list.info;
     priceC.text = widget.list.salary;
+    titleC.text = widget.list.title;
+    // Todo ContractingVO area 추가 되면 -> areaC.text = widget.list.area
+    addressC.text = widget.list.address;
     tagList = widget.list.tag;
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    areaC.dispose();
+    addressC.dispose();
+    priceC.dispose();
+    infoC.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,25 +65,16 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     borderRadius: BorderRadius.circular(18)),
                 elevation: 5,
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.only(
+                      right: 15.0, left: 15, bottom: 15, top: 10),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.list.title,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        widget.list.field,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        widget.list.address,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
+                      buildTextField("업체명", titleC,
+                          deco: false, autoFocus: false),
+                      buildTextField("지역", areaC,
+                          deco: false, autoFocus: false),
+                      buildTextField("주소", addressC,
+                          deco: false, autoFocus: false),
                       buildTextField("평균 연봉", priceC,
                           deco: false, autoFocus: false),
                     ],
@@ -168,12 +159,18 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   }
 
   onContractingModify() {
-    if (priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty) {
+    if (priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty ||
+        titleC.text.isEmpty || addressC.text.isEmpty
+      // TODO || area.text.isEmpty
+    ) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       widget.list.salary = priceC.text;
       widget.list.info = infoC.text;
       widget.list.tag = tagList;
+      widget.list.address = addressC.text;
+      widget.list.title = titleC.text;
+      // widget.list.area = areaC.text;
       Navigator.pop(context, widget.list);
     }
   }

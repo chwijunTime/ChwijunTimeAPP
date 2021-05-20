@@ -27,7 +27,7 @@ class _SplashPageState extends State<SplashPage> {
     var role = prefs.getString("role") ?? "user";
     var token = prefs.getString("accessToken");
     print("role, main: ${role}");
-    User.role = User.user;
+    User.role = User.admin;
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       msg = "완료!";

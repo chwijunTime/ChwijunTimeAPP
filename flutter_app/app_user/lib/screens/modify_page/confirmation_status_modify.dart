@@ -3,6 +3,7 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +25,12 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
   RetrofitHelper helper;
 
   var titleC = TextEditingController();
+  var areaC = TextEditingController();
+  var stdNameC = TextEditingController();
+  var generationC = TextEditingController();
+  var addressC = TextEditingController();
   var siteUrl = TextEditingController();
+  List<String> tagList = [];
 
   @override
   void initState() {
@@ -34,6 +40,17 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
       siteUrl.text = widget.list.siteUrl;
     });
     initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    titleC.dispose();
+    areaC.dispose();
+    stdNameC.dispose();
+    generationC.dispose();
+    addressC.dispose();
+    siteUrl.dispose();
+    super.dispose();
   }
 
   initRetrofit() {
@@ -64,75 +81,45 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
                 right: 25,
                 top: 25,
               ),
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 15, left: 20, right: 20, bottom: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "지역: ${widget.list.area}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        widget.list.address,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  ),
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    buildTextField("업체명", titleC, deco: false),
+                    buildTextField("학생 이름", stdNameC, deco: false),
+                    buildTextField("회사 사이트 주소", siteUrl, deco: false),
+                    buildTextField("지역명", areaC, deco: false),
+                    buildTextField("상세 주소", addressC, deco: false),
+                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number, deco: false),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: 24,),
-            Center(
-                child: Text(
-              "업체명과 사이트 url만 변경이 가능합니다.",
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey),
-            )),
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 24),
-              child: buildTextField("업체명", titleC),
+            SizedBox(
+              height: 15,
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("회사 사이트 주소", siteUrl),
+              padding: const EdgeInsets.only(left: 100, right: 100),
+              child: makeBtn(
+                  msg: "태그 선택하러 가기",
+                  onPressed: () async {
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    setState(() {
+                      if (result != null) {
+                        tagList = result;
+                      }
+                    });
+                    print("tagList: $tagList");
+                  },
+                  mode: 2),
             ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "비고",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      widget.list.etc == null
-                          ? Text("비고를 작성하지 않았습니다.")
-                          : Text(widget.list.etc)
-                    ],
-                  ),
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15, left: 15),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: makeTagWidget(
+                      tag: tagList, size: Size(360, 27), mode: 1)),
             ),
             SizedBox(
               height: 20,
@@ -161,15 +148,24 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
   }
 
   onStatusModify() async {
-    if (titleC.text.isEmpty || siteUrl.text.isEmpty) {
+    if (titleC.text.isEmpty ||
+        siteUrl.text.isEmpty ||
+        addressC.text.isEmpty ||
+        areaC.text.isEmpty ||
+        stdNameC.text.isEmpty ||
+        generationC.text.isEmpty ||
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       var vo = ConfirmationVO(
           title: titleC.text,
-          area: widget.list.area,
+          area: areaC.text,
           siteUrl: siteUrl.text,
-          address: widget.list.address,
-          etc: widget.list.etc);
+          address: addressC.text,
+      // TODO stdName 추가하기
+        // TODO generation 추가하기
+        postTag: tagList
+      );
 
       try {
         final pref = await SharedPreferences.getInstance();

@@ -13,6 +13,13 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
   var contentC = TextEditingController();
 
   @override
+  void dispose() {
+    titleC.dispose();
+    contentC.dispose();
+    super.dispose();
+  }
+
+  @override
   build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
