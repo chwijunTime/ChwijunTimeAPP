@@ -14,6 +14,12 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
   var email = TextEditingController();
 
   @override
+  void dispose() {
+    email.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget.scafforldkey,
@@ -44,7 +50,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        "비밀번호 찾기",
+                        "비밀번호 바꾸기",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
@@ -69,18 +75,23 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(right: 34, left: 34),
-                  child:
-                      buildTextField("Email", email, autoFocus: false, type: TextInputType.emailAddress),
+                  child: buildTextField("Email", email,
+                      autoFocus: false, type: TextInputType.emailAddress),
                 ),
                 SizedBox(
                   height: 24,
                 ),
                 makeGradientBtn(
-                    msg: "비밀번호 찾기",
+                    msg: "메일 보내기",
                     onPressed: () {
                       onFindPassword();
                     },
                     mode: 3),
+                SizedBox(
+                  height: 10,
+                ),
+                Text("입력한 이메일로 비밀번호 변경 url이 전송됩니다. 확인해 주세요.",
+                style: TextStyle(fontSize: 12, color: Colors.grey,),),
               ],
             ))),
             Stack(
@@ -159,7 +170,8 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
           ),
           btnName2: "로그인하기",
           btnCall2: () {
-            Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/login", (route) => false);
           },
         ),
       );

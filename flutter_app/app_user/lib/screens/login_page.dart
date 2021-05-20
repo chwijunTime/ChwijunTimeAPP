@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, "/find_acount");
+                          Navigator.pushNamed(context, "/password_change");
                         },
                         child: Text(
                           "계정이 기억나지 않으시나요?",
