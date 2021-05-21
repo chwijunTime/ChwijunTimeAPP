@@ -55,16 +55,135 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postEmailCheck(email) async {
-    ArgumentError.checkNotNull(email, 'email');
+  Future<ResponseData> postEmailCheck(body) async {
+    ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'email': email};
+    final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>('/v1/email-check',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
             headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postLogout() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/logout',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postRefreshToken(body) async {
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/auth/refresh',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseFindPW> getCheckFindPw(classNumber, email) async {
+    ArgumentError.checkNotNull(classNumber, 'classNumber');
+    ArgumentError.checkNotNull(email, 'email');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'classNumber': classNumber,
+      r'userEmail': email
+    };
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/check/findPw',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseFindPW.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postSendEmail(email) async {
+    ArgumentError.checkNotNull(email, 'email');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'userEmail': email};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/check/findPw/sendEmail',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putChengPassword(token, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/password-change',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postProfile(tokey, body) async {
+    ArgumentError.checkNotNull(tokey, 'tokey');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/profile',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': tokey},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
