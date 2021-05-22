@@ -54,7 +54,7 @@ class _RequestDialog extends State<RequestDialog> {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "${widget.vo.user} ${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"}",
+                  "${widget.vo.user} ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"}",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -74,7 +74,7 @@ class _RequestDialog extends State<RequestDialog> {
                                     ShowWebView(url: widget.vo.url)));
                       },
                       child: Text(
-                        "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "자기소개서"} 바로 보기",
+                        "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,

@@ -1,12 +1,10 @@
-import 'package:app_user/model/company_review/review_vo.dart';
-import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/my_page/my_profile_create.dart';
 import 'package:app_user/screens/my_page/my_profile_modify.dart';
 import 'package:app_user/screens/my_page/portfolio.dart';
+import 'package:app_user/screens/my_page/resume.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/tag.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +26,9 @@ class _MyPageState extends State<MyPage> {
 
   CarouselController buttonCarouselController = CarouselController();
   List<Widget> menuList = [
-    Image.asset("images/logo.png",),
+    Image.asset(
+      "images/logo.png",
+    ),
     Image.asset("images/loco.jpg"),
     Image.asset("images/top.png"),
     Image.asset("images/bottom.png"),
@@ -89,12 +89,12 @@ class _MyPageState extends State<MyPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18))),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(15,5,15,5),
+                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
-                        "자소서 보러가기",
+                        "이력서 보러가기",
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 18),
                       ),
@@ -104,7 +104,12 @@ class _MyPageState extends State<MyPage> {
                           Icons.file_download,
                           size: 28,
                         ),
-                        onPressed: () {})
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResumePage()));
+                        })
                   ],
                 ),
               ),
@@ -115,7 +120,7 @@ class _MyPageState extends State<MyPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18))),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(15,5,15,5),
+                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                 child: Row(
                   children: [
                     Expanded(

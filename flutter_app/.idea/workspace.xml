@@ -20,8 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/resume.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/portfolio.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/portfolio.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/request_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/request_dialog.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
