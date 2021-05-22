@@ -12,30 +12,11 @@ class MyProfileCreate extends StatefulWidget {
 
 class _MyProfileCreateState extends State<MyProfileCreate> {
   var phoneC = TextEditingController();
-  var addressC = TextEditingController();
-  var classC = TextEditingController();
-  var numberC = TextEditingController();
   List<String> tagList = [];
-  List<String> _list = [];
-
-  init() {
-    _list.add("Google");
-    _list.add("IOS");
-    _list.add("Android");
-    _list.add("Dart");
-    _list.add("Flutter");
-    _list.add("Python");
-    _list.add("React");
-    _list.add("Xamarin");
-    _list.add("Kotlin");
-    _list.add("Java");
-    _list.add("RxAndroid");
-  }
 
   @override
   void initState() {
     super.initState();
-    init();
   }
 
   @override
@@ -76,28 +57,6 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                   child: Column(
                     children: [
                       buildTextField("전화번호", phoneC, type: TextInputType.phone),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      buildTextField("집주소", addressC),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 2,
-                              child: buildTextField("반", classC,
-                                  type: TextInputType.number)),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                              flex: 3,
-                              child: buildTextField("번호", numberC,
-                                  type: TextInputType.number))
-                        ],
-                      ),
                       SizedBox(
                         height: 10,
                       ),
@@ -182,9 +141,6 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
 
   _postCreateProfile() {
     if (phoneC.text.isEmpty ||
-        addressC.text.isEmpty ||
-        classC.text.isEmpty ||
-        numberC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
