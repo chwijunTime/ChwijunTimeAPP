@@ -58,22 +58,40 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 height: 20,
               ),
               Expanded(
-                  child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        return buildPortfolio(context, index);
-                      },
-                      separatorBuilder: (context, index) {
-                        return Container(
-                          height: 1,
-                          color: Colors.grey,
+                  child: FutureBuilder(
+                    future: _getPortpolio(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.separated(
+                            itemBuilder: (context, index) {
+                              return buildPortfolio(context, index);
+                            },
+                            separatorBuilder: (context, index) {
+                              return Container(
+                                height: 1,
+                                color: Colors.grey,
+                              );
+                            },
+                            itemCount: portList.length);
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
                         );
-                      },
-                      itemCount: portList.length))
+                      }
+                    },
+                  )
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<List<PortfolioVO>> _getPortpolio() async {
+    List<PortfolioVO> list = [];
+
+    return list;
   }
 
   Widget buildPortfolio(BuildContext context, int index) {
