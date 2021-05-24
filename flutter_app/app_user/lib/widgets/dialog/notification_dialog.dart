@@ -60,9 +60,7 @@ class _NotificationDialog extends State<NotificationDialog> {
   Future<ResponseNotice> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     String token = pref.getString("accessToken");
-    print("index: ${widget.index}");
-    print("token: ${token}");
-    final res = await helper.getNotice(token, widget.index);
+    final res = await helper.getNotice("Bearer ${token}", widget.index);
     print(res.toJson());
     if (res.success) {
       return res;

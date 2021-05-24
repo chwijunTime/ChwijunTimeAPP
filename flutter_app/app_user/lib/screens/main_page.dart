@@ -56,7 +56,6 @@ class _MainPageState extends State<MainPage> {
       body: Container(
         color: Colors.white,
         child: Column(
-          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -141,7 +140,7 @@ class _MainPageState extends State<MainPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    var res = await helper.getNoticeList(token);
+    var res = await helper.getNoticeList("Bearer ${token}");
     print("res.msg: ${res.list}");
     if (res.success) {
       return res.list.reversed.toList();
@@ -193,19 +192,14 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 22,
-                child: Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "등록일: ${strDate}",
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400),
-                    ),
-                  ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  "등록일: ${strDate}",
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400),
                 ),
               )
             ],

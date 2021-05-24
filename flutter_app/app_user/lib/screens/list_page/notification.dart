@@ -9,8 +9,6 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/tag.dart';
-import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -29,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
   List<NotificationVO> noticeList = [];
   List<bool> deleteNoti = [];
   final _scrollController = ScrollController();
-  int itemCount = Consts.showItemCount;
+  int itemCount = 0;
 
   RetrofitHelper helper;
 
@@ -125,7 +123,6 @@ class _NotificationPageState extends State<NotificationPage> {
                         makeGradientBtn(
                             msg: "공지사항 등록",
                             onPressed: () async {
-                              print("등록하자");
                               final res = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -169,12 +166,15 @@ class _NotificationPageState extends State<NotificationPage> {
                             for (int i = 0; i < noticeList.length; i++) {
                               deleteNoti.add(false);
                             }
+                            if (noticeList.length <=10) {
+                              itemCount = noticeList.length;
+                            }
                             return ListView.builder(
                               controller: _scrollController,
-                                itemCount: itemCount + 1,
+                                itemCount: itemCount +1 ,
                                 itemBuilder: (context, index) {
                                   if (index == itemCount) {
-                                    if (index == noticeList.length) {
+                                    if (index >= noticeList.length) {
                                       return Padding(
                                         padding: EdgeInsets.all(Consts.padding),
                                         child: makeGradientBtn(
@@ -229,11 +229,9 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    print(token);
-    var res = await helper.getNoticeList(token);
-    print("res.success: ${res.success}");
+    var res = await helper.getNoticeList("Bearer ${token}");
     if (res.success) {
-      return res.list.reversed.toList();
+      return res.list.toList();
     } else {
       return null;
     }
@@ -312,18 +310,14 @@ class _NotificationPageState extends State<NotificationPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              SizedBox(
-                child: Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "등록일: ${strDate}",
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400),
-                    ),
-                  ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "등록일: ${strDate}",
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400),
                 ),
               )
             ],
@@ -361,7 +355,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   try {
                     for (int i = 0; i < arr.length; i++) {
                       final res = await helper.deleteNotice(
-                          token: token, index: arr[i]);
+                          token: "Bearer ${token}", index: arr[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
                       } else {

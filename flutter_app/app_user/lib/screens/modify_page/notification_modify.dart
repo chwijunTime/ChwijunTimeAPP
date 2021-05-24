@@ -102,7 +102,7 @@ class _NotificationModifyState extends State<NotificationModify> {
       var token = pref.getString("accessToken");
       print(widget.list.index);
       final res = await helper.putNotice(
-          token: token,
+          token: "Bearer ${token}",
           index: widget.list.index,
           noticeSaveDto:
               SNoticeVO(title: titleC.text, content: contentsC.text).toJson());

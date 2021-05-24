@@ -3,7 +3,6 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -90,14 +89,14 @@ class _NotificationWriteState extends State<NotificationWrite> {
       var token = pref.getString("accessToken");
       print(vo.toJson());
       try {
-        final res = await helper.postNotice(token, vo.toJson());
+        final res = await helper.postNotice("Bearer ${token}", vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {
           print("error: ${res.msg}");
         }
       } catch (e) {
-        print("error: ${e}");
+        print("error!: ${e}");
       }
     }
   }
