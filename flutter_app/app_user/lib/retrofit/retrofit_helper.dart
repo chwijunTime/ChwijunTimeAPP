@@ -1,5 +1,6 @@
 import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/comp_notice/response_comp_notice_list.dart';
+import 'package:app_user/model/comp_notice/response_comp_status_list.dart';
 import 'package:app_user/model/company_review/response_review.dart';
 import 'package:app_user/model/company_review/response_review_list.dart';
 import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
@@ -48,102 +49,52 @@ abstract class RetrofitHelper {
   @POST("/v1/check/findPw/sendEmail")
   Future<ResponseData> postSendEmail(
       @Query("userEmail", encoded: true) String email);
-  
+
   @PUT("/v1/password-change")
   Future<ResponseData> putChengPassword(
-      @Header("Authorization") String token,
-      @Body() Map<String, dynamic> body
-      );
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
   @POST("/v1/profile")
   Future<ResponseData> postProfile(
-      @Header("Authorization") String token,
-      @Body() Map<String, dynamic> body
-      );
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
   @PUT("/v1/update-profile")
   Future<ResponseData> putProfile(
-      @Header("Authorization") String token,
-      @Body() Map<String, dynamic> body
-      );
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
   @GET("/v1/userinfo")
   Future<ResponseUserInfo> getUserInfo(
-      @Header("Authorization") String token,
-      );
+    @Header("Authorization") String token,
+  );
 
   @GET("/v1/view-profile")
   Future<ResponseProfile> getProfile(
-      @Header("Authorization") String token,
-      );
+    @Header("Authorization") String token,
+  );
 
   //endregion
 
-  //region 2. 태그
-  @GET("/v1/tag")
-  Future<ResponseTagList> getTagList(@Header("Authorization") String token);
-
-  @POST("/v1/tag")
-  Future<ResponseData> postTag(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> body);
-
-  @GET("/v1/tag/{tagIdx}")
-  Future<ResponseTag> getTag(@Header("Authorization") String token,
-      @Path("tagIdx") int index);
-
-  @PUT("/v1/tag/{tagIdx}")
-  Future<ResponseTag> putTag(@Header("Authorization") String token,
-      @Path("tagIdx") int index, @Body() Map<String, dynamic> body);
-
-  @DELETE("/v1/tag/{tagIdx}")
-  Future<ResponseData> deleteTag(@Header("Authorization") String token,
-      @Path("tagIdx") int index,);
-
-  //endregion
-
-  //region 3. 협약 업체
-  @GET("/v1/contracting-company")
-  Future<ResponseContractingList> getContList(
-      @Header("Authorization") String token,);
-
-  @POST("/v1/contracting-company")
-  Future<ResponseData> postCont(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> vo);
-
-  @GET("/v1/contracting-company-keyword")
-  Future<ResponseContractingList> getContListKeyword(
-      @Header("Authorization") String token,
-      @Query("keyword", encoded: true) String keyword
-      );
-
-  @GET("/v1/contracting-company/{companyidx}")
-  Future<ResponseContracting> getCont(@Header("Authorization") String token,
-      @Path("companyidx") int index);
-  
-  @PUT("/v1/contracting-company/{companyidx}")
-  Future<ResponseData> putCont(
-      @Header("Authorization") String token,
-      @Path("companyidx") int index, @Body() Map<String, dynamic> body
-      );
-
-  @DELETE("/v1/contracting-company/{companyidx}")
-  Future<ResponseData> deleteCont(@Header("Authorization") String token,
-      @Path("companyidx") int index);
-
-  //endregion
-
-  //region 4. 면접 후기 및 회사 후기
+  //region 2. 면접 후기 및 회사 후기
   @GET("/v1/companyreview")
   Future<ResponseReviewList> getReviewList(
       @Header("Authorization") String token);
 
   @POST("/v1/companyreview")
-  Future<ResponseData> postReview(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> body);
+  Future<ResponseData> postReview(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+
+  @GET("/v1/companyreview-keyword")
+  Future<ResponseReviewList> getReviewListKeyword(
+      @Header("Authorization") String token,
+      @Query("companyNameKeyword", encoded: true) String keyword);
 
   @GET("/v1/companyreview/{companyreviewIdx}")
   Future<ResponseReview> getReview(@Header("Authorization") String token,
       @Path("companyreviewIdx") int index);
+
+  @PUT("/v1/companyreview/{companyreviewIdx}")
+  Future<ResponseData> putReview(@Header("Authorization") String token,
+      @Path("companyreviewIdx") int index, @Body() Map<String, dynamic> body);
 
   @DELETE("/v1/companyreview/{companyreviewIdx}")
   Future<ResponseData> deleteReview(@Header("Authorization") String token,
@@ -151,31 +102,61 @@ abstract class RetrofitHelper {
 
   //endregion
 
-  //region 5. 공지사항
-  @GET("/v1/notice")
-  Future<ResponseNoticeList> getNoticeList(
-      @Header("Authorization") String token);
+  //region 3. 협약 업체
+  @GET("/v1/contracting-company")
+  Future<ResponseContractingList> getContList(
+    @Header("Authorization") String token,
+  );
 
-  @POST("/v1/notice")
-  Future<ResponseData> postNotice(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> noticeSaveDto);
+  @POST("/v1/contracting-company")
+  Future<ResponseData> postCont(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> vo);
 
-  @GET("/v1/notice/{noticeidx}")
-  Future<ResponseNotice> getNotice(@Header("Authorization") String token,
-      @Path("noticeidx") int index);
+  @GET("/v1/contracting-company-keyword")
+  Future<ResponseContractingList> getContListKeyword(
+      @Header("Authorization") String token,
+      @Query("keyword", encoded: true) String keyword);
 
-  @PUT("/v1/notice/{noticeidx}")
-  Future<ResponseData> putNotice({@Header("Authorization") String token,
-    @Path("noticeidx") int index,
-    @Body() Map<String, dynamic> noticeSaveDto});
+  @GET("/v1/contracting-company/{companyidx}")
+  Future<ResponseContracting> getCont(
+      @Header("Authorization") String token, @Path("companyidx") int index);
 
-  @DELETE("/v1/notice/{noticeidx}")
-  Future<ResponseData> deleteNotice(
-      {@Header("Authorization") String token, @Path("noticeidx") int index});
+  @PUT("/v1/contracting-company/{companyidx}")
+  Future<ResponseData> putCont(@Header("Authorization") String token,
+      @Path("companyidx") int index, @Body() Map<String, dynamic> body);
 
-//endregion
+  @DELETE("/v1/contracting-company/{companyidx}")
+  Future<ResponseData> deleteCont(
+      @Header("Authorization") String token, @Path("companyidx") int index);
 
-  //region 6. 취업공고
+  //endregion
+
+  //region 4. 취업 공고
+  @POST("/v1/application-accept/{applicationIdx}")
+  Future<ResponseData> postCompNoticeAcc(
+      @Header("Authorization") String token, @Path("applicationIdx") int index);
+
+  @POST("/v1/application-reject/{applicationIdx}")
+  Future<ResponseData> postCompNoticeRej(
+      @Header("Authorization") String token, @Path("applicationIdx") int index);
+
+  @GET("/v1/application-keyword")
+  Future<ResponseCompNoticeList> getCompListKeyword(
+      @Header("Authorization") String token,
+      @Query("keyword", encoded: true) String keyword);
+
+  @GET("/v1/application-status")
+  Future<ResponseCompStatusList> getCompApplyStatusList(
+      @Header("Authorization") String token,
+      @Query("status", encoded: true) String status);
+
+  @POST("/v1/application/{employmentAnnouncementIdx}")
+  Future<ResponseData> postCompApply(
+    @Header("Authorization") String token,
+    @Path("employmentAnnouncementIdx") int index,
+    @Body() Map<String, dynamic> body,
+  );
+
   @GET("/v1/employment-announcement")
   Future<ResponseCompNoticeList> getCompList(
       @Header("Authorization") String token);
@@ -189,17 +170,20 @@ abstract class RetrofitHelper {
       @Path("employmentAnnouncementIdx") int index);
 
   @PUT("/v1/employment-announcement/{employmentAnnouncementIdx}")
-  Future<ResponseData> putComp(@Header("Authorization") String token,
+  Future<ResponseData> putComp(
+      @Header("Authorization") String token,
       @Path("employmentAnnouncementIdx") int index,
       @Body() Map<String, dynamic> employmentAnnouncementSaveDto);
 
   @DELETE("/v1/employment-announcement/{employmentAnnouncementIdx}")
-  Future<ResponseData> deleteComp(@Header("Authorization") String token,
-      @Path("employmentAnnouncementIdx") int index,);
+  Future<ResponseData> deleteComp(
+    @Header("Authorization") String token,
+    @Path("employmentAnnouncementIdx") int index,
+  );
 
-  // endregion
+  //endregion
 
-  // region 10. 취업 확정 현황
+  //region 5. 취업 확정 현황
   @GET("/v1/employment-confirmation")
   Future<ResponseConfirmationList> getConfList(
       @Header("Authorization") String token);
@@ -208,17 +192,96 @@ abstract class RetrofitHelper {
   Future<ResponseData> postConf(@Header("Authorization") String token,
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
+  @GET("/v1/employment-confirmation-keyword")
+  Future<ResponseConfirmationList> getConfListKeyword(
+      @Header("Authorization") String token,
+      @Query("keyword", encoded: true) String keyword);
+
   @GET("/v1/employment-confirmation/{employmentConfirmationIdx}")
-  Future<ResponseConfirmation> getConf(@Header("Authorization") String token,
-      @Path("employmentConfirmationIdx") int index,);
+  Future<ResponseConfirmation> getConf(
+    @Header("Authorization") String token,
+    @Path("employmentConfirmationIdx") int index,
+  );
 
   @PUT("/v1/employment-confirmation/{employmentConfirmationIdx}")
-  Future<ResponseData> putConf(@Header("Authorization") String token,
+  Future<ResponseData> putConf(
+      @Header("Authorization") String token,
       @Path("employmentConfirmationIdx") int index,
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
   @DELETE("/v1/employment-confirmation/{employmentConfirmationIdx}")
-  Future<ResponseData> deleteConf(@Header("Authorization") String token,
-      @Path("employmentConfirmationIdx") int index,);
+  Future<ResponseData> deleteConf(
+    @Header("Authorization") String token,
+    @Path("employmentConfirmationIdx") int index,
+  );
+
+//endregion
+
+  //region 6. 공지사항
+  @GET("/v1/notice")
+  Future<ResponseNoticeList> getNoticeList(
+      @Header("Authorization") String token);
+
+  @POST("/v1/notice")
+  Future<ResponseData> postNotice(@Header("Authorization") String token,
+      @Body() Map<String, dynamic> noticeSaveDto);
+
+  @GET("/v1/notice/{noticeidx}")
+  Future<ResponseNotice> getNotice(
+      @Header("Authorization") String token, @Path("noticeidx") int index);
+
+  @PUT("/v1/notice/{noticeidx}")
+  Future<ResponseData> putNotice(
+      {@Header("Authorization") String token,
+      @Path("noticeidx") int index,
+      @Body() Map<String, dynamic> noticeSaveDto});
+
+  @DELETE("/v1/notice/{noticeidx}")
+  Future<ResponseData> deleteNotice(
+      {@Header("Authorization") String token, @Path("noticeidx") int index});
+
+  // endregion
+
+  //region 7. 태그
+  @GET("/v1/request-tag")
+  Future<ResponseTagList> getReqTagList(@Header("Authorization") String token);
+
+  @POST("/v1/request-tag")
+  Future<ResponseData> postReqTag(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+
+  @GET("/v1/request-tag/{rtagidx}")
+  Future<ResponseTag> getReqTag(
+      @Header("Authorization") String token, @Path("rtagidx") int index);
+
+  @DELETE("/v1/request-tag/{rtagidx}")
+  Future<ResponseData> deleteReqTag(
+      @Header("Authorization") String token, @Path("rtagidx") int index);
+
+  @GET("/v1/tag")
+  Future<ResponseTagList> getTagList(@Header("Authorization") String token);
+
+  @POST("/v1/tag")
+  Future<ResponseData> postTag(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+
+  @GET("/v1/tag/{tagIdx}")
+  Future<ResponseTag> getTag(
+      @Header("Authorization") String token, @Path("tagIdx") int index);
+
+  @PUT("/v1/tag/{tagIdx}")
+  Future<ResponseTag> putTag(@Header("Authorization") String token,
+      @Path("tagIdx") int index, @Body() Map<String, dynamic> body);
+
+  @DELETE("/v1/tag/{tagIdx}")
+  Future<ResponseData> deleteTag(
+    @Header("Authorization") String token,
+    @Path("tagIdx") int index,
+  );
+
+//endregion
+
+// region 10. 취업 확정 현황
+
 // endregion
 }

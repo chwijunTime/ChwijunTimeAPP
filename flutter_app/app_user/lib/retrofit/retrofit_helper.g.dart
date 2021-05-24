@@ -249,12 +249,13 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTagList> getTagList(token) async {
+  Future<ResponseReviewList> getReviewList(token) async {
     ArgumentError.checkNotNull(token, 'token');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -262,19 +263,20 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseTagList.fromJson(_result.data);
+    final value = ResponseReviewList.fromJson(_result.data);
     return value;
   }
 
   @override
-  Future<ResponseData> postTag(token, body) async {
+  Future<ResponseData> postReview(token, body) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -287,13 +289,14 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTag> getTag(token, index) async {
+  Future<ResponseReviewList> getReviewListKeyword(token, keyword) async {
     ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(index, 'index');
+    ArgumentError.checkNotNull(keyword, 'keyword');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'companyNameKeyword': keyword};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview-keyword',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -301,12 +304,32 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseTag.fromJson(_result.data);
+    final value = ResponseReviewList.fromJson(_result.data);
     return value;
   }
 
   @override
-  Future<ResponseTag> putTag(token, index, body) async {
+  Future<ResponseReview> getReview(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseReview.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putReview(token, index, body) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(body, 'body');
@@ -314,7 +337,8 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -322,18 +346,19 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseTag.fromJson(_result.data);
+    final value = ResponseData.fromJson(_result.data);
     return value;
   }
 
   @override
-  Future<ResponseData> deleteTag(token, index) async {
+  Future<ResponseData> deleteReview(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/companyreview/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -468,13 +493,54 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseReviewList> getReviewList(token) async {
+  Future<ResponseData> postCompNoticeAcc(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/companyreview',
+        '/v1/application-accept/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postCompNoticeRej(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/application-reject/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseCompNoticeList> getCompListKeyword(token, keyword) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(keyword, 'keyword');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'keyword': keyword};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/application-keyword',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -482,160 +548,44 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseReviewList.fromJson(_result.data);
+    final value = ResponseCompNoticeList.fromJson(_result.data);
     return value;
   }
 
   @override
-  Future<ResponseData> postReview(token, body) async {
+  Future<ResponseCompStatusList> getCompApplyStatusList(token, status) async {
     ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(status, 'status');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'status': status};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/application-status',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseCompStatusList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postCompApply(token, index, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/companyreview',
+        '/v1/application/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseData.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseReview> getReview(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(index, 'index');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/companyreview/$index',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseReview.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseData> deleteReview(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(index, 'index');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/companyreview/$index',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseData.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseNoticeList> getNoticeList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseNoticeList.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseData> postNotice(token, noticeSaveDto) async {
-    ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(noticeSaveDto, 'noticeSaveDto');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseData.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseNotice> getNotice(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(index, 'index');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/notice/$index',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseNotice.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseData> putNotice({token, index, noticeSaveDto}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/notice/$index',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = ResponseData.fromJson(_result.data);
-    return value;
-  }
-
-  @override
-  Future<ResponseData> deleteNotice({token, index}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/notice/$index',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'DELETE',
             headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),
@@ -791,6 +741,26 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
+  Future<ResponseConfirmationList> getConfListKeyword(token, keyword) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(keyword, 'keyword');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'keyword': keyword};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/employment-confirmation-keyword',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseConfirmationList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
   Future<ResponseConfirmation> getConf(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
@@ -842,6 +812,278 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
         '/v1/employment-confirmation/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseNoticeList> getNoticeList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseNoticeList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postNotice(token, noticeSaveDto) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(noticeSaveDto, 'noticeSaveDto');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseNotice> getNotice(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/notice/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseNotice.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putNotice({token, index, noticeSaveDto}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(noticeSaveDto ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/notice/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> deleteNotice({token, index}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/notice/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseTagList> getReqTagList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/request-tag',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseTagList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postReqTag(token, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/request-tag',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseTag> getReqTag(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/request-tag/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseTag.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> deleteReqTag(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/request-tag/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseTagList> getTagList(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseTagList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> postTag(token, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseTag> getTag(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseTag.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseTag> putTag(token, index, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseTag.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> deleteTag(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
