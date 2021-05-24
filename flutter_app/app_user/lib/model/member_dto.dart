@@ -4,6 +4,7 @@ part 'member_dto.g.dart';
 
 @JsonSerializable()
 class MemberDTO{
+  @JsonKey(name: "")
   String memberClassNumber;
   String memberEmail;
   String memberPassword;

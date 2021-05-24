@@ -12,6 +12,9 @@ import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
 import 'package:app_user/model/response_find_pw.dart';
 import 'package:app_user/model/response_login.dart';
+import 'package:app_user/model/resume_portfolio/response_portfolio.dart';
+import 'package:app_user/model/resume_portfolio/response_portfolio_list.dart';
+import 'package:app_user/model/resume_portfolio/response_resume_list.dart';
 import 'package:app_user/model/tag/response_tag.dart';
 import 'package:app_user/model/tag/response_tag_list.dart';
 import 'package:app_user/model/user/response_profile.dart';
@@ -279,6 +282,74 @@ abstract class RetrofitHelper {
     @Path("tagIdx") int index,
   );
 
+//endregion
+
+  //region 8. 이력서 및 포트폴리오
+  @GET("/v1/my-portfolio")
+  Future<ResponsePortfolioList> getMyPortfolioList(
+      @Header("Authorization") String token);
+
+  @GET("/v1/my-resume")
+  Future<ResponseResumeList> getMyResumeList(
+      @Header("Authorization") String token);
+
+  @GET("/v1/portfolio")
+  Future<ResponsePortfolioList> getPortfolioList(
+      @Header("Authorization") String token);
+
+  @POST("/v1/portfolio")
+  Future<ResponseData> postPortfolio(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body   // TODO "notionPortfolioURL": "string"
+      );
+
+  @GET("/v1/portfolio/{portfolioIdx}")
+  Future<ResponsePortfolio> getPortfolio(
+      @Header("Authorization") String token,
+      @Path("portfolioIdx") int index
+      );
+
+  @PUT("/v1/portfolio/{portfolioIdx}")
+  Future<ResponseData> putPortfolio(
+      @Header("Authorization") String token,
+      @Path("portfolioIdx") int index,
+      @Body() Map<String, dynamic> body   // TODO "notionPortfolioURL": "string"
+      );
+
+  @DELETE("/v1/portfolio/{portfolioIdx}")
+  Future<ResponseData> deletePortfolio(
+      @Header("Authorization") String token,
+      @Path("portfolioIdx") int index
+      );
+
+  @GET("/v1/resume")
+  Future<ResponseResumeList> getResumeList(
+      @Header("Authorization") String token);
+
+  @POST("/v1/portfolio")
+  Future<ResponseData> postResume(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body   // TODO "resumeFileURL": "string"
+      );
+
+  @GET("/v1/portfolio/{resumeIdx}")
+  Future<ResponsePortfolio> getResume(
+      @Header("Authorization") String token,
+      @Path("resumeIdx") int index
+      );
+
+  @PUT("/v1/portfolio/{resumeIdx}")
+  Future<ResponseData> putResume(
+      @Header("Authorization") String token,
+      @Path("resumeIdx") int index,
+      @Body() Map<String, dynamic> body   // TODO "resumeFileURL": "string"
+      );
+
+  @DELETE("/v1/portfolio/{resumeIdx}")
+  Future<ResponseData> deleteResume(
+      @Header("Authorization") String token,
+      @Path("resumeIdx") int index
+      );
 //endregion
 
 // region 10. 취업 확정 현황

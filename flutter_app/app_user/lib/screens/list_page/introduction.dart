@@ -1,4 +1,4 @@
-import 'package:app_user/model/portfolio_vo.dart';
+import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/dialog/request_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
@@ -15,7 +15,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
   init() {
     for (int i = 0; i < 10; i++) {
       introList.add(PortfolioVO(
-          user: "3210_안수빈", state: "notDone", url: "https://naver.com"));
+          user: "3210_안수빈", state: "notDone", portfolioUrl: "https://naver.com"));
     }
   }
 

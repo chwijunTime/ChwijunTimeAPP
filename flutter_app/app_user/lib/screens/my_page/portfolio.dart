@@ -1,4 +1,4 @@
-import 'package:app_user/model/portfolio_vo.dart';
+import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -20,13 +20,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
   void initState() {
     super.initState();
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        PortfolioVO(user: "오잉", state: "approve", portfolioUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        PortfolioVO(user: "오잉", state: "approve", portfolioUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        PortfolioVO(user: "오잉", state: "approve", portfolioUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        PortfolioVO(user: "오잉", state: "approve", portfolioUrl: "https://naver.com"));
   }
 
   @override
@@ -127,7 +127,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ShowWebView(url: portList[index].url)));
+                                ShowWebView(url: portList[index].portfolioUrl)));
                   },
                   child: Icon(Icons.search),
                 ),

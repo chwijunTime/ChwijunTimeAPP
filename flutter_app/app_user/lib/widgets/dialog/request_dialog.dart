@@ -1,4 +1,4 @@
-import 'package:app_user/model/portfolio_vo.dart';
+import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/button.dart';
@@ -71,7 +71,7 @@ class _RequestDialog extends State<RequestDialog> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    ShowWebView(url: widget.vo.url)));
+                                    ShowWebView(url: widget.vo.portfolioUrl)));
                       },
                       child: Text(
                         "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",

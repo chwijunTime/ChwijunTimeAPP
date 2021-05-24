@@ -1,4 +1,4 @@
-import 'package:app_user/model/portfolio_vo.dart';
+import 'package:app_user/model/resume_portfolio/resume_vo.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/dialog/request_dialog.dart';
@@ -14,19 +14,19 @@ class ResumePage extends StatefulWidget {
 }
 
 class _ResumePageState extends State<ResumePage> {
-  List<PortfolioVO> portList = [];
+  List<ResumeVO> portList = [];
 
   @override
   void initState() {
     super.initState();
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
     portList.add(
-        PortfolioVO(user: "오잉", state: "approve", url: "https://naver.com"));
+        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
   }
 
   @override
@@ -88,8 +88,8 @@ class _ResumePageState extends State<ResumePage> {
     );
   }
 
-  Future<List<PortfolioVO>> _getPortpolio() async {
-    List<PortfolioVO> list = [];
+  Future<List<ResumeVO>> _getPortpolio() async {
+    List<ResumeVO> list = [];
 
     return list;
   }
@@ -110,11 +110,12 @@ class _ResumePageState extends State<ResumePage> {
                 ),
                 InkWell(
                   onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            RequestDialog(
-                                vo: portList[index], mode: "resume"));
+                    // TODO Resume 첨삭 신청하기
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (BuildContext context) =>
+                    //         RequestDialog(
+                    //             vo: [index], mode: "resume"));
                   },
                   child: Icon(Icons.mail),
                 ),
@@ -127,7 +128,7 @@ class _ResumePageState extends State<ResumePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ShowWebView(url: portList[index].url)));
+                                ShowWebView(url: portList[index].resumeUrl)));
                   },
                   child: Icon(Icons.search),
                 ),
