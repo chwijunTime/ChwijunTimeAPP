@@ -31,12 +31,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   List<ContractingVO> contractingList = [];
   final titleC = TextEditingController();
   List<bool> deleteList = [];
-  var itemCount = Consts.showItemCount;
+  var itemCount = 0;
 
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
@@ -84,6 +83,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
 
   @override
   Widget build(BuildContext context) {
+    widget.role = User.role;
     return Scaffold(
       key: scafforldkey,
       drawer: buildDrawer(
@@ -159,8 +159,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 : Padding(
                     padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                     child: buildTextField("협약 업체명, 지역", titleC,
-                        autoFocus: false,
-                        prefixIcon: Icon(Icons.search), textInput: (String key) {
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) {
                       print("호잇: ${key}");
                     })),
             Expanded(
@@ -173,12 +173,33 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         for (int i = 0; i < contractingList.length; i++) {
                           deleteList.add(false);
                         }
+                        if (contractingList.length <= Consts.showItemCount) {
+                          itemCount = contractingList.length;
+                        }
                         return ListView.builder(
                             controller: _scrollController,
                             itemCount: itemCount + 1,
                             itemBuilder: (context, index) {
                               if (index == itemCount) {
-                                if (index == contractingList.length) {
+                                if (index == 0) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
+                                          child: Text(
+                                            "등록된 협약업체가 없습니다.",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )),
+                                    ),
+                                  );
+                                } else if (index == contractingList.length) {
                                   return Padding(
                                     padding: EdgeInsets.all(Consts.padding),
                                     child: makeGradientBtn(
@@ -235,7 +256,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getContList(token);
+      var res = await helper.getContList("Bearer ${token}");
       print("res.success: ${res.success}");
       if (res.success) {
         return res.list.reversed.toList();
@@ -307,28 +328,25 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 height: 22,
                 child: Row(
                   children: [
-                    Row(
-                      children: List.generate(2, (indextag) {
-                        return buildItemTag(
-                            contractingList[index].tag, indextag);
-                      }),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${contractingList[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
+                    buildItemTag(contractingList[index].tag, 0),
+                    contractingList[index].tag.length > 1
+                        ? Container(
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${contractingList[index].tag.length - 1}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
@@ -378,9 +396,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   print("token: ${token}");
                   try {
                     for (int i = 0; i < deleteComp.length; i++) {
-                      var res = await helper.deleteCont(token, deleteComp[i]);
+                      var res = await helper.deleteCont("Bearer ${token}", deleteComp[i]);
                       if (res.success) {
-                        print("삭제함: ${res.msg}");
+                        setState(() {
+                          print("삭제함: ${res.msg}");
+                        });
                       } else {
                         print("errorr: ${res.msg}");
                       }

@@ -261,7 +261,7 @@ class _ContractingCompanyDetailPageState
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getCont(token, widget.index);
+      var res = await helper.getCont("Bearer ${token}", widget.index);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
@@ -279,10 +279,9 @@ class _ContractingCompanyDetailPageState
         MaterialPageRoute(
             builder: (context) => ContractingCompanyModify(list: widget.list)));
 
-    if (result != false && result != null) {
-      print("list: ${widget.list}");
+    if (result != null && result == true) {
       setState(() {
-        widget.list = result;
+        _getContracting();
       });
     }
   }
@@ -303,7 +302,7 @@ class _ContractingCompanyDetailPageState
                 var token = pref.getString("accessToken");
                 print("token: ${token}");
                 try {
-                  var res = await helper.deleteCont(token, widget.index);
+                  var res = await helper.deleteCont("Bearer ${token}", widget.index);
                   if (res.success) {
                     Navigator.pop(context, "yes");
                   } else {

@@ -110,9 +110,21 @@ abstract class RetrofitHelper {
   Future<ResponseData> postCont(@Header("Authorization") String token,
       @Body() Map<String, dynamic> vo);
 
+  @GET("/v1/contracting-company-keyword")
+  Future<ResponseContractingList> getContListKeyword(
+      @Header("Authorization") String token,
+      @Query("keyword", encoded: true) String keyword
+      );
+
   @GET("/v1/contracting-company/{companyidx}")
   Future<ResponseContracting> getCont(@Header("Authorization") String token,
       @Path("companyidx") int index);
+  
+  @PUT("/v1/contracting-company/{companyidx}")
+  Future<ResponseData> putCont(
+      @Header("Authorization") String token,
+      @Path("companyidx") int index, @Body() Map<String, dynamic> body
+      );
 
   @DELETE("/v1/contracting-company/{companyidx}")
   Future<ResponseData> deleteCont(@Header("Authorization") String token,

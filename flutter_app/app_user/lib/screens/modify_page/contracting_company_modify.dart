@@ -1,10 +1,13 @@
 import 'package:app_user/model/contracting_company/contracting_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractingCompanyModify extends StatefulWidget {
   final ContractingVO list;
@@ -17,8 +20,10 @@ class ContractingCompanyModify extends StatefulWidget {
 }
 
 class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
-  var areaC = TextEditingController();
+  var fieldC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
@@ -27,10 +32,11 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   @override
   void initState() {
     super.initState();
+    initRetrofit();
     infoC.text = widget.list.info;
     priceC.text = widget.list.salary;
     titleC.text = widget.list.title;
-    // Todo ContractingVO area 추가 되면 -> areaC.text = widget.list.area
+    fieldC.text = widget.list.field;
     addressC.text = widget.list.address;
     tagList = widget.list.tag;
   }
@@ -38,11 +44,23 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   @override
   void dispose() {
     titleC.dispose();
-    areaC.dispose();
+    fieldC.dispose();
     addressC.dispose();
     priceC.dispose();
     infoC.dispose();
     super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -71,7 +89,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     children: [
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
-                      buildTextField("지역", areaC,
+                      buildTextField("사업분야", fieldC,
                           deco: false, autoFocus: false),
                       buildTextField("주소", addressC,
                           deco: false, autoFocus: false),
@@ -158,20 +176,36 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     );
   }
 
-  onContractingModify() {
-    if (priceC.text.isEmpty || infoC.text.isEmpty || tagList.isEmpty ||
-        titleC.text.isEmpty || addressC.text.isEmpty
-      // TODO || area.text.isEmpty
-    ) {
+  onContractingModify() async {
+    if (priceC.text.isEmpty ||
+        infoC.text.isEmpty ||
+        tagList.isEmpty ||
+        titleC.text.isEmpty ||
+        addressC.text.isEmpty ||
+        fieldC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      widget.list.salary = priceC.text;
-      widget.list.info = infoC.text;
-      widget.list.tag = tagList;
-      widget.list.address = addressC.text;
-      widget.list.title = titleC.text;
-      // widget.list.area = areaC.text;
-      Navigator.pop(context, widget.list);
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      print(widget.list.index);
+      final res = await helper.putCont(
+          "Bearer ${token}",
+          widget.list.index,
+          ContractingVO(
+                  salary: priceC.text,
+                  info: infoC.text,
+                  postTag: tagList,
+                  title: titleC.text,
+                  address: addressC.text,
+                  field: fieldC.text)
+              .toJson());
+      if (res.success) {
+        Navigator.pop(context, true);
+      } else {
+        Navigator.pop(context, false);
+        snackBar("서버오류", context);
+        print("e: ${res.msg}");
+      }
     }
   }
 

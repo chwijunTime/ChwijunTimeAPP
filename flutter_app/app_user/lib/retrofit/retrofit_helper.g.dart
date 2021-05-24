@@ -386,6 +386,26 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
+  Future<ResponseContractingList> getContListKeyword(token, keyword) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(keyword, 'keyword');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'keyword': keyword};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/contracting-company-keyword',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseContractingList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
   Future<ResponseContracting> getCont(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
@@ -402,6 +422,28 @@ class _RetrofitHelper implements RetrofitHelper {
             baseUrl: baseUrl),
         data: _data);
     final value = ResponseContracting.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putCont(token, index, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/contracting-company/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
     return value;
   }
 

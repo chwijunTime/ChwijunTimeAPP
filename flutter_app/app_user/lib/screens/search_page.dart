@@ -53,6 +53,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    initRetrofit();
     _IsSearching = false;
     print("list: ${list}");
   }
@@ -81,11 +82,11 @@ class _SearchPageState extends State<SearchPage> {
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getTagList(token);
+      var res = await helper.getTagList("Bearer ${token}");
       if (res.success) {
         return res.list.reversed.toList();
       } else {
-        return null;
+        print("err: ${res.msg}");
       }
     } catch (e) {
       print("error: $e");
@@ -137,19 +138,39 @@ class _SearchPageState extends State<SearchPage> {
           child: buildTextField("Tag", _searchQuery),
         ),
         Expanded(
-          child: _IsSearching
-              ? FutureBuilder(
+          child: FutureBuilder(
                   future: _getTagList(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       list = snapshot.data;
-                      return SizedBox(
+                      return _IsSearching ? SizedBox(
                         child: Card(
                           margin: EdgeInsets.only(left: 34, right: 34),
                           elevation: 5,
                           child: ListView(
                             padding: EdgeInsets.symmetric(vertical: 8),
                             children: _buildSearchList(),
+                          ),
+                        ),
+                      ) : SizedBox(
+                        child: Card(
+                          margin: EdgeInsets.only(left: 34, right: 34),
+                          elevation: 5,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "태그 검색어를 입력해주세요!",
+                                  style: TextStyle(
+                                      fontSize: 18, fontWeight: FontWeight.w800),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                CircularProgressIndicator()
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -178,28 +199,6 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     }
                   })
-              : SizedBox(
-                  child: Card(
-                    margin: EdgeInsets.only(left: 34, right: 34),
-                    elevation: 5,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "태그 검색어를 입력해주세요!",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w800),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CircularProgressIndicator()
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
