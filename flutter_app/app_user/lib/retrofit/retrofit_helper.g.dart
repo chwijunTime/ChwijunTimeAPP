@@ -9,7 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://52.78.120.111:8080/';
+    baseUrl ??= 'http://10.120.71.242:8082/';
   }
 
   final Dio _dio;
@@ -172,8 +172,8 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postProfile(tokey, body) async {
-    ArgumentError.checkNotNull(tokey, 'tokey');
+  Future<ResponseData> postProfile(token, body) async {
+    ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -183,11 +183,68 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': tokey},
+            headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
     final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseData> putProfile(token, body) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/update-profile',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PUT',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseUserInfo> getUserInfo(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/userinfo',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseUserInfo.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<ResponseProfile> getProfile(token) async {
+    ArgumentError.checkNotNull(token, 'token');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/view-profile',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseProfile.fromJson(_result.data);
     return value;
   }
 

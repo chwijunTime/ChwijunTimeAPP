@@ -13,12 +13,14 @@ import 'package:app_user/model/response_find_pw.dart';
 import 'package:app_user/model/response_login.dart';
 import 'package:app_user/model/tag/response_tag.dart';
 import 'package:app_user/model/tag/response_tag_list.dart';
+import 'package:app_user/model/user/response_profile.dart';
+import 'package:app_user/model/user/response_userinfo.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'retrofit_helper.g.dart';
 
-@RestApi(baseUrl: "http://52.78.120.111:8080/")
+@RestApi(baseUrl: "http://10.120.71.242:8082/")
 abstract class RetrofitHelper {
   factory RetrofitHelper(Dio dio, {String baseUrl}) = _RetrofitHelper;
 
@@ -55,8 +57,24 @@ abstract class RetrofitHelper {
 
   @POST("/v1/profile")
   Future<ResponseData> postProfile(
-      @Header("Authorization") String tokey,
+      @Header("Authorization") String token,
       @Body() Map<String, dynamic> body
+      );
+
+  @PUT("/v1/update-profile")
+  Future<ResponseData> putProfile(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body
+      );
+
+  @GET("/v1/userinfo")
+  Future<ResponseUserInfo> getUserInfo(
+      @Header("Authorization") String token,
+      );
+
+  @GET("/v1/view-profile")
+  Future<ResponseProfile> getProfile(
+      @Header("Authorization") String token,
       );
 
   //endregion
