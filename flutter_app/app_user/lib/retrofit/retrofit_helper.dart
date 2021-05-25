@@ -1,5 +1,6 @@
 import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/comp_notice/response_comp_notice_list.dart';
+import 'package:app_user/model/comp_notice/response_comp_status.dart';
 import 'package:app_user/model/comp_notice/response_comp_status_list.dart';
 import 'package:app_user/model/company_review/response_review.dart';
 import 'package:app_user/model/company_review/response_review_list.dart';
@@ -152,6 +153,12 @@ abstract class RetrofitHelper {
   Future<ResponseCompStatusList> getCompApplyStatusList(
       @Header("Authorization") String token,
       @Query("status", encoded: true) String status);
+
+  @GET("/v1/application/{applicationIdx}")
+  Future<ResponseCompStatus> getCompApplyStatus(
+      @Header("Authorization") String token,
+      @Path("applicationIdx") int index
+      );
 
   @POST("/v1/application/{employmentAnnouncementIdx}")
   Future<ResponseData> postCompApply(

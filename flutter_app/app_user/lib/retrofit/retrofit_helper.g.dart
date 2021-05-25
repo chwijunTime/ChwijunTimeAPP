@@ -573,6 +573,26 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
+  Future<ResponseCompStatus> getCompApplyStatus(token, index) async {
+    ArgumentError.checkNotNull(token, 'token');
+    ArgumentError.checkNotNull(index, 'index');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/application/$index',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': token},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = ResponseCompStatus.fromJson(_result.data);
+    return value;
+  }
+
+  @override
   Future<ResponseData> postCompApply(token, index, body) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
