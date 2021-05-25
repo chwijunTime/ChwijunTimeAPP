@@ -82,7 +82,7 @@ class _SearchPageState extends State<SearchPage> {
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getTagList("Bearer ${token}");
+      var res = await helper.getTagList(token);
       if (res.success) {
         return res.list.reversed.toList();
       } else {

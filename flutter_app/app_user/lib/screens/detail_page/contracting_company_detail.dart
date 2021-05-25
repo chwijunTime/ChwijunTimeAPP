@@ -33,6 +33,8 @@ class _ContractingCompanyDetailPageState
   RetrofitHelper helper;
   LatLng latLng;
 
+  GoogleMapController mapController;
+
   Future<LatLng> getCordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
@@ -57,6 +59,14 @@ class _ContractingCompanyDetailPageState
     helper = RetrofitHelper(dio);
   }
 
+  moveCamera() async {
+    print("1: ${widget.list.address}");
+    List<Location> location = await locationFromAddress(widget.list.address);
+    latLng = LatLng(location[0].latitude, location[0].longitude);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 17)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +78,7 @@ class _ContractingCompanyDetailPageState
             builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             widget.list = snapshot.data;
+            moveCamera();
             return ListView(
               children: [
                 Card(
@@ -169,6 +180,11 @@ class _ContractingCompanyDetailPageState
                                               latLng.longitude),
                                           zoom: 17,
                                         ),
+                                        onMapCreated: (GoogleMapController
+                                        controller) async {
+                                          mapController = controller;
+                                          print("호잇");
+                                        },
                                         markers: _createMarker(),
                                       );
                                     }
@@ -261,7 +277,7 @@ class _ContractingCompanyDetailPageState
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getCont("Bearer ${token}", widget.index);
+      var res = await helper.getCont(token, widget.index);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
@@ -274,16 +290,13 @@ class _ContractingCompanyDetailPageState
   }
 
   _moveModify() async {
-    final result = await Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ContractingCompanyModify(list: widget.list)));
-
-    if (result != null && result == true) {
       setState(() {
         _getContracting();
       });
-    }
   }
 
   _onDeleteComp() async {

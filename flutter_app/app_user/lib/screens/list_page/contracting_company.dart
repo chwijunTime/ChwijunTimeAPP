@@ -275,17 +275,15 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
         onTap: () async {
-          var res = await Navigator.push(
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (countext) => ContractingCompanyDetailPage(
                         index: contractingList[index].index,
                       )));
-          if (res != null && res) {
-            setState(() {
-              _getContractingList();
-            });
-          }
+          setState(() {
+            _getContractingList();
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -400,6 +398,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       if (res.success) {
                         setState(() {
                           print("삭제함: ${res.msg}");
+                          deleteList.clear();
                         });
                       } else {
                         print("errorr: ${res.msg}");

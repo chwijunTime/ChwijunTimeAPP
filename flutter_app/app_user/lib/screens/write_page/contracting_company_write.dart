@@ -98,7 +98,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                 child: Padding(
                   padding: EdgeInsets.all(15),
                   child: buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                      maxLine: 8, maxLength: 150, autoFocus: false),
+                      maxLine: 8, maxLength: 150, autoFocus: false, multiLine: true, type: TextInputType.multiline),
                 ),
               ),
               SizedBox(
@@ -172,7 +172,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
       var token = pref.getString("accessToken");
       print("token: ${token}");
       try {
-        var res = await helper.postCont("Bearer ${token}", vo.toJson());
+        var res = await helper.postCont(token, vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {
