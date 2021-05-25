@@ -33,7 +33,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
     initRetrofit();
   }
@@ -153,13 +152,12 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 )
               ],
             ),
-            widget.role == User.role
+            User.role == User.user
                 ? Padding(
-                padding:
-                EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("회사 이름", titleC,
-                    autoFocus: false,
-                    prefixIcon: Icon(Icons.search), textInput: (String key) {
+                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                    child: buildTextField("회사 이름", titleC,
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) {
                       print("호잇: ${key}");
                     }))
                 : SizedBox(),
@@ -169,14 +167,34 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                     future: _getReview(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
-                        var result = snapshot.data as List<ReviewVO>;
-                        reviewList = result;
+                        reviewList = snapshot.data;
+                        if (reviewList.length <= Consts.showItemCount) {
+                          itemCount = reviewList.length;
+                        }
                         return ListView.builder(
                             controller: _scrollController,
                             itemCount: itemCount + 1,
                             itemBuilder: (context, index) {
                               if (index == itemCount) {
-                                if (index == reviewList.length) {
+                                if (index == 0) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
+                                          child: Text(
+                                            "등록된 리뷰가 없습니다.",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )),
+                                    ),
+                                  );
+                                } else if (index == reviewList.length) {
                                   return Padding(
                                     padding: EdgeInsets.all(Consts.padding),
                                     child: makeGradientBtn(
@@ -263,27 +281,25 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 height: 22,
                 child: Row(
                   children: [
-                    Row(
-                      children: List.generate(2, (indextag) {
-                        return buildItemTag(reviewList[index].tag, indextag);
-                      }),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${reviewList[index].tag.length - 2}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
+                    buildItemTag(reviewList[index].tag, 0),
+                    reviewList[index].tag.length > 1
+                        ? Container(
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${reviewList[index].tag.length - 1}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,

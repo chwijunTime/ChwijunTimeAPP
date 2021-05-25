@@ -136,7 +136,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                         height: 5,
                       ),
                       buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 6, maxLength: 100)
+                          maxLine: 6, maxLength: 100, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),

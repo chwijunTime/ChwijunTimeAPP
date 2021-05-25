@@ -64,6 +64,7 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 widget.list = snapshot.data;
+                _moveCamera();
                 return ListView(
                   children: [
                     Card(
@@ -95,16 +96,14 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  widget.list.isMine
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.delete_sharp,
-                                            size: 28,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: _onDelete,
-                                        )
-                                      : SizedBox()
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete_sharp,
+                                      size: 28,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: _onDelete,
+                                  )
                                 ],
                               ),
                               Text(
@@ -368,6 +367,9 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
         widget.list = result;
       });
     }
+  }
+
+  _moveCamera() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     mapController.animateCamera(CameraUpdate.newCameraPosition(
