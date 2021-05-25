@@ -8,6 +8,8 @@ import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
 import 'package:app_user/model/contracting_company/response_contracting.dart';
 import 'package:app_user/model/contracting_company/response_contracting_list.dart';
+import 'package:app_user/model/correction/response_correction.dart';
+import 'package:app_user/model/correction/response_correction_list.dart';
 import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
@@ -358,6 +360,45 @@ abstract class RetrofitHelper {
       @Path("resumeIdx") int index
       );
 //endregion
+
+  //region 9. 이력서 및 포트폴리오 첨삭
+  @GET("/v1/correction")
+  Future<ResponseCorrectionList> getCorrectionList(
+      @Header("Authorization") String token,
+      );
+
+  @POST("/v1/correction-approval")
+  Future<ResponseData> postCorrectionApproval(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body,
+      @Query("idx", encoded: true) int index
+      );
+
+  @POST("/v1/correction-rejection")
+  Future<ResponseData> postCorrectionReject(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body,
+      @Query("idx", encoded: true) int index
+      );
+
+  @POST("/v1/correction-request")
+  Future<ResponseData> postCorrectionRequest(
+      @Header("Authorization") String token,
+      @Query("correctionType", encoded: true) String type,
+      @Query("idx", encoded: true) int index
+      );
+
+  @GET("/v1/correction/{idx}")
+  Future<ResponseCorrection> getCorrection(
+      @Header("Authorization") String token,
+      @Path("idx") int type,
+      );
+
+  @GET("/v1/my-correction")
+  Future<ResponseCorrectionList> getMyCorrectionList(
+      @Header("Authorization") String token,
+      );
+  //endregion
 
 // region 10. 취업 확정 현황
 
