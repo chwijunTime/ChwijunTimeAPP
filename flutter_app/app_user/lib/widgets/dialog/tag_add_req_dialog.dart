@@ -1,6 +1,9 @@
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweet_alert_dialogs/sweet_alert_dialogs.dart';
 
 class TagAddReqDialog extends StatefulWidget {
@@ -10,13 +13,30 @@ class TagAddReqDialog extends StatefulWidget {
 
 class _TagAddReqDialogState extends State<TagAddReqDialog> {
   var titleC = TextEditingController();
-  var contentC = TextEditingController();
+
+  RetrofitHelper helper;
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
 
   @override
   void dispose() {
     titleC.dispose();
-    contentC.dispose();
     super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -35,8 +55,8 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Container(
-        width: 311,
-        height: 385,
+        width: 340,
+        height: 200,
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 60),
         decoration: new BoxDecoration(
@@ -70,32 +90,29 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
                         fontWeight: FontWeight.w500,
                         color: Color(0xff4F9ECB))),
                 TextSpan(
-                    text: "과\n ",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black)),
-                TextSpan(
-                    text: "이유",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff4F9ECB))),
-                TextSpan(
-                    text: "를 작성해주세요.",
+                    text: "을 작성해주세요.",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color: Colors.black)),
               ])),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               buildTextField("태그명", titleC, autoFocus: false),
-              SizedBox(height: 10,),
-              buildTextField("등록 이유", contentC, autoFocus: false, maxLine: 5, maxLength: 80),
-              SizedBox(height: 10,),
-              makeGradientBtn(msg: "요청해요!", onPressed: () {
-                postAddTagReq();
-              }, mode: 1, icon: Icon(Icons.add_box_rounded, color: Colors.white, ))
+              SizedBox(
+                height: 10,
+              ),
+              makeGradientBtn(
+                  msg: "요청해요!",
+                  onPressed: () {
+                    postAddTagReq();
+                  },
+                  mode: 1,
+                  icon: Icon(
+                    Icons.add_box_rounded,
+                    color: Colors.white,
+                  ))
             ],
           ),
         ),
@@ -103,37 +120,78 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
     );
   }
 
-  postAddTagReq() {
-    if (titleC.text.isEmpty || contentC.text.isEmpty) {
-      showDialog(context: context, builder: (BuildContext context) {
-        return RichAlertDialog(alertTitle: richTitle("입력 오류"),
-          alertSubtitle: richSubtitle("태그명과 등록 이유를 입력해주세요!"),
-          alertType: RichAlertType.ERROR,
-          actions: [
-            FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.orange[800],)
-          ],);
-      });
+  postAddTagReq() async {
+    if (titleC.text.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle("입력 오류"),
+              alertSubtitle: richSubtitle("태그명을 입력해주세요!"),
+              alertType: RichAlertType.ERROR,
+              actions: [
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "확인",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Colors.orange[800],
+                )
+              ],
+            );
+          });
     } else {
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      var res = await helper.postReqTag(token, {"tagName": titleC.text});
       Navigator.pop(context);
-      
-      if (true) {
-        showDialog(context: context, builder: (BuildContext context) {
-          return RichAlertDialog(alertTitle: richTitle("요청 완료!"),
-            alertSubtitle: richSubtitle("성공적으로 태그가 요청되었습니다."),
-            alertType: RichAlertType.SUCCESS,
-            actions: [
-              FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.green[400],)
-            ],);
-        });
+      if (res.success) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RichAlertDialog(
+                alertTitle: richTitle("요청 완료!"),
+                alertSubtitle: richSubtitle("성공적으로 태그가 요청되었습니다."),
+                alertType: RichAlertType.SUCCESS,
+                actions: [
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "확인",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.green[400],
+                  )
+                ],
+              );
+            });
       } else {
-        showDialog(context: context, builder: (BuildContext context) {
-          return RichAlertDialog(alertTitle: richTitle("ERROR"),
-            alertSubtitle: richSubtitle("잠시후 다시 요청해주세요."),
-            alertType: RichAlertType.ERROR,
-            actions: [
-              FlatButton(onPressed: (){Navigator.pop(context);}, child: Text("확인", style: TextStyle(color: Colors.white),), color: Colors.orange[800],)
-            ],);
-        });
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RichAlertDialog(
+                alertTitle: richTitle("ERROR"),
+                alertSubtitle: richSubtitle("잠시후 다시 요청해주세요."),
+                alertType: RichAlertType.ERROR,
+                actions: [
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "확인",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.orange[800],
+                  )
+                ],
+              );
+            });
       }
     }
   }
