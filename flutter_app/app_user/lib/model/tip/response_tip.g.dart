@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'response_comp_status.dart';
+part of 'response_tip.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ResponseCompStatus _$ResponseCompStatusFromJson(Map<String, dynamic> json) {
-  return ResponseCompStatus(
+ResponseTip _$ResponseTipFromJson(Map<String, dynamic> json) {
+  return ResponseTip(
     code: json['code'] as int,
     data: json['data'] == null
         ? null
-        : CompStatusDetailVO.fromJson(json['data'] as Map<String, dynamic>),
+        : TipVO.fromJson(json['data'] as Map<String, dynamic>),
     msg: json['msg'] as String,
     success: json['success'] as bool,
   );
 }
 
-Map<String, dynamic> _$ResponseCompStatusToJson(ResponseCompStatus instance) =>
+Map<String, dynamic> _$ResponseTipToJson(ResponseTip instance) =>
     <String, dynamic>{
       'code': instance.code,
       'data': instance.data,

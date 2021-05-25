@@ -1,13 +1,17 @@
 import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/comp_notice/response_comp_notice_list.dart';
-import 'package:app_user/model/comp_notice/response_comp_status.dart';
+import 'package:app_user/model/comp_notice/response_comp_status_detail.dart';
 import 'package:app_user/model/comp_notice/response_comp_status_list.dart';
 import 'package:app_user/model/company_review/response_review.dart';
 import 'package:app_user/model/company_review/response_review_list.dart';
 import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
+import 'package:app_user/model/consulting/response_consulting_user_list.dart';
+import 'package:app_user/model/consulting/response_consulting_admin_list.dart';
+import 'package:app_user/model/consulting/response_consulting_admin.dart';
 import 'package:app_user/model/contracting_company/response_contracting.dart';
 import 'package:app_user/model/contracting_company/response_contracting_list.dart';
+import 'package:app_user/model/correction/response_corrected_list.dart';
 import 'package:app_user/model/correction/response_correction.dart';
 import 'package:app_user/model/correction/response_correction_list.dart';
 import 'package:app_user/model/notice/response_notice.dart';
@@ -20,6 +24,8 @@ import 'package:app_user/model/resume_portfolio/response_portfolio_list.dart';
 import 'package:app_user/model/resume_portfolio/response_resume_list.dart';
 import 'package:app_user/model/tag/response_tag.dart';
 import 'package:app_user/model/tag/response_tag_list.dart';
+import 'package:app_user/model/tip/response_tip.dart';
+import 'package:app_user/model/tip/response_tip_list.dart';
 import 'package:app_user/model/user/response_profile.dart';
 import 'package:app_user/model/user/response_userinfo.dart';
 import 'package:dio/dio.dart';
@@ -157,10 +163,8 @@ abstract class RetrofitHelper {
       @Query("status", encoded: true) String status);
 
   @GET("/v1/application/{applicationIdx}")
-  Future<ResponseCompStatus> getCompApplyStatus(
-      @Header("Authorization") String token,
-      @Path("applicationIdx") int index
-      );
+  Future<ResponseCompStatusDetail> getCompApplyStatus(
+      @Header("Authorization") String token, @Path("applicationIdx") int index);
 
   @POST("/v1/application/{employmentAnnouncementIdx}")
   Future<ResponseData> postCompApply(
@@ -307,100 +311,192 @@ abstract class RetrofitHelper {
       @Header("Authorization") String token);
 
   @POST("/v1/portfolio")
-  Future<ResponseData> postPortfolio(
-      @Header("Authorization") String token,
-      @Body() Map<String, dynamic> body   // TODO "notionPortfolioURL": "string"
+  Future<ResponseData> postPortfolio(@Header("Authorization") String token,
+      @Body() Map<String, dynamic> body // TODO "notionPortfolioURL": "string"
       );
 
   @GET("/v1/portfolio/{portfolioIdx}")
   Future<ResponsePortfolio> getPortfolio(
-      @Header("Authorization") String token,
-      @Path("portfolioIdx") int index
-      );
+      @Header("Authorization") String token, @Path("portfolioIdx") int index);
 
   @PUT("/v1/portfolio/{portfolioIdx}")
   Future<ResponseData> putPortfolio(
       @Header("Authorization") String token,
       @Path("portfolioIdx") int index,
-      @Body() Map<String, dynamic> body   // TODO "notionPortfolioURL": "string"
+      @Body() Map<String, dynamic> body // TODO "notionPortfolioURL": "string"
       );
 
   @DELETE("/v1/portfolio/{portfolioIdx}")
   Future<ResponseData> deletePortfolio(
-      @Header("Authorization") String token,
-      @Path("portfolioIdx") int index
-      );
+      @Header("Authorization") String token, @Path("portfolioIdx") int index);
 
   @GET("/v1/resume")
   Future<ResponseResumeList> getResumeList(
       @Header("Authorization") String token);
 
   @POST("/v1/portfolio")
-  Future<ResponseData> postResume(
-      @Header("Authorization") String token,
-      @Body() Map<String, dynamic> body   // TODO "resumeFileURL": "string"
+  Future<ResponseData> postResume(@Header("Authorization") String token,
+      @Body() Map<String, dynamic> body // TODO "resumeFileURL": "string"
       );
 
   @GET("/v1/portfolio/{resumeIdx}")
   Future<ResponsePortfolio> getResume(
-      @Header("Authorization") String token,
-      @Path("resumeIdx") int index
-      );
+      @Header("Authorization") String token, @Path("resumeIdx") int index);
 
   @PUT("/v1/portfolio/{resumeIdx}")
   Future<ResponseData> putResume(
       @Header("Authorization") String token,
       @Path("resumeIdx") int index,
-      @Body() Map<String, dynamic> body   // TODO "resumeFileURL": "string"
+      @Body() Map<String, dynamic> body // TODO "resumeFileURL": "string"
       );
 
   @DELETE("/v1/portfolio/{resumeIdx}")
   Future<ResponseData> deleteResume(
-      @Header("Authorization") String token,
-      @Path("resumeIdx") int index
-      );
+      @Header("Authorization") String token, @Path("resumeIdx") int index);
+
 //endregion
 
   //region 9. 이력서 및 포트폴리오 첨삭
   @GET("/v1/correction")
   Future<ResponseCorrectionList> getCorrectionList(
-      @Header("Authorization") String token,
-      );
+    @Header("Authorization") String token,
+  );
 
   @POST("/v1/correction-approval")
   Future<ResponseData> postCorrectionApproval(
       @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
-      @Query("idx", encoded: true) int index
-      );
+      @Query("idx", encoded: true) int index);
 
   @POST("/v1/correction-rejection")
   Future<ResponseData> postCorrectionReject(
       @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
-      @Query("idx", encoded: true) int index
-      );
+      @Query("idx", encoded: true) int index);
 
   @POST("/v1/correction-request")
   Future<ResponseData> postCorrectionRequest(
       @Header("Authorization") String token,
       @Query("correctionType", encoded: true) String type,
-      @Query("idx", encoded: true) int index
-      );
+      @Query("idx", encoded: true) int index);
 
   @GET("/v1/correction/{idx}")
   Future<ResponseCorrection> getCorrection(
-      @Header("Authorization") String token,
-      @Path("idx") int type,
-      );
+    @Header("Authorization") String token,
+    @Path("idx") int type,
+  );
 
   @GET("/v1/my-correction")
   Future<ResponseCorrectionList> getMyCorrectionList(
-      @Header("Authorization") String token,
-      );
+    @Header("Authorization") String token,
+  );
+
   //endregion
 
-// region 10. 취업 확정 현황
+  //region 10. 상담
+  @GET("/v1/consulting-admin")
+  Future<ResponseConsultingAdminList> getConsultingAdminList(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/consulting-admin")
+  Future<ResponseData> postConsultingAdmin(
+    @Header("Authorization") String token,
+    @Body() Map<String, dynamic> body, // TODO  "applicationDate": "string"
+  );
+
+  @GET("/v1/consulting-admin/{consultingIdx}")
+  Future<ResponseConsultingAdmin> getConsultingAdmin(
+      @Header("Authorization") String token, @Path("consultingIdx") int index);
+
+  @DELETE("/v1/consulting-admin/{consultingIdx}")
+  Future<ResponseData> deleteConsulting(
+      @Header("Authorization") String token, @Path("consultingIdx") int index);
+
+  @GET("/v1/consulting-user")
+  Future<ResponseConsultingUserList> getConsultingUserList(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/consulting-user")
+  Future<ResponseData> postConsultingUser(
+      @Header("Authorization") String token,
+      @Query("idx", encoded: true) int index,
+      @Body() Map<String, dynamic> body);
 
 // endregion
+
+  //region 11. 마이페이지
+  @GET("/v1/mypage-application-employment")
+  Future<ResponseCompStatusList> getMyApplyCompNotice(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-company-review")
+  Future<ResponseReviewList> getMyReview(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-consulting-user")
+  Future<ResponseConsultingUserList> getMyConsulting(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-correction")
+  Future<ResponseCorrectedList> getMyCorrection(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-correction-apply")
+  Future<ResponseCorrectionList> getMyCorrectionApply(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-portfolio")
+  Future<ResponsePortfolioList> getMyPortfolio(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-resume")
+  Future<ResponseResumeList> getMyResume(
+    @Header("Authorization") String token,
+  );
+
+  @GET("/v1/mypage-tip-user")
+  Future<ResponseTipList> getMyTip(
+    @Header("Authorization") String token,
+  );
+
+  //endregion
+
+  //region 12. 꿀팁
+  @GET("/v1/tips-storage")
+  Future<ResponseTipList> getTipList(
+    @Header("Authorization") String token,
+  );
+
+  @POST("/v1/tips-storage")
+  Future<ResponseData> postTip(
+    @Header("Authorization") String token,
+    @Body() Map<String, dynamic> body, // TipVO를 이용
+  );
+
+  @GET("/v1/tips-storage-keyword")
+  Future<ResponseTipList> getTipListKeyword(
+      @Header("Authorization") String token,
+      @Query("keyword", encoded: true) String keyword);
+
+  @GET("/v1/tips-storage/{tipidx}")
+  Future<ResponseTip> getTip(
+      @Header("Authorization") String token, @Path("tipidx") int idx);
+
+  @PUT("/v1/tips-storage/{tipidx}")
+  Future<ResponseData> putTip(@Header("Authorization") String token,
+      @Path("tipidx") int idx, @Body() Map<String, dynamic> body);
+
+  @DELETE("/v1/tips-storage/{tipidx}")
+  Future<ResponseData> deleteTip(
+      @Header("Authorization") String token, @Path("tipidx") int idx);
+
+//endregion
 }
