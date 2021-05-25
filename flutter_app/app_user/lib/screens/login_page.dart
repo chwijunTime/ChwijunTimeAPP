@@ -23,11 +23,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    initRetrofit();
+  }
 
+  initRetrofit() {
     Dio dio = Dio();
     dio.options = BaseOptions(
-      receiveDataWhenStatusError: true,
-      connectTimeout: 10 * 1000,
+        receiveDataWhenStatusError: true,
+        connectTimeout: 10 * 1000,
         receiveTimeout: 10 * 1000,
         followRedirects: false,
         validateStatus: (status) {
@@ -42,7 +45,8 @@ class _LoginPageState extends State<LoginPage> {
       var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
       if (res.success) {
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString("accessToken", res.data.accessToken);
+        prefs.setString("accessToken", "Bearer ${res.data.accessToken}");
+        prefs.setString("refreshToken", res.data.refreshToken);
         prefs.setString("role", res.data.roles);
         Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
         User.role = res.data.roles;

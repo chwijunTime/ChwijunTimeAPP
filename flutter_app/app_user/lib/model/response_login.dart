@@ -22,10 +22,11 @@ class Data {
   String accessToken;
   String memberClassNumber;
   String memberEmail;
+  String refreshToken;
   String roles;
 
 
-  Data({this.accessToken, this.memberClassNumber, this.memberEmail, this.roles});
+  Data({this.accessToken, this.memberClassNumber, this.memberEmail, this.roles, this.refreshToken});
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 

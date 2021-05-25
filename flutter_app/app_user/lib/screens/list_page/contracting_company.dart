@@ -256,7 +256,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getContList("Bearer ${token}");
+      var res = await helper.getContList(token);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.list.reversed.toList();
@@ -396,7 +396,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   print("token: ${token}");
                   try {
                     for (int i = 0; i < deleteComp.length; i++) {
-                      var res = await helper.deleteCont("Bearer ${token}", deleteComp[i]);
+                      var res = await helper.deleteCont(token, deleteComp[i]);
                       if (res.success) {
                         setState(() {
                           print("삭제함: ${res.msg}");

@@ -31,6 +31,7 @@ Data _$DataFromJson(Map<String, dynamic> json) {
     memberClassNumber: json['memberClassNumber'] as String,
     memberEmail: json['memberEmail'] as String,
     roles: json['roles'] as String,
+    refreshToken: json['refreshToken'] as String,
   );
 }
 
@@ -38,5 +39,6 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
       'accessToken': instance.accessToken,
       'memberClassNumber': instance.memberClassNumber,
       'memberEmail': instance.memberEmail,
+      'refreshToken': instance.refreshToken,
       'roles': instance.roles,
     };
