@@ -59,7 +59,7 @@ class _NotificationWriteState extends State<NotificationWrite> {
                 height: 24,
               ),
               buildTextField("공지사항 내용을 입력해주세요.", contentsC,
-                  maxLine: 16, maxLength: 1000),
+                  maxLine: 16, maxLength: 1000, multiLine: true, type: TextInputType.multiline),
               SizedBox(
                 height: 19,
               ),
@@ -89,7 +89,7 @@ class _NotificationWriteState extends State<NotificationWrite> {
       var token = pref.getString("accessToken");
       print(vo.toJson());
       try {
-        final res = await helper.postNotice("Bearer ${token}", vo.toJson());
+        final res = await helper.postNotice(token, vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {

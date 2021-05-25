@@ -39,7 +39,6 @@ class _NotificationPageState extends State<NotificationPage> {
     _scrollController.addListener(_scrollListener);
   }
 
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -157,67 +156,81 @@ class _NotificationPageState extends State<NotificationPage> {
             Expanded(
               child: Align(
                 child: FutureBuilder(
-                        future: _getNotice(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            var result = snapshot.data as List<NotificationVO>;
-                            noticeList = result;
-                            for (int i = 0; i < noticeList.length; i++) {
-                              deleteNoti.add(false);
-                            }
-                            if (noticeList.length <=10) {
-                              itemCount = noticeList.length;
-                            }
-                            return ListView.builder(
-                              controller: _scrollController,
-                                itemCount: itemCount +1 ,
-                                itemBuilder: (context, index) {
-                                  if (index == itemCount) {
-                                    if (index >= noticeList.length) {
-                                      return Padding(
+                    future: _getNotice(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        var result = snapshot.data as List<NotificationVO>;
+                        noticeList = result;
+                        for (int i = 0; i < noticeList.length; i++) {
+                          deleteNoti.add(false);
+                        }
+                        if (noticeList.length <= 10) {
+                          itemCount = noticeList.length;
+                        }
+                        return ListView.builder(
+                            controller: _scrollController,
+                            itemCount: itemCount + 1,
+                            itemBuilder: (context, index) {
+                              if (index == itemCount) {
+                                if (index == 0) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.all(Consts.padding),
+                                          child: Text(
+                                            "등록된 공지사항이 없습니다.",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )),
+                                    ),
+                                  );
+                                } else if (index == noticeList.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: makeGradientBtn(
+                                        msg: "맨 처음으로",
+                                        onPressed: () {
+                                          _scrollController.animateTo(
+                                              _scrollController
+                                                  .position.minScrollExtent,
+                                              duration:
+                                              Duration(milliseconds: 200),
+                                              curve: Curves.elasticOut);
+                                        },
+                                        mode: 1,
+                                        icon: Icon(
+                                          Icons.arrow_upward,
+                                          color: Colors.white,
+                                        )),
+                                  );
+                                } else {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
                                         padding: EdgeInsets.all(Consts.padding),
-                                        child: makeGradientBtn(
-                                            msg: "맨 처음으로",
-                                            onPressed: () {
-                                              _scrollController.animateTo(
-                                                  _scrollController
-                                                      .position.minScrollExtent,
-                                                  duration:
-                                                  Duration(milliseconds: 200),
-                                                  curve: Curves.elasticOut);
-                                            },
-                                            mode: 1,
-                                            icon: Icon(
-                                              Icons.arrow_upward,
-                                              color: Colors.white,
-                                            )),
-                                      );
-                                    } else {
-                                      return Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(18)),
-                                        elevation: 5,
-                                        margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(Consts.padding),
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    return buildItemNotification(context, index, noticeList);
-                                  }
-                                });
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        }),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                return buildItemNotification(context, index, noticeList);
+                              }
+                            });
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
               ),
             )
           ],
@@ -229,7 +242,7 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    var res = await helper.getNoticeList("Bearer ${token}");
+    var res = await helper.getNoticeList(token);
     if (res.success) {
       return res.list.toList();
     } else {
@@ -355,9 +368,10 @@ class _NotificationPageState extends State<NotificationPage> {
                   try {
                     for (int i = 0; i < arr.length; i++) {
                       final res = await helper.deleteNotice(
-                          token: "Bearer ${token}", index: arr[i]);
+                          token: token, index: arr[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
+                        deleteNoti.clear();
                       } else {
                         print("errorr: ${res.msg}");
                       }

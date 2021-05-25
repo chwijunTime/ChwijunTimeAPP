@@ -1,7 +1,9 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -19,16 +21,25 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   List<SliderCard> sliderList = [
-    SliderCard(title: "협약업체", image: "images/loco.jpg", route: "/contracting_company"),
-    SliderCard(title: "취업공고", image: "images/loco.jpg", route: "/company_notice"),
-    SliderCard(title: "면접후기", image: "images/loco.jpg", route: "/interview_review"),
-    SliderCard(title: "취업 확정 현황", image: "images/loco.jpg", route: "/confirmation_status"),
-    SliderCard(title: "꿀팁 저장소", image: "images/loco.jpg", route: "/tip_storage"),
+    SliderCard(
+        title: "협약업체", image: "images/loco.jpg", route: "/contracting_company"),
+    SliderCard(
+        title: "취업공고", image: "images/loco.jpg", route: "/company_notice"),
+    SliderCard(
+        title: "면접후기", image: "images/loco.jpg", route: "/interview_review"),
+    SliderCard(
+        title: "취업 확정 현황",
+        image: "images/loco.jpg",
+        route: "/confirmation_status"),
+    SliderCard(
+        title: "꿀팁 저장소", image: "images/loco.jpg", route: "/tip_storage"),
   ];
 
   RetrofitHelper helper;
+  final _scrollController = ScrollController();
+  int itemCount = 0;
 
-  List<NotificationVO> notiList = [];
+  List<NotificationVO> noticeList = [];
 
   @override
   void initState() {
@@ -39,7 +50,7 @@ class _MainPageState extends State<MainPage> {
 
   init() {
     Dio dio = Dio(BaseOptions(
-      connectTimeout: 5 * 1000,
+        connectTimeout: 5 * 1000,
         receiveTimeout: 5 * 1000,
         followRedirects: false,
         validateStatus: (status) {
@@ -59,7 +70,7 @@ class _MainPageState extends State<MainPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 18, right: 26, left: 26 ),
+              padding: const EdgeInsets.only(top: 18, right: 26, left: 26),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -109,27 +120,78 @@ class _MainPageState extends State<MainPage> {
             ),
             Expanded(
               child: FutureBuilder(
-                future: _getNotice(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    var result = snapshot.data as List<NotificationVO>;
-                    notiList = result;
-                    return ListView.builder(
-                      itemCount: notiList.length,
-                      itemBuilder: (context, index) {
-                        return buildItemNotification(context, index);
-                      },
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                    );
-                  }
-                  else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }
-              ),
+                  future: _getNotice(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      var result = snapshot.data as List<NotificationVO>;
+                      noticeList = result;
+                      if (noticeList.length <= 10) {
+                        itemCount = noticeList.length;
+                      }
+                      return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: itemCount + 1,
+                          itemBuilder: (context, index) {
+                            if (index == itemCount) {
+                              if (index == 0) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: Text(
+                                          "등록된 공지사항이 없습니다.",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700),
+                                        )),
+                                  ),
+                                );
+                              } else if (index == noticeList.length) {
+                                return Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: makeGradientBtn(
+                                      msg: "맨 처음으로",
+                                      onPressed: () {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.minScrollExtent,
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            curve: Curves.elasticOut);
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.white,
+                                      )),
+                                );
+                              } else {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              return buildItemNotification(context, index);
+                            }
+                          });
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
             )
           ],
         ),
@@ -140,7 +202,7 @@ class _MainPageState extends State<MainPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    var res = await helper.getNoticeList("Bearer ${token}");
+    var res = await helper.getNoticeList(token);
     print("res.msg: ${res.list}");
     if (res.success) {
       return res.list.reversed.toList();
@@ -150,7 +212,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildItemNotification(BuildContext context, int index) {
-    DateTime dt = DateTime.parse(notiList[index].date);
+    DateTime dt = DateTime.parse(noticeList[index].date);
     String strDate = "${dt.year}.${dt.month}.${dt.day}";
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -160,7 +222,10 @@ class _MainPageState extends State<MainPage> {
         onTap: () async {
           await showDialog(
               context: context,
-              builder: (BuildContext context) => NotificationDialog(index: notiList[index].index, size: Size(346, 502), role: widget.role));
+              builder: (BuildContext context) => NotificationDialog(
+                  index: noticeList[index].index,
+                  size: Size(346, 502),
+                  role: widget.role));
 
           setState(() {
             _getNotice();
@@ -172,16 +237,15 @@ class _MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${notiList[index].title}",
-                style:
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                "${noticeList[index].title}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Container(
                   height: 60,
                   child: AutoSizeText(
-                    "${notiList[index].content}",
+                    "${noticeList[index].content}",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -218,12 +282,14 @@ Widget makeSlider(List<SliderCard> list) {
           return Builder(builder: (BuildContext context) {
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamedAndRemoveUntil(context, card.route, (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, card.route, (route) => false);
               },
               child: Container(
                 width: 357,
                 height: 250,
-                margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                margin:
+                    EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                 decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.all(Radius.circular(10)),

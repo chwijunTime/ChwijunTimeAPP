@@ -11,13 +11,14 @@ Widget buildTextField(String hint, TextEditingController controller,
     bool disable = false,
     Icon prefixIcon,
     String suffixText,
-    Function textInput}) {
+    Function textInput,
+    bool multiLine = false}) {
   return TextField(
     controller: controller,
     keyboardType: type,
     obscureText: password,
     textInputAction:
-        textInput != null ? TextInputAction.done : TextInputAction.next,
+        textInput != null ? TextInputAction.done : multiLine ? TextInputAction.newline : TextInputAction.next,
     onSubmitted: textInput,
     autofocus: autoFocus,
     maxLines: maxLine,
