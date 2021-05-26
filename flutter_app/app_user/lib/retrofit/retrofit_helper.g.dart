@@ -1507,7 +1507,7 @@ class _RetrofitHelper implements RetrofitHelper {
         '/v1/consulting-admin',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'GET',
+            method: 'POST',
             headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),
@@ -1588,7 +1588,7 @@ class _RetrofitHelper implements RetrofitHelper {
         '/v1/consulting-user',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'GET',
+            method: 'POST',
             headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),

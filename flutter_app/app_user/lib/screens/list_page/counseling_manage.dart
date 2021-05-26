@@ -1,12 +1,17 @@
 import 'package:app_user/consts.dart';
-import 'package:app_user/model/counseling_vo.dart';
+import 'package:app_user/model/consulting/consulting_admin_vo.dart';
+import 'package:app_user/model/consulting/consulting_user_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/write_page/counseling_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/counseling_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/text_field.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CounselingManage extends StatefulWidget {
@@ -15,36 +20,58 @@ class CounselingManage extends StatefulWidget {
 }
 
 class _CounselingManageState extends State<CounselingManage> {
-  final scafforldkey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  RetrofitHelper helper;
 
   PanelController panelController = PanelController();
   final _scrollController = ScrollController();
   final titleC = TextEditingController();
 
-  List<CounselingVO> counList = [];
+  List<ConsultingAdminVO> counAdminList = [];
+  List<ConsultingUserVO> counUserList = [];
   List<String> tagList = [];
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['상담 정보', '상담 신청내역'];
+  String selectValue = "상담 정보";
 
-  Future<List<CounselingVO>> getCounselingList() async {
-    List<CounselingVO> list = [];
-    await Future.delayed(Duration(seconds: 1));
-    for (int i = 0; i < 39; i++) {
-      list.add(CounselingVO(
-          date: "2021.03.21",
-          time: "03:30",
-          place: "취진부",
-          tag: List.generate(5, (index) => "${i}.tag"),
-          reason: "이유라는게 뭐 각별하게 있습니다. 있다구요",
-          user: "3210 안수빈",
-          done: i % 2 == 0));
+  Future<List<ConsultingAdminVO>> getCounselingAdminList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getConsultingAdminList(token);
+      print("res.success: ${res.success}");
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
     }
+  }
 
-    return list;
+  Future<List<ConsultingUserVO>> getCounselingUserList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getConsultingUserList(token);
+      print("res.success: ${res.success}");
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -60,9 +87,9 @@ class _CounselingManageState extends State<CounselingManage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != counList.length) {
-          if ((counList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += counList.length % Consts.showItemCount;
+        if (itemCount != counAdminList.length) {
+          if ((counAdminList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount += counAdminList.length % Consts.showItemCount;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -71,10 +98,21 @@ class _CounselingManageState extends State<CounselingManage> {
     }
   }
 
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scafforldkey,
+      key: scaffoldKey,
       appBar: buildAppBar("취준타임", context),
       drawer: buildDrawer(context),
       body: Container(
@@ -110,11 +148,15 @@ class _CounselingManageState extends State<CounselingManage> {
                   Expanded(
                       child: makeGradientBtn(
                           msg: "상담 등록하기",
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => CounselingWrite()));
+                            setState(() {
+                              getCounselingAdminList();
+                              print("호잇");
+                            });
                           },
                           mode: 1,
                           icon: Icon(
@@ -124,25 +166,48 @@ class _CounselingManageState extends State<CounselingManage> {
                 ],
               ),
             ),
-            Padding(
-                padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("키워드 검색", titleC,
-                    autoFocus: false,
-                    prefixIcon: Icon(Icons.search), textInput: (String key) {
-                  print("호잇: ${key}");
-                })),
-            Expanded(
+            makeDropDownBtn(
+                valueList: valueList,
+                selectedValue: selectValue,
+                onSetState: (value) {
+                  setState(() {
+                    selectValue = value;
+                  });
+                },
+                hint: "보기"),
+            selectValue == valueList[0] ? Expanded(
                 child: FutureBuilder(
-              future: getCounselingList(),
+              future: getCounselingAdminList(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
-                  counList = snapshot.data;
+                  counAdminList = snapshot.data;
+                  if (counAdminList.length <= Consts.showItemCount) {
+                    itemCount = counAdminList.length;
+                  }
+                  print(counAdminList.length);
                   return ListView.builder(
                     controller: _scrollController,
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
+                      print("index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
                       if (index == itemCount) {
-                        if (index == counList.length) {
+                        if (counAdminList.length == 0) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 5,
+                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                            child: Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: Text(
+                                    "등록된 상담이 없습니다.",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700),
+                                  )),
+                            ),
+                          );
+                        } else if (index == counAdminList.length) {
                           return Padding(
                             padding: EdgeInsets.all(Consts.padding),
                             child: makeGradientBtn(
@@ -187,7 +252,82 @@ class _CounselingManageState extends State<CounselingManage> {
                   );
                 }
               },
-            )),
+            )) : Expanded(
+                child: FutureBuilder(
+                  future: getCounselingUserList(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      counUserList = snapshot.data;
+                      if (counUserList.length <= Consts.showItemCount) {
+                        itemCount = counUserList.length;
+                      }
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: itemCount + 1,
+                        itemBuilder: (context, index) {
+                          if (index == itemCount) {
+                            if (counUserList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        "상담 신청이 없습니다.",
+                                        style:
+                                        TextStyle(fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            } else if (index == counUserList.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: makeGradientBtn(
+                                    msg: "맨 처음으로",
+                                    onPressed: () {
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    },
+                                    mode: 1,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.white,
+                                    )),
+                              );
+                            } else {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+                          } else {
+                            return buildCounselingUser(context, index);
+                          }
+                        },
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                )),
           ],
         ),
       ),
@@ -195,12 +335,15 @@ class _CounselingManageState extends State<CounselingManage> {
   }
 
   Widget buildCounseling(BuildContext context, int index) {
+    var tempDate =
+    DateFormat("yyyy-MM-dd hh:mm").parse(counAdminList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
     return GestureDetector(
       onTap: () {
         showDialog(
             context: context,
             builder: (BuildContext context) =>
-                CounselingDialog(index: counList[index].index));
+                CounselingDialog(index: counAdminList[index].index));
       },
       child: Card(
           shape: RoundedRectangleBorder(
@@ -212,23 +355,12 @@ class _CounselingManageState extends State<CounselingManage> {
             child: Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${counList[index].date}, ${counList[index].time}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        counList[index].place,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      )
-                    ],
+                  child: Text(
+                    strDate,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
-                counList[index].done
+                counAdminList[index].type != "No_Application"
                     ? Container(
                         width: 48,
                         decoration: BoxDecoration(
@@ -269,5 +401,34 @@ class _CounselingManageState extends State<CounselingManage> {
             ),
           )),
     );
+  }
+
+  Widget buildCounselingUser(BuildContext context, int index) {
+    var tempDate =
+    DateFormat("yyyy-MM-dd hh:mm").parse(counUserList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+    return Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18))),
+        elevation: 5,
+        margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
+        child: Padding(
+          padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${counUserList[index].classNumber} ${counUserList[index].name}님의 신청",
+                style:
+                TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                strDate,
+                style:
+                TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              )
+            ],
+          ),
+        ));
   }
 }

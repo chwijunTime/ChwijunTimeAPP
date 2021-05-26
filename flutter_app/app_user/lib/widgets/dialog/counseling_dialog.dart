@@ -1,11 +1,14 @@
-import 'package:app_user/model/counseling_vo.dart';
-import 'package:app_user/widgets/tag.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:app_user/model/consulting/consulting_admin_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CounselingDialog extends StatefulWidget {
-  CounselingVO list;
+  ConsultingAdminVO list;
   int index;
 
   CounselingDialog({@required this.index});
@@ -15,6 +18,27 @@ class CounselingDialog extends StatefulWidget {
 }
 
 class _CounselingDialogState extends State<CounselingDialog> {
+  RetrofitHelper helper;
+
+  String strDate;
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
+
   @override
   build(BuildContext context) {
     return Dialog(
@@ -23,13 +47,23 @@ class _CounselingDialogState extends State<CounselingDialog> {
       ),
       elevation: 0,
       backgroundColor: Colors.transparent,
-      child: widget.list.done
-          ? dialogDeadline(context)
-          : dialogProceeding(context),
+      child: FutureBuilder (
+        future: _getConsulting(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            widget.list = snapshot.data;
+            var tempDate = DateFormat("yyyy-MM-dd hh:mm").parse(widget.list.applyDate);
+            strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+            return buildDialog(context);
+          } else {
+            return Center(child: CircularProgressIndicator(),);
+          }
+        },
+      )
     );
   }
 
-  dialogProceeding(BuildContext context) {
+  buildDialog(BuildContext context) {
     return Container(
       width: 311,
       height: 233,
@@ -51,23 +85,19 @@ class _CounselingDialogState extends State<CounselingDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "${widget.list.date}, ${widget.list.time}",
+            strDate,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          Text(
-            widget.list.place,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           Expanded(
               child: Center(
-            child: Text(
-              "해당 상담은 아직 신청자가 없습니다.",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
-          )),
+                child: Text(
+                  widget.list.type == "No_Application" ? "해당 상담은 아직 신청자가 없습니다." : "해당 상담은 마감되었습니다.",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              )),
           Align(
             alignment: Alignment.bottomRight,
-            child: Container(
+            child: widget.list.type == "No_Application" ? Container(
               width: 48,
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -84,92 +114,39 @@ class _CounselingDialogState extends State<CounselingDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
+            ) :Container(
+              width: 48,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(40)),
+                  border: Border.all(color: Color(0xffFF7777))),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text(
+                  "마감",
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xffFF7777)),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  dialogDeadline(BuildContext context) {
-    return Container(
-      width: 311,
-      height: 320,
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.only(top: 60),
-      decoration: new BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              spreadRadius: 1,
-              offset: const Offset(0.0, 0.0),
-            )
-          ]),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${widget.list.date}, ${widget.list.time}",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                widget.list.place,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              Expanded(
-                child: Text(
-                  widget.list.user,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-              ),
-              Container(
-                width: 48,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(40)),
-                    border: Border.all(color: Color(0xffFF7777))),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    "마감",
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xffFF7777)),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            "신청이유",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          Expanded(
-            child: AutoSizeText(
-              widget.list.reason,
-              maxLines: 8,
-              minFontSize: 14,
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-          makeTagWidget(tag: widget.list.tag, size: Size(360, 24), mode: 1)
-        ],
-      ),
-    );
+  Future<ConsultingAdminVO> _getConsulting() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    var res = await helper.getConsultingAdmin(token, widget.index);
+    if (res.success) {
+      return res.data;
+    } else {
+      snackBar(res.msg, context);
+      print("error: ${res.msg}");
+    }
   }
 }

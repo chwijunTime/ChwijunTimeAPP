@@ -399,7 +399,7 @@ abstract class RetrofitHelper {
     @Header("Authorization") String token,
   );
 
-  @GET("/v1/consulting-admin")
+  @POST("/v1/consulting-admin")
   Future<ResponseData> postConsultingAdmin(
     @Header("Authorization") String token,
     @Body() Map<String, dynamic> body, // TODO  "applicationDate": "string"
@@ -418,7 +418,7 @@ abstract class RetrofitHelper {
     @Header("Authorization") String token,
   );
 
-  @GET("/v1/consulting-user")
+  @POST("/v1/consulting-user")
   Future<ResponseData> postConsultingUser(
       @Header("Authorization") String token,
       @Query("idx", encoded: true) int index,
