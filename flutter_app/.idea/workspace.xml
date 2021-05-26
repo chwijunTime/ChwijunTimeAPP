@@ -21,17 +21,12 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/model/company_review/review_vo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/company_review/review_vo.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/model/company_review/review_vo.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/company_review/review_vo.g.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/interview_review.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/interview_review.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/notification_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/notification_modify.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

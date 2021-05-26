@@ -9,6 +9,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -29,9 +30,13 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   final _scrollController = ScrollController();
 
   List<ContractingVO> contractingList = [];
+  List<ContractingVO> searchContractingList = [];
   final titleC = TextEditingController();
   List<bool> deleteList = [];
   var itemCount = 0;
+  List<String> valueList = ['전체보기', '검색하기'];
+  String selectValue = "전체보기";
+  String msg = "검색된 협약업체가 없습니다.";
 
   @override
   void initState() {
@@ -97,154 +102,264 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           children: [
             Padding(
               padding: EdgeInsets.all(26),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
+                      ),
+                      Text(
+                        "협약업체",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      )
+                    ],
                   ),
-                  Text(
-                    "협약업체",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
-                  )
+                  makeDropDownBtn(
+                          valueList: valueList,
+                          selectedValue: selectValue,
+                          onSetState: (value) {
+                            setState(() {
+                              selectValue = value;
+                              if (selectValue == valueList[1]) {
+                                itemCount = 0;
+                                searchContractingList.clear();
+                                msg = "회사명, 지역명으로 검색하기";
+                              } else {
+                                titleC.text = "";
+                              }
+                            });
+                          },
+                          hint: "보기"),
                 ],
               ),
             ),
-            widget.role == User.admin
+            User.role == User.admin
                 ? Padding(
-                    padding:
-                        const EdgeInsets.only(right: 26, left: 26, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        makeGradientBtn(
-                            msg: "협약 업체 등록",
-                            onPressed: () async {
-                              var res = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ContractingCompanyWrite()));
-                              if (res != null && res) {
-                                setState(() {
-                                  _getContractingList();
-                                });
+                  padding: const EdgeInsets.only(
+                      right: 26, left: 26, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      makeGradientBtn(
+                          msg: "협약 업체 등록",
+                          onPressed: () async {
+                            var res = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ContractingCompanyWrite()));
+                            if (res != null && res) {
+                              setState(() {
+                                _getContractingList();
+                              });
+                            }
+                          },
+                          mode: 1,
+                          icon: Icon(
+                            Icons.note_add,
+                            color: Colors.white,
+                          )),
+                      makeGradientBtn(
+                          msg: "선택된 업체 삭제",
+                          onPressed: () {
+                            _onDeleteCompany();
+                          },
+                          mode: 1,
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ))
+                    ],
+                  ),
+                )
+                : SizedBox(),
+            selectValue == valueList[1]
+                ? Padding(
+                padding: EdgeInsets.only(
+                    right: 33, left: 33, bottom: 15, top: 15),
+                child: buildTextField("협약 업체명, 지역", titleC,
+                    autoFocus: false,
+                    prefixIcon: Icon(Icons.search),
+                    textInput: (String key) async {
+                      final pref =
+                      await SharedPreferences.getInstance();
+                      var token = pref.getString("accessToken");
+                      var res =
+                      await helper.getContListKeyword(token, key);
+                      if (res.success)
+                        setState(() {
+                          searchContractingList = res.list;
+                          if (searchContractingList.length <=
+                              Consts.showItemCount) {
+                            itemCount = searchContractingList.length;
+                            print(searchContractingList.length);
+                            msg = "검색된 리뷰가 없습니다.";
+                          }
+                        });
+                    }))
+                : SizedBox(),
+            selectValue == valueList[1]
+                ? Expanded(
+                    child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: itemCount + 1,
+                        itemBuilder: (context, index) {
+                          if (index == itemCount) {
+                            if (searchContractingList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        msg,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            } else if (index == searchContractingList.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: makeGradientBtn(
+                                    msg: "맨 처음으로",
+                                    onPressed: () {
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    },
+                                    mode: 1,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.white,
+                                    )),
+                              );
+                            } else {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+                          } else {
+                            return buildItemCompany(
+                                context, index, searchContractingList);
+                          }
+                        }))
+                : Expanded(
+                    child: Align(
+                      child: FutureBuilder(
+                          future: _getContractingList(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              contractingList = snapshot.data;
+                              for (int i = 0; i < contractingList.length; i++) {
+                                deleteList.add(false);
                               }
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.note_add,
-                              color: Colors.white,
-                            )),
-                        makeGradientBtn(
-                            msg: "선택된 업체 삭제",
-                            onPressed: () {
-                              _onDeleteCompany();
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ))
-                      ],
-                    ),
-                  )
-                : Padding(
-                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                    child: buildTextField("협약 업체명, 지역", titleC,
-                        autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) {
-                      print("호잇: ${key}");
-                    })),
-            Expanded(
-              child: Align(
-                child: FutureBuilder(
-                    future: _getContractingList(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        contractingList = snapshot.data;
-                        for (int i = 0; i < contractingList.length; i++) {
-                          deleteList.add(false);
-                        }
-                        if (contractingList.length <= Consts.showItemCount) {
-                          itemCount = contractingList.length;
-                        }
-                        return ListView.builder(
-                            controller: _scrollController,
-                            itemCount: itemCount + 1,
-                            itemBuilder: (context, index) {
-                              if (index == itemCount) {
-                                if (index == 0) {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
+                              if (contractingList.length <=
+                                  Consts.showItemCount) {
+                                itemCount = contractingList.length;
+                              }
+                              return ListView.builder(
+                                  controller: _scrollController,
+                                  itemCount: itemCount + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == itemCount) {
+                                      if (index == 0) {
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18)),
+                                          elevation: 5,
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
+                                          child: Center(
+                                            child: Padding(
+                                                padding: EdgeInsets.all(
+                                                    Consts.padding),
+                                                child: Text(
+                                                  "등록된 협약업체가 없습니다.",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                )),
+                                          ),
+                                        );
+                                      } else if (index ==
+                                          contractingList.length) {
+                                        return Padding(
                                           padding:
                                               EdgeInsets.all(Consts.padding),
-                                          child: Text(
-                                            "등록된 협약업체가 없습니다.",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700),
-                                          )),
-                                    ),
-                                  );
-                                } else if (index == contractingList.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: makeGradientBtn(
-                                        msg: "맨 처음으로",
-                                        onPressed: () {
-                                          _scrollController.animateTo(
-                                              _scrollController
-                                                  .position.minScrollExtent,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.elasticOut);
-                                        },
-                                        mode: 1,
-                                        icon: Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                        )),
-                                  );
-                                } else {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return buildItemCompany(context, index);
-                              }
-                            });
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    }),
-              ),
-            )
+                                          child: makeGradientBtn(
+                                              msg: "맨 처음으로",
+                                              onPressed: () {
+                                                _scrollController.animateTo(
+                                                    _scrollController.position
+                                                        .minScrollExtent,
+                                                    duration: Duration(
+                                                        milliseconds: 200),
+                                                    curve: Curves.elasticOut);
+                                              },
+                                              mode: 1,
+                                              icon: Icon(
+                                                Icons.arrow_upward,
+                                                color: Colors.white,
+                                              )),
+                                        );
+                                      } else {
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18)),
+                                          elevation: 5,
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
+                                          child: Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  Consts.padding),
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      return buildItemCompany(
+                                          context, index, contractingList);
+                                    }
+                                  });
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          }),
+                    ),
+                  )
           ],
         ),
       ),
@@ -268,7 +383,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     }
   }
 
-  Widget buildItemCompany(BuildContext context, int index) {
+  Widget buildItemCompany(
+      BuildContext context, int index, List<ContractingVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -278,8 +394,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (countext) => ContractingCompanyDetailPage(
-                        index: contractingList[index].index,
+                  builder: (context) => ContractingCompanyDetailPage(
+                        index: list[index].index,
                       )));
           setState(() {
             _getContractingList();
@@ -294,7 +410,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${contractingList[index].title}",
+                      "${list[index].title}",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
@@ -318,7 +434,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${contractingList[index].info}",
+                  "${list[index].info}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -326,8 +442,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 height: 22,
                 child: Row(
                   children: [
-                    buildItemTag(contractingList[index].tag, 0),
-                    contractingList[index].tag.length > 1
+                    buildItemTag(list[index].tag, 0),
+                    list[index].tag.length > 1
                         ? Container(
                             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                             margin: EdgeInsets.only(right: 8),
@@ -338,7 +454,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                 )),
                             child: Center(
                               child: Text(
-                                "외 ${contractingList[index].tag.length - 1}개",
+                                "외 ${list[index].tag.length - 1}개",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w400),
                               ),
@@ -349,7 +465,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "평균: ${contractingList[index].salary}",
+                          "평균: ${list[index].salary}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
