@@ -117,8 +117,8 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                 ? Padding(
                     padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
                     child: buildTextField("회사 이름, 기수, 지역", titleC,
-                        autoFocus: false,
-                        prefixIcon: Icon(Icons.search), textInput: (String key) {
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) {
                       print(key);
                     }))
                 : Padding(
@@ -136,9 +136,10 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           ConfirmationStatusWrite()));
-                              if (res != null && res) {
+
+                              setState(() {
                                 _getComfirmation();
-                              }
+                              });
                             },
                             mode: 1,
                             icon: Icon(
@@ -167,12 +168,31 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       for (int i = 0; i < confList.length; i++) {
                         checkList.add(false);
                       }
+                      if (confList.length <= Consts.showItemCount) {
+                        itemCount = confList.length;
+                      }
                       return ListView.separated(
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
                           if (index == itemCount) {
-                            if (index == confList.length) {
+                            if (confList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        "등록된 취업 확정 현황이 없습니다.",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            } else if (index == confList.length) {
                               return Padding(
                                 padding: EdgeInsets.all(Consts.padding),
                                 child: makeGradientBtn(
@@ -181,8 +201,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                                       _scrollController.animateTo(
                                           _scrollController
                                               .position.minScrollExtent,
-                                          duration:
-                                          Duration(milliseconds: 200),
+                                          duration: Duration(milliseconds: 200),
                                           curve: Curves.elasticOut);
                                     },
                                     mode: 1,
@@ -194,8 +213,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                             } else {
                               return Card(
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(18)),
+                                    borderRadius: BorderRadius.circular(18)),
                                 elevation: 5,
                                 margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                 child: Center(
@@ -320,7 +338,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           children: [
             Expanded(
               child: Text(
-                "${confList[index].title}",
+                "${confList[index].jockey}기 ${confList[index].name} - ${confList[index].title}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),

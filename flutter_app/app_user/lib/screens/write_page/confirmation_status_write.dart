@@ -22,6 +22,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
   var generationC = TextEditingController();
   var addressC = TextEditingController();
   var siteUrl = TextEditingController();
+  var etcC = TextEditingController();
   List<String> tagList = [];
 
   RetrofitHelper helper;
@@ -40,6 +41,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
     generationC.dispose();
     addressC.dispose();
     siteUrl.dispose();
+    etcC.dispose();
     super.dispose();
   }
 
@@ -88,6 +90,35 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
             SizedBox(
               height: 15,
             ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              margin: EdgeInsets.all(25),
+              child: Container(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "기타",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      buildTextField("비고를 적어주세요", etcC,
+                          maxLine: 10, maxLength: 500)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 100, right: 100),
               child: makeBtn(
@@ -111,9 +142,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                   child: makeTagWidget(
                       tag: tagList, size: Size(360, 27), mode: 1)),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20,),
             Padding(
               padding:
                   EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
@@ -144,15 +173,18 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
         areaC.text.isEmpty ||
         stdNameC.text.isEmpty ||
         generationC.text.isEmpty ||
-        tagList.isEmpty) {
+        tagList.isEmpty ||
+    etcC.text.isEmpty ) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       var vo = ConfirmationVO(
           title: titleC.text,
           area: areaC.text,
           siteUrl: siteUrl.text,
+          etc: etcC.text,
+          jockey: generationC.text,
           address: addressC.text,
-          // TODO: Confirmation 채우기
+          name: stdNameC.text,
           postTag: tagList);
       try {
         final pref = await SharedPreferences.getInstance();

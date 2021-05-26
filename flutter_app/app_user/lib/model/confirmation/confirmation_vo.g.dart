@@ -15,10 +15,12 @@ ConfirmationVO _$ConfirmationVOFromJson(Map<String, dynamic> json) {
     index: json['employmentConfirmationIdx'] as int,
     title: json['employmentConfirmationName'] as String,
     siteUrl: json['employmentConfirmationSite'] as String,
+    jockey: json['employmentConfirmationJockey'] as String,
     tag: (json['employmentConfirmationTags'] as List)
         ?.map((e) => e as String)
         ?.toList(),
     postTag: (json['tagName'] as List)?.map((e) => e as String)?.toList(),
+    name: json['studentName'] as String,
   );
 }
 
@@ -31,6 +33,8 @@ Map<String, dynamic> _$ConfirmationVOToJson(ConfirmationVO instance) =>
       'employmentConfirmationIdx': instance.index,
       'employmentConfirmationName': instance.title,
       'employmentConfirmationSite': instance.siteUrl,
+      'employmentConfirmationJockey': instance.jockey,
+      'studentName': instance.name,
       'employmentConfirmationTags': instance.tag,
       'tagName': instance.postTag,
     };

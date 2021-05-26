@@ -18,6 +18,10 @@ class ConfirmationVO {
   String title;
   @JsonKey(name: "employmentConfirmationSite")
   String siteUrl;
+  @JsonKey(name: "employmentConfirmationJockey")
+  String jockey;
+  @JsonKey(name: "studentName")
+  String name;
   @JsonKey(name: "employmentConfirmationTags")
   List<String> tag;
   @JsonKey(name: "tagName")
@@ -31,10 +35,13 @@ class ConfirmationVO {
       this.index,
       this.title,
       this.siteUrl,
+      this.jockey,
       this.tag,
-      this.postTag});
+      this.postTag,
+      this.name});
 
-  factory ConfirmationVO.fromJson(Map<String, dynamic> json) => _$ConfirmationVOFromJson(json);
+  factory ConfirmationVO.fromJson(Map<String, dynamic> json) =>
+      _$ConfirmationVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$ConfirmationVOToJson(this);
 }
