@@ -7,6 +7,7 @@ import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
@@ -26,9 +27,13 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   RetrofitHelper helper;
 
   List<ReviewVO> reviewList = [];
+  List<ReviewVO> searchReviewList = [];
   final titleC = TextEditingController();
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['전체보기', '검색하기'];
+  String selectValue = "전체보기";
+  String msg = "검색된 리뷰가 없습니다.";
 
   @override
   void initState() {
@@ -152,114 +157,220 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 )
               ],
             ),
+            User.role == User.user ? Padding(
+              padding: const EdgeInsets.fromLTRB(33.0, 0, 33, 10),
+              child: makeDropDownBtn(
+                  valueList: valueList,
+                  selectedValue: selectValue,
+                  onSetState: (value) {
+                    setState(() {
+                      selectValue = value;
+                      if (selectValue == valueList[1]) {
+                        itemCount = 0;
+                        searchReviewList.clear();
+                        msg = "회사명으로 검색하기";
+                      } else {
+                        titleC.text = "";
+                      }
+                    });
+                  },
+                  hint: "보기"),
+            ) : SizedBox(),
             User.role == User.user
-                ? Padding(
-                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                    child: buildTextField("회사 이름", titleC,
-                        autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) {
-                      print("호잇: ${key}");
-                    }))
-                : SizedBox(),
-            Expanded(
-              child: Align(
-                child: FutureBuilder(
-                    future: _getReview(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        reviewList = snapshot.data;
-                        if (reviewList.length <= Consts.showItemCount) {
-                          itemCount = reviewList.length;
-                        }
-                        return ListView.builder(
-                            controller: _scrollController,
-                            itemCount: itemCount + 1,
-                            itemBuilder: (context, index) {
-                              if (index == itemCount) {
-                                if (index == 0) {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                          padding:
-                                              EdgeInsets.all(Consts.padding),
-                                          child: Text(
-                                            "등록된 리뷰가 없습니다.",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700),
-                                          )),
-                                    ),
-                                  );
-                                } else if (index == reviewList.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: makeGradientBtn(
-                                        msg: "맨 처음으로",
-                                        onPressed: () {
-                                          _scrollController.animateTo(
-                                              _scrollController
-                                                  .position.minScrollExtent,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.elasticOut);
-                                        },
-                                        mode: 1,
-                                        icon: Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                        )),
-                                  );
-                                } else {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return buildItemReview(context, index);
+                ? selectValue == valueList[1]
+                    ? Padding(
+                        padding:
+                            EdgeInsets.only(right: 33, left: 33, bottom: 26),
+                        child: buildTextField("회사 이름", titleC,
+                            autoFocus: false, prefixIcon: Icon(Icons.search),
+                            textInput: (String key) async {
+                          final pref = await SharedPreferences.getInstance();
+                          var token = pref.getString("accessToken");
+                          var res =
+                              await helper.getReviewListKeyword(token, key);
+                          if (res.success) {
+                            setState(() {});
+                            setState(() {
+                              searchReviewList = res.list;
+                              if (searchReviewList.length <= Consts.showItemCount) {
+                                itemCount = searchReviewList.length;
+                                print(searchReviewList.length);
+                                msg = "검색된 리뷰가 없습니다.";
                               }
                             });
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    }),
-              ),
-            )
+                          }
+                        }))
+                    : SizedBox()
+                : SizedBox(),
+            selectValue == valueList[1]
+                ? Expanded(
+                    child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: itemCount + 1,
+                        itemBuilder: (context, index) {
+                          print("index: $index, itemCount: $itemCount");
+                          if (index == itemCount) {
+                            if (searchReviewList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        msg,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            }
+                            else if (index == searchReviewList.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: makeGradientBtn(
+                                    msg: "맨 처음으로",
+                                    onPressed: () {
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    },
+                                    mode: 1,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.white,
+                                    )),
+                              );
+                            } else {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+                          } else {
+                            return buildItemReview(
+                                context, index, searchReviewList);
+                          }
+                        }),
+                  )
+                : Expanded(
+                    child: FutureBuilder(
+                        future: _getReview(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            reviewList = snapshot.data;
+                            if (reviewList.length <= Consts.showItemCount) {
+                              itemCount = reviewList.length;
+                            }
+                            return ListView.builder(
+                                controller: _scrollController,
+                                itemCount: itemCount + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == itemCount) {
+                                    if (index == 0) {
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18)),
+                                        elevation: 5,
+                                        margin:
+                                            EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                        child: Center(
+                                          child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  Consts.padding),
+                                              child: Text(
+                                                "등록된 리뷰가 없습니다.",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              )),
+                                        ),
+                                      );
+                                    } else if (index == reviewList.length) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: makeGradientBtn(
+                                            msg: "맨 처음으로",
+                                            onPressed: () {
+                                              _scrollController.animateTo(
+                                                  _scrollController
+                                                      .position.minScrollExtent,
+                                                  duration: Duration(
+                                                      milliseconds: 200),
+                                                  curve: Curves.elasticOut);
+                                            },
+                                            mode: 1,
+                                            icon: Icon(
+                                              Icons.arrow_upward,
+                                              color: Colors.white,
+                                            )),
+                                      );
+                                    } else {
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18)),
+                                        elevation: 5,
+                                        margin:
+                                            EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                        child: Center(
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsets.all(Consts.padding),
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return buildItemReview(
+                                        context, index, reviewList);
+                                  }
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
+                  )
           ],
         ),
       ),
     );
   }
 
-  Widget buildItemReview(BuildContext context, int index) {
+  Widget buildItemReview(BuildContext context, int index, List<ReviewVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
           print("눌림");
-          Navigator.push(
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (countext) => InterviewReviewDetail(
-                        index: reviewList[index].index,
+                        index: list[index].index,
                       )));
+          setState(() {
+            _getReview();
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -267,13 +378,13 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${reviewList[index].title}",
+                "${list[index].title}",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${reviewList[index].review}",
+                  "${list[index].review}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -281,8 +392,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 height: 22,
                 child: Row(
                   children: [
-                    buildItemTag(reviewList[index].tag, 0),
-                    reviewList[index].tag.length > 1
+                    buildItemTag(list[index].tag, 0),
+                    list[index].tag.length > 1
                         ? Container(
                             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                             margin: EdgeInsets.only(right: 8),
@@ -293,7 +404,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                 )),
                             child: Center(
                               child: Text(
-                                "외 ${reviewList[index].tag.length - 1}개",
+                                "외 ${list[index].tag.length - 1}개",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w400),
                               ),
@@ -304,7 +415,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "지원날짜: ${reviewList[index].applyDate}",
+                          "지원날짜: ${list[index].applyDate}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,

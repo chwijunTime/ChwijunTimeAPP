@@ -338,10 +338,11 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                 try {
                   var res = await helper.deleteReview(token, widget.list.index);
                   if (res.success) {
-                    Navigator.pop(context, "yes");
+                    Navigator.pop(context);
                   } else {
-                    snackBar("서버 오류", context);
+                    snackBar(res.msg, context);
                     print("error: ${res.msg}");
+                    Navigator.pop(context, false);
                   }
                 } catch (e) {
                   print(e);
@@ -349,31 +350,31 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
               },
             ),
         barrierDismissible: false);
-
-    if (result == "yes") {
+    if (result == null) {
       Navigator.pop(context);
     }
   }
 
   _onMoveModify() async {
-    final result = await Navigator.push(
+    await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
-                InterviewReviewModify(index: widget.list.index)));
-    print("result: ${result.toString()}");
-    if (result != null) {
-      setState(() {
-        widget.list = result;
-      });
-    }
+                InterviewReviewModify(list: widget.list)));
+    setState(() {
+      _getReview();
+    });
   }
 
   _moveCamera() async {
-    List<Location> location = await locationFromAddress(widget.list.address);
-    latLng = LatLng(location[0].latitude, location[0].longitude);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 17)));
+    try {
+      List<Location> location = await locationFromAddress(widget.list.address);
+      latLng = LatLng(location[0].latitude, location[0].longitude);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: latLng, zoom: 17)));
+    } catch (e) {
+      print(e);
+    }
   }
 
   Set<Marker> _createMarker() {

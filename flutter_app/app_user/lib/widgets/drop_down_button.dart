@@ -6,7 +6,7 @@ Widget makeDropDownBtn(
     void Function(String value) onSetState,
     String hint}) {
   return Container(
-    padding: const EdgeInsets.only(left: 10, right: 10, top: 7, bottom: 7),
+    padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
       color: Colors.white,
@@ -31,7 +31,7 @@ Widget makeDropDownBtn(
           print("onChanged: ${value}");
           onSetState(value);
         },
-
+        dropdownColor: Colors.white,
       ),
     ),
   );

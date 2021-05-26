@@ -1,23 +1,27 @@
 import 'package:app_user/model/company_review/review_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewModify extends StatefulWidget {
   ReviewVO list;
-  int index;
 
-  InterviewReviewModify({@required this.index});
+  InterviewReviewModify({@required this.list});
 
   @override
   _InterviewReviewModifyState createState() => _InterviewReviewModifyState();
 }
 
 class _InterviewReviewModifyState extends State<InterviewReviewModify> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String strDate = "지원날짜";
@@ -31,13 +35,15 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
   @override
   void initState() {
     super.initState();
+    initRetrofit();
     setState(() {
       titleC.text = widget.list.title;
       addressC.text = widget.list.address;
       priceC.text = widget.list.price.toString();
       reviewC.text = widget.list.review;
       questionC.text = widget.list.question;
-      strDate = widget.list.applyDate;
+      var listDate = widget.list.applyDate.split("-");
+      strDate = "${listDate[0]}년 ${listDate[1]}월 ${listDate[2]}일";
       tagList = widget.list.tag;
     });
   }
@@ -50,6 +56,17 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
     reviewC.dispose();
     questionC.dispose();
     super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -202,7 +219,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
     );
   }
 
-  _onModify() {
+  _onModify() async {
     if (addressC.text.isEmpty ||
         priceC.text.isEmpty ||
         reviewC.text.isEmpty ||
@@ -213,15 +230,28 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       snackBar("빈칸이 없도록 작성해주세요.", context);
     } else {
       ReviewVO vo = ReviewVO(
-          title: titleC.text,
-          applyDate: date,
-          address: addressC.text,
-          price: int.parse(priceC.text),
-          review: reviewC.text,
-          question: questionC.text,
-          tag: tagList,
-          isMine: widget.list.isMine);
-      Navigator.pop(context, vo);
+        title: titleC.text,
+        applyDate: date,
+        address: addressC.text,
+        price: int.parse(priceC.text),
+        review: reviewC.text,
+        question: questionC.text,
+        postTag: tagList,
+      );
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      try {
+        print(vo.toJson());
+        var res = await helper.putReview(token, widget.list.index, vo.toJson());
+        if (res.success) {
+          Navigator.pop(context);
+        } else {
+          print("err: ${res.msg}");
+          snackBar(res.msg, context);
+        }
+      } catch (e) {
+        print("error: $e");
+      }
     }
   }
 }

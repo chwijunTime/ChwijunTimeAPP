@@ -110,7 +110,7 @@ class _TagListState extends State<TagList> {
                       makeGradientBtn(
                           msg: "요청 태그 보기",
                           onPressed: () async {
-                            var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
                             setState(() {
                               _getTagList();
                             });
