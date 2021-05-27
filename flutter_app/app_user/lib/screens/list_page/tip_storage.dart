@@ -1,12 +1,16 @@
 import 'package:app_user/consts.dart';
-import 'package:app_user/model/tip_storage_vo.dart';
+import 'package:app_user/model/tip/tip_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/write_page/tip_storage_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStoragePage extends StatefulWidget {
   @override
@@ -15,16 +19,21 @@ class TipStoragePage extends StatefulWidget {
 
 class _TipStoragePageState extends State<TipStoragePage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
+  RetrofitHelper helper;
   final _scrollController = ScrollController();
 
   List<TipVO> tipList = [];
+  List<TipVO> searchTipList = [];
   final titleC = TextEditingController();
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['전체보기', '검색하기'];
+  String selectValue = "전체보기";
+  String msg = "등록된 꿀팁이 없습니다.";
 
   @override
   void initState() {
     super.initState();
-
+    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -33,6 +42,17 @@ class _TipStoragePageState extends State<TipStoragePage> {
     _scrollController.dispose();
     titleC.dispose();
     super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   void _scrollListener() async {
@@ -51,18 +71,20 @@ class _TipStoragePageState extends State<TipStoragePage> {
     }
   }
 
-  Future<List<TipVO>> getTipList() async {
-    await Future.delayed(Duration(seconds: 2));
-    List<TipVO> list = [];
-    for (int i = 0; i < 52; i++) {
-      list.add(TipVO(
-          title: "${i + 1}.업체명",
-          address: "광주광역시 광산구 광주소프트웨어마이스터고등학교",
-          tip:
-              "이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도이건 팁내용이에요 아주아주 길어요 아주아주 길다구요 엄청길죠? 신기하죠? 너무 길어서 놀랐죠? 저도 놀랐어요",
-          isMine: i % 2 == 0));
+  Future<List<TipVO>> _getTipList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print(token);
+    try {
+      var res = await helper.getTipList(token);
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
     }
-    return list;
   }
 
   @override
@@ -102,14 +124,33 @@ class _TipStoragePageState extends State<TipStoragePage> {
                     ],
                   ),
                 ),
+                makeDropDownBtn(
+                    valueList: valueList,
+                    selectedValue: selectValue,
+                    onSetState: (value) {
+                      setState(() {
+                        selectValue = value;
+                        itemCount = 0;
+                        if (selectValue == valueList[1]) {
+                          searchTipList.clear();
+                          msg = "회사명으로 검색하기";
+                        } else {
+                          titleC.text = "";
+                        }
+                      });
+                    },
+                    hint: "보기"),
                 Padding(
                   padding: EdgeInsets.only(right: 25),
                   child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => TipStorageWrite()));
+                      setState(() {
+                        _getTipList();
+                      });
                     },
                     child: Container(
                       width: 60,
@@ -141,71 +182,181 @@ class _TipStoragePageState extends State<TipStoragePage> {
                 )
               ],
             ),
-            Padding(
-                padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                child: buildTextField("꿀팁 제목", titleC,
-                    autoFocus: false,
-                    prefixIcon: Icon(Icons.search), textInput: (String key) {
-                  print(key);
-                })),
-            Expanded(
-              child: FutureBuilder(
-                  future: getTipList(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      tipList = snapshot.data;
-                      return Align(
-                        child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: itemCount + 1,
-                            itemBuilder: (context, index) {
-                              if (index == itemCount) {
-                                if (index == tipList.length) {
-                                  return Padding(
+            selectValue == valueList[1]
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        right: 33, left: 33, bottom: 15, top: 15),
+                    child: buildTextField("업체명", titleC,
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) async {
+                      final pref = await SharedPreferences.getInstance();
+                      var token = pref.getString("accessToken");
+                      print("key: $key");
+                      print(token);
+                      try {
+                        var res = await helper.getTipListKeyword(token, key);
+                        print(res.toJson());
+                        if (res.success)
+                          setState(() {
+                            searchTipList = res.list;
+                            if (searchTipList.length <= Consts.showItemCount) {
+                              itemCount = searchTipList.length;
+                              print(searchTipList.length);
+                              msg = "검색된 리뷰가 없습니다.";
+                            }
+                          });
+                      } catch (e) {
+                        print("error: $e");
+                      }
+                    }))
+                : SizedBox(),
+            selectValue == valueList[1]
+                ? Expanded(
+                    child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: itemCount + 1,
+                        itemBuilder: (context, index) {
+                          if (index == itemCount) {
+                            if (searchTipList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        msg,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            } else if (index == searchTipList.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: makeGradientBtn(
+                                    msg: "맨 처음으로",
+                                    onPressed: () {
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    },
+                                    mode: 1,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.white,
+                                    )),
+                              );
+                            } else {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
                                     padding: EdgeInsets.all(Consts.padding),
-                                    child: makeGradientBtn(
-                                        msg: "맨 처음으로",
-                                        onPressed: () {
-                                          _scrollController.animateTo(
-                                              _scrollController
-                                                  .position.minScrollExtent,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.elasticOut);
-                                        },
-                                        mode: 1,
-                                        icon: Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                        )),
-                                  );
-                                } else {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return buildItemTip(context, index, tipList);
-                              }
-                            }),
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            )
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+                          } else {
+                            return buildItemTip(context, index, tipList);
+                          }
+                        }),
+                  )
+                : Expanded(
+                    child: FutureBuilder(
+                        future: _getTipList(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            tipList = snapshot.data;
+                            if (tipList.length <= Consts.showItemCount) {
+                              itemCount = tipList.length;
+                            }
+                            return Align(
+                              child: ListView.builder(
+                                  controller: _scrollController,
+                                  itemCount: itemCount + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == itemCount) {
+                                      if (tipList.length == 0) {
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18)),
+                                          elevation: 5,
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
+                                          child: Center(
+                                            child: Padding(
+                                                padding: EdgeInsets.all(
+                                                    Consts.padding),
+                                                child: Text(
+                                                  msg,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                )),
+                                          ),
+                                        );
+                                      } else if (index == tipList.length) {
+                                        return Padding(
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
+                                          child: makeGradientBtn(
+                                              msg: "맨 처음으로",
+                                              onPressed: () {
+                                                _scrollController.animateTo(
+                                                    _scrollController.position
+                                                        .minScrollExtent,
+                                                    duration: Duration(
+                                                        milliseconds: 200),
+                                                    curve: Curves.elasticOut);
+                                              },
+                                              mode: 1,
+                                              icon: Icon(
+                                                Icons.arrow_upward,
+                                                color: Colors.white,
+                                              )),
+                                        );
+                                      } else {
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18)),
+                                          elevation: 5,
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
+                                          child: Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  Consts.padding),
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      return buildItemTip(
+                                          context, index, tipList);
+                                    }
+                                  }),
+                            );
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
+                  )
           ],
         ),
       ),
@@ -217,13 +368,16 @@ class _TipStoragePageState extends State<TipStoragePage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
+      child: InkWell(
+        onTap: () async {
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       TipStorageDetail(index: list[index].index)));
+          setState(() {
+            _getTipList();
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -237,7 +391,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${list[index].tip}",
+                  "${list[index].tipInfo}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,

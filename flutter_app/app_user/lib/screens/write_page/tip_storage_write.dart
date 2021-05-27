@@ -1,7 +1,13 @@
+import 'package:app_user/model/tip/tip_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStorageWrite extends StatefulWidget {
   @override
@@ -9,9 +15,19 @@ class TipStorageWrite extends StatefulWidget {
 }
 
 class _TipStorageWriteState extends State<TipStorageWrite> {
+  RetrofitHelper helper;
+
   var titleC = TextEditingController();
   var addressC = TextEditingController();
   var tipC = TextEditingController();
+  List<String> tagList = [];
+
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
 
   @override
   void dispose() {
@@ -19,6 +35,17 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
     addressC.dispose();
     tipC.dispose();
     super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -54,7 +81,7 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                             fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       buildTextField("이곳에 작성하면 됩니당", tipC,
-                          maxLine: 10, maxLength: 500, autoFocus: false)
+                          maxLine: 10, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -62,6 +89,27 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
               SizedBox(
                 height: 24,
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 80, right: 80),
+                child: makeBtn(
+                    msg: "태그 선택하러 가기",
+                    onPressed: () async {
+                      final result = await Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SearchPage()));
+                      setState(() {
+                        if (result != null) {
+                          tagList = result;
+                        }
+                      });
+                      print("tagList: $tagList");
+                    },
+                    mode: 2),
+              ),
+              Align(
+                  alignment: Alignment.center,
+                  child: makeTagWidget(
+                      tag: tagList, size: Size(360, 27), mode: 1)),
+              SizedBox(height: 20,),
               Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -78,7 +126,7 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                 alignment: Alignment.center,
                 child: makeGradientBtn(
                     msg: "둥록하기",
-                    onPressed: () {},
+                    onPressed: _postTip,
                     mode: 4,
                     icon: Icon(
                       Icons.check,
@@ -93,5 +141,29 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
         ),
       ),
     );
+  }
+
+  _postTip() async {
+    if (titleC.text.isEmpty || addressC.text.isEmpty || tipC.text.isEmpty || tagList.isEmpty) {
+      snackBar("빈칸이 없도록 작성해주세요.", context);
+    } else {
+      final pref =
+      await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      TipVO vo = TipVO(tag: tagList, tipInfo: tipC.text, address: addressC.text, title: titleC.text);
+      try {
+        var res = await helper.postTip(token, vo.toJson());
+        if (res.success) {
+          snackBar("등록되었습니다", context);
+          Navigator.pop(context);
+        } else {
+          print("err: ${res.msg}");
+          snackBar(res.msg, context);
+        }
+      } catch (e) {
+        print("error: $e");
+      }
+    }
+
   }
 }

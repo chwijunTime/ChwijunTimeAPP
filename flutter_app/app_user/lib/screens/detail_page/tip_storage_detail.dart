@@ -1,8 +1,14 @@
-import 'package:app_user/model/tip_storage_vo.dart';
+import 'package:app_user/model/tip/tip_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/modify_page/tip_storage_modify.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:app_user/widgets/tag.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStorageDetail extends StatefulWidget {
   TipVO list;
@@ -15,6 +21,25 @@ class TipStorageDetail extends StatefulWidget {
 }
 
 class _TipStorageDetailState extends State<TipStorageDetail> {
+  RetrofitHelper helper;
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,80 +48,173 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.only(left: 25, right: 25, top: 24),
-          child: ListView(
-            children: [
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                ),
-                child: Padding(padding: EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.list.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
-                    Text("주소: ${widget.list.address}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                  ],
-                ),),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18))),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: FutureBuilder(
+            future: _getTip(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                widget.list = snapshot.data;
+                return Center(
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
-                      Text(
-                        "꿀팁 정보",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18)),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.list.title,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              Text("주소: ${widget.list.address}",
+                                  style: TextStyle(
+                                      fontSize: 18, fontWeight: FontWeight.w600))
+                            ],
+                          ),
+                        ),
                       ),
-                      Text(widget.list.tip,
-                      style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14),)
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "꿀팁 정보",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                widget.list.tipInfo,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 14),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Align(
+                          alignment: Alignment.center,
+                          child: makeTagWidget(
+                              tag: widget.list.tag,
+                              size: Size(360, 27),
+                              mode: 1)),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            makeGradientBtn(
+                                msg: "수정하기",
+                                onPressed: () async {
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TipStorageModify(
+                                              list: widget.list)));
+                                  setState(() {
+                                    _getTip();
+                                  });
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.note_add,
+                                  color: Colors.white,
+                                )),
+                            makeGradientBtn(
+                                msg: "삭제하기",
+                                onPressed: _deleteTip,
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ))
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25,
+                      )
                     ],
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              widget.list.isMine ?
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        makeGradientBtn(
-                              msg: "수정하기",
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => TipStorageModify(list: widget.list)));
-                              },
-                              mode: 1,
-                              icon: Icon(
-                                Icons.note_add,
-                                color: Colors.white,)),
-                        makeGradientBtn(
-                            msg: "삭제하기",
-                            onPressed: () {},
-                            mode: 1,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.white,))
-                      ],
-                    ),
-                  ): SizedBox(),
-              SizedBox(
-                height: 25,
-              )
-            ],
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           ),
         ),
       ),
     );
+  }
+
+  Future<TipVO> _getTip() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.getTip(token, widget.index);
+      if (res.success) {
+        return res.data;
+      } else {
+        print("err: ${res.msg}");
+      }
+    } catch (e) {
+      print("err: $e");
+    }
+  }
+
+  _deleteTip() async {
+    final result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => StdDialog(
+          msg: "해당 꿀팁을 삭제하시겠습니까?",
+          size: Size(326, 124),
+          btnName1: "아니요",
+          btnCall1: () {
+            Navigator.pop(context, "no");
+          },
+          btnName2: "삭제하기",
+          btnCall2: () async {
+            final pref = await SharedPreferences.getInstance();
+            var token = pref.getString("accessToken");
+            print("token: ${token}");
+            try {
+              var res = await helper.deleteTip(token, widget.index);
+              if (res.success) {
+                Navigator.pop(context, "yes");
+              } else {
+                snackBar(res.msg, context);
+                print("error: ${res.msg}");
+              }
+            } catch (e) {
+              print(e);
+            }
+          },
+        ),
+        barrierDismissible: false);
+
+    if (result == "yes") {
+      Navigator.pop(context, true);
+    }
   }
 }
