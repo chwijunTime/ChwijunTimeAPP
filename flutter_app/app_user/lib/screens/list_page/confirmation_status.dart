@@ -326,13 +326,17 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => ConfirmationStatusDetail(
                         index: confList[index].index,
                       )));
+          setState(() {
+            print("이?잉");
+            _getComfirmation();
+          });
         },
         child: Row(
           children: [
@@ -352,7 +356,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
             SizedBox(
               width: 10,
             ),
-            widget.role == User.user
+            User.role == User.user
                 ? InkWell(
                     onTap: () {
                       Navigator.push(

@@ -7,6 +7,7 @@ import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +30,29 @@ class ConfirmationStatusDetail extends StatefulWidget {
 class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
   LatLng latLng;
   RetrofitHelper helper;
+  GoogleMapController mapController;
 
   Future<LatLng> getCordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     return latLng;
+  }
+
+  moveCamera() async {
+    try {
+      List<Location> location = await locationFromAddress(widget.list.address);
+      latLng = LatLng(location[0].latitude, location[0].longitude);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: latLng, zoom: 17)));
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
   }
 
   initRetrofit() {
@@ -59,6 +78,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
               if (snapshot.hasData) {
                 final result = snapshot.data as ResponseConfirmation;
                 widget.list = result.data;
+                moveCamera();
                 return ListView(
                   children: [
                     Card(
@@ -82,7 +102,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      widget.list.title,
+                                      "${widget.list.jockey}기 ${widget.list.name}",
                                       style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.w600),
@@ -100,7 +120,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                 ],
                               ),
                               Text(
-                                "지역: ${widget.list.area}",
+                                "회사명: ${widget.list.title}",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
@@ -139,7 +159,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                       ),
                       child: Container(
                         child: Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -175,10 +195,27 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                                   latLng.longitude),
                                               zoom: 17,
                                             ),
+                                            onMapCreated: (GoogleMapController
+                                                controller) async {
+                                              mapController = controller;
+                                            },
                                             markers: _createMarker(),
                                           );
                                         }
-                                      }))
+                                      })),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  "지역: ${widget.list.area}",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -228,20 +265,31 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                     SizedBox(
                       height: 25,
                     ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: makeTagWidget(
+                            tag: widget.list.tag,
+                            size: Size(360, 27),
+                            mode: 1)),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(right: 25, left: 25),
                       child: makeGradientBtn(
                           msg: "취업 현황 수정하기",
                           onPressed: () async {
-                            var res = await Navigator.push(
+                            await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         ConfirmationStatusModify(
-                                            index: widget.list.index)));
-                            if (res != null && res) {
+                                          list: widget.list,
+                                        )));
+                            print("hi");
+                            setState(() {
                               _getComfirmation();
-                            }
+                            });
                           },
                           mode: 2,
                           icon: Icon(
@@ -294,11 +342,11 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                 try {
                   final res = await helper.deleteConf(token, widget.list.index);
                   if (res.success) {
-                    print("삭제함: ${res.msg}");
+                    snackBar("삭제되었습니다.", context);
+                    Navigator.pop(context);
                   } else {
                     print("errorr: ${res.msg}");
                   }
-                  Navigator.pop(context, true);
                 } catch (e) {
                   print("err: ${e}");
                   Navigator.pop(context, false);
@@ -308,7 +356,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
             ),
         barrierDismissible: false);
 
-    if (result == "yes") {
+    if (result == null) {
       Navigator.pop(context);
     }
   }

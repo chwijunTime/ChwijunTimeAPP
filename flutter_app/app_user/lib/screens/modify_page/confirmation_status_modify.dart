@@ -12,9 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusModify extends StatefulWidget {
   ConfirmationVO list;
-  int index;
 
-  ConfirmationStatusModify({@required this.index});
+  ConfirmationStatusModify({@required this.list});
 
   @override
   _ConfirmationStatusModifyState createState() =>
@@ -30,6 +29,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
   var generationC = TextEditingController();
   var addressC = TextEditingController();
   var siteUrl = TextEditingController();
+  var etcC = TextEditingController();
   List<String> tagList = [];
 
   @override
@@ -38,6 +38,12 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
     setState(() {
       titleC.text = widget.list.title;
       siteUrl.text = widget.list.siteUrl;
+      areaC.text = widget.list.area;
+      stdNameC.text = widget.list.name;
+      generationC.text = "${widget.list.jockey}기 (기수는 수정이 불가능합니다.)";
+      addressC.text = widget.list.address;
+      etcC.text = widget.list.etc;
+      tagList = widget.list.tag;
     });
     initRetrofit();
   }
@@ -50,6 +56,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
     generationC.dispose();
     addressC.dispose();
     siteUrl.dispose();
+    etcC.dispose();
     super.dispose();
   }
 
@@ -90,13 +97,43 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
                     buildTextField("회사 사이트 주소", siteUrl, deco: false),
                     buildTextField("지역명", areaC, deco: false),
                     buildTextField("상세 주소", addressC, deco: false),
-                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number, deco: false),
+                    buildTextField("기수", generationC,
+                        deco: false, disable: true),
                   ],
                 ),
               ),
             ),
             SizedBox(
               height: 15,
+            ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              margin: EdgeInsets.all(25),
+              child: Container(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "기타",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      buildTextField("비고를 적어주세요", etcC,
+                          maxLine: 10, maxLength: 500)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 100, right: 100),
@@ -153,7 +190,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
         addressC.text.isEmpty ||
         areaC.text.isEmpty ||
         stdNameC.text.isEmpty ||
-        generationC.text.isEmpty ||
+        etcC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
@@ -162,19 +199,22 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
           area: areaC.text,
           siteUrl: siteUrl.text,
           address: addressC.text,
-      // TODO stdName 추가하기
-        // TODO generation 추가하기
-        postTag: tagList
-      );
+          name: stdNameC.text,
+          jockey: generationC.text,
+          postTag: tagList,
+          etc: etcC.text);
 
       try {
         final pref = await SharedPreferences.getInstance();
         var token = pref.getString("accessToken");
-        var res = await helper.putConf(token, widget.index, vo.toJson());
+        var res = await helper.putConf(token, widget.list.index, vo.toJson());
+        print(widget.list.index);
+        print(token);
+        print(vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {
-          snackBar("서버 에러", context);
+          snackBar(res.msg, context);
           print("error: ${res.msg}");
         }
       } catch (e) {
