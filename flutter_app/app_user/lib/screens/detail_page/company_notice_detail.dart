@@ -1,12 +1,12 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
-import 'package:app_user/model/comp_notice/response_comp_notice.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/apply_dialog.dart';
+import 'package:app_user/widgets/dialog/apply_write_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -35,6 +35,30 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   LatLng latLng;
 
   RetrofitHelper helper;
+  GoogleMapController mapController;
+
+  Future<LatLng> getCordinate() async {
+    List<Location> location = await locationFromAddress(widget.list.address);
+    latLng = LatLng(location[0].latitude, location[0].longitude);
+    return latLng;
+  }
+
+  moveCamera() async {
+    try {
+      List<Location> location = await locationFromAddress(widget.list.address);
+      latLng = LatLng(location[0].latitude, location[0].longitude);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: latLng, zoom: 17)));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initRetrofit();
+  }
 
   initRetrofit() {
     Dio dio = Dio(BaseOptions(
@@ -47,21 +71,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     helper = RetrofitHelper(dio);
   }
 
-
-  Future<LatLng> getCordinate() async {
-    List<Location> location = await locationFromAddress(widget.list.address);
-    latLng = LatLng(location[0].latitude, location[0].longitude);
-    return latLng;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.role = User.role;
-    initRetrofit();
-  }
-
-  Future<ResponseNoticeComp> _getNotice() async {
+  Future<CompNoticeVO> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     String token = pref.getString("accessToken");
     print("index: ${widget.index}");
@@ -69,7 +79,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
     final res = await helper.getComp(token, widget.index);
     print(res.toJson());
     if (res.success) {
-      return res;
+      return res.data;
     } else {
       Navigator.pop(context);
       snackBar("서버 에러", context);
@@ -88,6 +98,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 widget.list = snapshot.data;
+                moveCamera();
                 return ListView(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -118,16 +129,11 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ),
-                                  widget.role == User.user
+                                  User.role == User.user
                                       ? SizedBox()
                                       : IconButton(
                                           icon: Icon(Icons.delete),
-                                          onPressed: () async {
-                                            var res = await _onDeleteCompNotice();
-                                            if (res != null && res == "yes") {
-                                              Navigator.pop(context, true);
-                                            }
-                                          }),
+                                          onPressed: _onDeleteCompNotice),
                                 ],
                               ),
                               Text(
@@ -197,6 +203,10 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                                   latLng.longitude),
                                               zoom: 17,
                                             ),
+                                            onMapCreated: (GoogleMapController
+                                                controller) async {
+                                              mapController = controller;
+                                            },
                                             markers: _createMarker(),
                                           );
                                         }
@@ -323,7 +333,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                     SizedBox(
                       height: 30,
                     ),
-                    widget.role == User.user
+                    User.role == User.user
                         ? Align(
                             alignment: Alignment.bottomRight,
                             child: Padding(
@@ -331,46 +341,30 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                   const EdgeInsets.only(right: 30, bottom: 25),
                               child: makeGradientBtn(
                                   msg: "해당 기업에 지원 신청",
-                                  onPressed: () => print("신청"),
+                                  onPressed: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            ApplyWriteDialog(vo: widget.list));
+                                  },
                                   mode: 2),
                             ),
                           )
                         : Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.bottomRight,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   bottom: 25, right: 15, left: 15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  makeGradientBtn(
-                                      msg: "신청한 학생 보기",
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CompanyNoticeApply(
-                                                        list: widget.list)));
-                                      },
-                                      mode: 1,
-                                      icon: Icon(
-                                        Icons.search,
-                                        color: Colors.white,
-                                      )),
-                                  makeGradientBtn(
-                                      msg: "취업 공고 수정하기",
-                                      onPressed: () {
-                                        _onModifyCompNotice();
-                                      },
-                                      mode: 1,
-                                      icon: Icon(
-                                        Icons.arrow_forward,
-                                        color: Colors.white,
-                                      ))
-                                ],
-                              ),
+                              child: makeGradientBtn(
+                                  msg: "취업 공고 수정하기",
+                                  onPressed: () {
+                                    _onModifyCompNotice();
+                                  },
+                                  mode: 1,
+                                  icon: Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                  )),
                             ),
                           )
                   ],
@@ -401,40 +395,36 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
               final pref = await SharedPreferences.getInstance();
               var token = pref.getString("accessToken");
               try {
-                final res = await helper.deleteComp(
-                    token, widget.index);
+                final res = await helper.deleteComp(token, widget.index);
                 if (res.success) {
                   Navigator.pop(context, "yes");
                 } else {
                   Navigator.pop(context, "no");
-                  snackBar("서버 오류", context);
+                  snackBar(res.msg, context);
                   print("error: ${res.msg}");
                 }
               } catch (e) {
                 print("error: ${e}");
-                Navigator.pop(context, "yes");
+                Navigator.pop(context, "no");
               }
             }),
         barrierDismissible: false);
-
     if (result == "yes") {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
   }
 
   _onModifyCompNotice() async {
-    final result = await Navigator.push(
+    await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CompanyNoticeModifyPage(
                   list: widget.list,
                 )));
 
-    if (result != null && result) {
-      setState(() {
-        _getNotice();
-      });
-    }
+    setState(() {
+      _getNotice();
+    });
   }
 
   Set<Marker> _createMarker() {

@@ -9,6 +9,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -20,24 +21,27 @@ class CompanyNoticePage extends StatefulWidget {
   @override
   _CompanyNoticePageState createState() => _CompanyNoticePageState();
 
-  List<CompNoticeVO> notiList = [];
   String role;
 }
 
 class _CompanyNoticePageState extends State<CompanyNoticePage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
+  List<CompNoticeVO> noticeList = [];
+  List<CompNoticeVO> searchNoticeList = [];
   final titleC = TextEditingController();
   final _scrollController = ScrollController();
   List<bool> deleteNoti = [];
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['전체보기', '검색하기'];
+  String selectValue = "전체보기";
+  String msg = "검색된 협약업체가 없습니다.";
 
   RetrofitHelper helper;
 
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
     initRetrofit();
   }
@@ -54,10 +58,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != widget.notiList.length) {
-          if ((widget.notiList.length - itemCount) ~/ Consts.showItemCount <=
-              0) {
-            itemCount += widget.notiList.length % Consts.showItemCount;
+        if (itemCount != noticeList.length) {
+          if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount += noticeList.length % Consts.showItemCount;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -96,34 +99,49 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           children: [
             Padding(
               padding: EdgeInsets.all(26),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
+                      ),
+                      Text(
+                        "취업 공고",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      )
+                    ],
                   ),
-                  Text(
-                    "취업 공고",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
-                  )
+                  makeDropDownBtn(
+                      valueList: valueList,
+                      selectedValue: selectValue,
+                      onSetState: (value) {
+                        setState(() {
+                          selectValue = value;
+                          if (selectValue == valueList[1]) {
+                            itemCount = 0;
+                            searchNoticeList.clear();
+                            msg = "이름, 지역, 직군으로 검색하기";
+                          } else {
+                            titleC.text = "";
+                          }
+                        });
+                      },
+                      hint: "보기"),
                 ],
               ),
             ),
-            widget.role == User.user
-                ? Padding(
-                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                    child: buildTextField("회사 이름, 지역, 채용 분야", titleC,
-                        autoFocus: false,
-                        prefixIcon: Icon(Icons.search), textInput: (String key) {
-                      print(key);
-                    }))
+            User.role == User.user
+                ? SizedBox()
                 : Padding(
                     padding:
                         const EdgeInsets.only(right: 26, left: 26, bottom: 10),
@@ -163,66 +181,179 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       ],
                     ),
                   ),
-            Expanded(
-              child: FutureBuilder(
-                  future: _getCompany(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      widget.notiList = snapshot.data;
-                      for (int i = 0; i < widget.notiList.length; i++) {
-                        deleteNoti.add(false);
-                      }
-                      return ListView.builder(
-                        controller: _scrollController,
-                        itemCount: itemCount,
-                        itemBuilder: (context, index) {
-                          if (index == itemCount) {
-                            if (index == widget.notiList.length) {
-                              return Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: makeGradientBtn(
-                                    msg: "맨 처음으로",
-                                    onPressed: () {
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                    },
-                                    mode: 1,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Colors.white,
-                                    )),
-                              );
-                            } else {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              );
-                            }
-                          } else {
-                            return buildItemCompany(context, index);
+            selectValue == valueList[1]
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        right: 33, left: 33, bottom: 15, top: 15),
+                    child: buildTextField("이름, 지역, 직군", titleC,
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) async {
+                      final pref = await SharedPreferences.getInstance();
+                      var token = pref.getString("accessToken");
+                      var res = await helper.getCompListKeyword(token, key);
+                      if (res.success)
+                        setState(() {
+                          searchNoticeList = res.list;
+                          if (searchNoticeList.length <= Consts.showItemCount) {
+                            itemCount = searchNoticeList.length;
+                            print(searchNoticeList.length);
+                            msg = "검색된 취업공고가 없습니다.";
                           }
-                        },
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                      );
-                    }
-                  }),
-            )
+                        });
+                    }))
+                : SizedBox(),
+            selectValue == valueList[1]
+                ? Expanded(
+                    child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: itemCount + 1,
+                    itemBuilder: (context, index) {
+                      print("index: $index");
+                      if (index == itemCount) {
+                        if (searchNoticeList.length == 0) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 5,
+                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                            child: Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: Text(
+                                    msg,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700),
+                                  )),
+                            ),
+                          );
+                        } else if (index == searchNoticeList.length) {
+                          return Padding(
+                            padding: EdgeInsets.all(Consts.padding),
+                            child: makeGradientBtn(
+                                msg: "맨 처음으로",
+                                onPressed: () {
+                                  _scrollController.animateTo(
+                                      _scrollController
+                                          .position.minScrollExtent,
+                                      duration: Duration(milliseconds: 200),
+                                      curve: Curves.elasticOut);
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.arrow_upward,
+                                  color: Colors.white,
+                                )),
+                          );
+                        } else {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 5,
+                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        return buildItemCompany(
+                            context, index, searchNoticeList);
+                      }
+                    },
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                  ))
+                : Expanded(
+                    child: FutureBuilder(
+                        future: _getCompany(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            noticeList = snapshot.data;
+                            for (int i = 0; i < noticeList.length; i++) {
+                              deleteNoti.add(false);
+                            }
+                            if (noticeList.length <= Consts.showItemCount) {
+                              itemCount = noticeList.length;
+                            }
+                            return ListView.builder(
+                              controller: _scrollController,
+                              itemCount: itemCount + 1,
+                              itemBuilder: (context, index) {
+                                if (index == itemCount) {
+                                  if (noticeList.length == 0) {
+                                    return Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18)),
+                                      elevation: 5,
+                                      margin:
+                                          EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      child: Center(
+                                        child: Padding(
+                                            padding:
+                                                EdgeInsets.all(Consts.padding),
+                                            child: Text(
+                                              msg,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
+                                            )),
+                                      ),
+                                    );
+                                  } else if (index == noticeList.length) {
+                                    return Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: makeGradientBtn(
+                                          msg: "맨 처음으로",
+                                          onPressed: () {
+                                            _scrollController.animateTo(
+                                                _scrollController
+                                                    .position.minScrollExtent,
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                curve: Curves.elasticOut);
+                                          },
+                                          mode: 1,
+                                          icon: Icon(
+                                            Icons.arrow_upward,
+                                            color: Colors.white,
+                                          )),
+                                    );
+                                  } else {
+                                    return Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18)),
+                                      elevation: 5,
+                                      margin:
+                                          EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      child: Center(
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  return buildItemCompany(
+                                      context, index, noticeList);
+                                }
+                              },
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                            );
+                          }
+                        }),
+                  )
           ],
         ),
       ),
@@ -237,7 +368,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       var res = await helper.getCompList(token);
       print("res.success: ${res.success}");
       if (res.success) {
-        return res.list.reversed.toList();
+        return res.list.toList();
       } else {
         return null;
       }
@@ -248,9 +379,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
 
   _onDeleteCompNotice() async {
     List<int> arr = [];
-    for (int i = 0; i < widget.notiList.length; i++) {
+    for (int i = 0; i < noticeList.length; i++) {
       if (deleteNoti[i]) {
-        arr.add(widget.notiList[i].index);
+        arr.add(noticeList[i].index);
       }
     }
 
@@ -278,6 +409,13 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                         print("삭제함: ${res.msg}");
                       } else {
                         print("errorr: ${res.msg}");
+                        if (res.msg == "작성자의 권한이 필요합니다.") {
+                          snackBar("작성자의 권한이 필요한 취업공고가 존재합니다.", context);
+                        } else {
+                          snackBar(res.msg, context);
+                        }
+                        Navigator.pop(context);
+                        return null;
                       }
                     }
                     Navigator.pop(context, true);
@@ -298,19 +436,24 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     }
   }
 
-  Widget buildItemCompany(BuildContext context, int index) {
+  Widget buildItemCompany(
+      BuildContext context, int index, List<CompNoticeVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
+      child: InkWell(
+        onTap: () async {
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => CompanyNoticeDetailPage(
-                        index: widget.notiList[index].index,
+                        index: list[index].index,
                       )));
+          setState(() {
+            _getCompany();
+            selectValue = valueList[0];
+          });
         },
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -321,12 +464,12 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${widget.notiList[index].title}",
+                      "${list[index].title}",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == User.user
+                  User.role == User.user
                       ? SizedBox()
                       : IconButton(
                           icon: deleteNoti[index]
@@ -347,7 +490,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 child: Container(
                   height: 60,
                   child: AutoSizeText(
-                    "${widget.notiList[index].info}, ",
+                    "${list[index].info}, ",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -365,13 +508,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   children: [
                     Row(
                       children: List.generate(
-                          widget.notiList[index].tag.length < 2 ? 1 : 2,
-                          (indextag) {
-                        return buildItemTag(
-                            widget.notiList[index].tag, indextag);
+                          list[index].tag.length < 2 ? 1 : 2, (indextag) {
+                        return buildItemTag(list[index].tag, indextag);
                       }),
                     ),
-                    widget.notiList[index].tag.length < 2
+                    list[index].tag.length < 3
                         ? SizedBox()
                         : Container(
                             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
@@ -383,7 +524,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                 )),
                             child: Center(
                               child: Text(
-                                "외 ${widget.notiList[index].tag.length - 2}개",
+                                "외 ${list[index].tag.length - 2}개",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w400),
                               ),
@@ -393,7 +534,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "마감일: ${widget.notiList[index].deadLine}",
+                          "마감일: ${list[index].deadLine}",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey,

@@ -288,6 +288,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
           Navigator.pop(context, true);
         } else {
           print("error: ${res.msg}");
+          snackBar(res.msg, context);
         }
       } catch (e) {
         print(e);

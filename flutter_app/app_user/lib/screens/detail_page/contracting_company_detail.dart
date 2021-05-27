@@ -60,11 +60,14 @@ class _ContractingCompanyDetailPageState
   }
 
   moveCamera() async {
-    print("1: ${widget.list.address}");
-    List<Location> location = await locationFromAddress(widget.list.address);
-    latLng = LatLng(location[0].latitude, location[0].longitude);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 17)));
+    try {
+      List<Location> location = await locationFromAddress(widget.list.address);
+      latLng = LatLng(location[0].latitude, location[0].longitude);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: latLng, zoom: 17)));
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -183,7 +186,6 @@ class _ContractingCompanyDetailPageState
                                         onMapCreated: (GoogleMapController
                                         controller) async {
                                           mapController = controller;
-                                          print("호잇");
                                         },
                                         markers: _createMarker(),
                                       );
@@ -315,7 +317,7 @@ class _ContractingCompanyDetailPageState
                 var token = pref.getString("accessToken");
                 print("token: ${token}");
                 try {
-                  var res = await helper.deleteCont("Bearer ${token}", widget.index);
+                  var res = await helper.deleteCont(token, widget.index);
                   if (res.success) {
                     Navigator.pop(context, "yes");
                   } else {

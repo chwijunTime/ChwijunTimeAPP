@@ -29,20 +29,25 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
   var infoC = TextEditingController();
   var preferentialInfoC = TextEditingController();
   var addressC = TextEditingController();
-  String deadLineDateC = "마감일";
-  String deadLineDate = "";
-  DateTime selectedDate = DateTime.now();
   var etcC = TextEditingController();
+  var deadline = TextEditingController();
   List<String> tagList = [];
 
   @override
   void initState() {
     super.initState();
     setState(() {
+      titleC.text = widget.list.title;
       fieldC.text = widget.list.field;
       infoC.text = widget.list.info;
       preferentialInfoC.text = widget.list.preferential;
+      addressC.text = widget.list.address;
       etcC.text = widget.list.etc;
+      var tempDate =
+      DateFormat("yyyy-MM-dd").parse(widget.list.deadLine);
+      var strDate = DateFormat("yyyy년 MM월 dd일").format(tempDate);
+      deadline.text = "$strDate (수정이 불가능합니다.)";
+      tagList = widget.list.tag;
     });
     initRetrofit();
   }
@@ -55,6 +60,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
     preferentialInfoC.dispose();
     addressC.dispose();
     etcC.dispose();
+    deadline.dispose();
     super.dispose();
   }
 
@@ -100,42 +106,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                       buildTextField("업체명", titleC, deco: false),
                       buildTextField("채용분야", fieldC, deco: false),
                       buildTextField("주소", addressC, deco: false),
-                      GestureDetector(
-                        onTap: () async {
-                          final DateTime picked = await showDatePicker(
-                              context: context,
-                              initialDate: selectedDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2050));
-                          if (picked != null) {
-                            setState(() {
-                              selectedDate = picked;
-                              deadLineDateC =
-                                  "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
-                            });
-                            final f = DateFormat("yyyy-MM-dd");
-                            deadLineDate = f.format(selectedDate);
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Colors.grey, width: 1))),
-                          width: constraints.maxWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            child: Text(
-                              deadLineDateC,
-                              style: TextStyle(
-                                  color: deadLineDateC == "마감일"
-                                      ? Colors.grey
-                                      : Colors.black,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
+                      buildTextField("마감일", deadline, deco: false, disable: true)
                     ],
                   );
                 }),
@@ -165,7 +136,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                         height: 10,
                       ),
                       buildTextField("회사 설명을 적어주세용", infoC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -195,7 +166,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                         height: 10,
                       ),
                       buildTextField("우대 조건을 적어주세용", preferentialInfoC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -221,7 +192,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                         height: 10,
                       ),
                       buildTextField("기타 설명을 적어주세요. (필수가 아닙니다.)", etcC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -273,7 +244,6 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
   _onModify() async {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
-        deadLineDate == "" ||
         addressC.text.isEmpty ||
         infoC.text.isEmpty ||
         preferentialInfoC.text.isEmpty ||
@@ -283,11 +253,11 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
       CompNoticeVO vo = CompNoticeVO(
           title: titleC.text,
           field: fieldC.text,
-          deadLine: deadLineDate,
           address: addressC.text,
           info: infoC.text,
           preferential: preferentialInfoC.text,
-          etc: etcC.text.isEmpty ? "" : etcC.text);
+          etc: etcC.text.isEmpty ? "" : etcC.text,
+      postTag: tagList);
 
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
@@ -297,7 +267,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
         if (res.success) {
           Navigator.pop(context, true);
         } else {
-          snackBar("서버 오류", context);
+          snackBar(res.msg, context);
           print("eeror: ${res.msg}");
         }
       } catch (e) {

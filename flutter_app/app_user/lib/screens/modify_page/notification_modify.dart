@@ -4,7 +4,6 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -67,12 +66,12 @@ class _NotificationModifyState extends State<NotificationModify> {
             padding: const EdgeInsets.only(right: 34, left: 34, top: 24),
             child: Column(
               children: [
-                buildTextField("제목", titleC, disable: true),
+                buildTextField("제목", titleC, disable: true,),
                 SizedBox(
                   height: 24,
                 ),
                 buildTextField("공지사항 내용을 입력해주세요.", contentsC,
-                    maxLine: 16, maxLength: 1000),
+                    maxLine: 16, maxLength: 1000, type: TextInputType.multiline, multiLine: true),
                 SizedBox(
                   height: 24,
                 ),
@@ -102,7 +101,7 @@ class _NotificationModifyState extends State<NotificationModify> {
       var token = pref.getString("accessToken");
       print(widget.list.index);
       final res = await helper.putNotice(
-          token: "Bearer ${token}",
+          token: token,
           index: widget.list.index,
           noticeSaveDto:
               SNoticeVO(title: titleC.text, content: contentsC.text).toJson());
@@ -110,7 +109,7 @@ class _NotificationModifyState extends State<NotificationModify> {
         Navigator.pop(context, true);
       } else {
         Navigator.pop(context, false);
-        snackBar("서버오류", context);
+        snackBar(res.msg, context);
         print("e: ${res.msg}");
       }
     }
