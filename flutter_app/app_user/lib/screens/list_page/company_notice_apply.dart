@@ -1,29 +1,29 @@
 import 'package:app_user/consts.dart';
-import 'package:app_user/model/apply_vo.dart';
-import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
+import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_dialog.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeApply extends StatefulWidget {
-  CompNoticeVO list;
-
-  CompanyNoticeApply({@required this.list});
-
   @override
   _CompanyNoticeApplyState createState() => _CompanyNoticeApplyState();
 }
 
 class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   RetrofitHelper helper;
-  List<ApplyVO> applyList = [];
+  List<CompApplyStatusVO> applyList = [];
 
   final titleC = TextEditingController();
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['전체', '수락', '거절', '대기중'];
+  String selectValue = '전체';
 
   @override
   void initState() {
@@ -45,8 +45,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
         if (itemCount != applyList.length) {
-          if ((applyList.length - itemCount) ~/ Consts.showItemCount <=
-              0) {
+          if ((applyList.length - itemCount) ~/ Consts.showItemCount <= 0) {
             itemCount += applyList.length % Consts.showItemCount;
           } else {
             itemCount += Consts.showItemCount;
@@ -79,38 +78,75 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
             Padding(
               padding: EdgeInsets.all(26),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.list.title,
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
+                      ),
+                      Text(
+                        "취업 공고 신청",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      )
+                    ],
                   ),
-                  Text(
-                    "에 지원한 학생들",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black),
-                  )
+                  makeDropDownBtn(
+                      valueList: valueList,
+                      selectedValue: selectValue,
+                      onSetState: (value) {
+                        setState(() {
+                          selectValue = value;
+                          itemCount = 0;
+                        });
+                      },
+                      hint: "보기"),
                 ],
               ),
             ),
             Expanded(
               child: FutureBuilder(
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  future: _getList(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     } else {
+                      applyList = snapshot.data;
+                      if (applyList.length <= Consts.showItemCount) {
+                        itemCount = applyList.length;
+                      }
                       return ListView.separated(
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
                           if (index == itemCount) {
-                            if (index == applyList.length) {
+                            if (applyList.length == 0) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                elevation: 5,
+                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                child: Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: Text(
+                                        "등록된 협약업체가 없습니다.",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                ),
+                              );
+                            } else if (index == applyList.length) {
                               return Padding(
                                 padding: EdgeInsets.all(20),
                                 child: makeGradientBtn(
@@ -153,8 +189,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
                         shrinkWrap: true,
                       );
                     }
-                  }
-              ),
+                  }),
             ),
           ],
         ),
@@ -162,35 +197,127 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
     );
   }
 
-  Future<List<ApplyVO>> _getList () async {
-    await Future.delayed(Duration(seconds: 3));
-    List<ApplyVO> list = [];
-    for (int i = 0; i < 15; i++) {
-      list.add(ApplyVO(
-          user: "3210안수빈",
-          portfolio: "https://www.naver.com/",
-          introduction: "https://www.naver.com/",
-          status: "notDone"));
+  Future<List<CompApplyStatusVO>> _getList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var status = "";
+      switch (selectValue) {
+        case "전체":
+          {
+            status = "All";
+            break;
+          }
+        case "수락":
+          {
+            status = "Approve";
+            break;
+          }
+
+        case "거절":
+          {
+            status = "Reject";
+            break;
+          }
+        case "대기중":
+          {
+            status = "Wait";
+            break;
+          }
+        default:
+          status = "All";
+      }
+      var res = await helper.getCompApplyStatusList(token, status);
+      if (res.success) {
+        return res.list;
+      } else {
+        print("error: ${res.msg}");
+        snackBar(res.msg, context);
+      }
+    } catch (e) {
+      print("err: $e");
     }
   }
 
-
   Widget buildItemApply(BuildContext context, int index) {
+    var status = applyList[index].status;
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: InkWell(
-        onTap: () {
-          showDialog(context: context, builder: (BuildContext context) => ApplyDialog(vo: applyList[index]));
+        onTap: () async {
+          await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  ApplyDialog(index: applyList[index].index, statusVo: applyList[index],));
+          setState(() {
+            _getList();
+          });
         },
         child: Row(
           children: [
             Expanded(
               child: Text(
-                "${applyList[index].user}",
+                "${applyList[index].classNumber}_${applyList[index].title}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ),
+            status == "Wait"
+                ? Container(
+                    width: 48,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                        border: Border.all(color: Colors.grey)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        "대기중",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : status == "Approve"
+                    ? Container(
+                        width: 48,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            border: Border.all(color: Color(0xff4687ff))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "수락함",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff4687ff)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 48,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            border: Border.all(color: Color(0xffFF7777))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "거절함",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xffFF7777)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
             SizedBox(
               width: 10,
             ),

@@ -3,6 +3,7 @@ import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/detail_page/company_notice_detail.dart';
+import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/company_notice_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -145,39 +146,50 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 : Padding(
                     padding:
                         const EdgeInsets.only(right: 26, left: 26, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Column(
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            makeGradientBtn(
+                                msg: "취업 공고 등록",
+                                onPressed: () async {
+                                  print("등록하자");
+                                  var res = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CompanyNoticeWritePage()));
+                                  if (res != null && res) {
+                                    setState(() {
+                                      _getCompany();
+                                    });
+                                  }
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.note_add,
+                                  color: Colors.white,
+                                )),
+                            makeGradientBtn(
+                                msg: "선택된 공고 삭제",
+                                onPressed: () {
+                                  _onDeleteCompNotice();
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         makeGradientBtn(
-                            msg: "취업 공고 등록",
-                            onPressed: () async {
-                              print("등록하자");
-                              var res = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CompanyNoticeWritePage()));
-                              if (res != null && res) {
-                                setState(() {
-                                  _getCompany();
-                                });
-                              }
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.note_add,
-                              color: Colors.white,
-                            )),
-                        makeGradientBtn(
-                            msg: "선택된 공고 삭제",
-                            onPressed: () {
-                              _onDeleteCompNotice();
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ))
+                            msg: "취업 공고 신청 목록 보기", onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CompanyNoticeApply()));
+                        }, mode: 6, icon: Icon(Icons.search, color: Colors.white,))
                       ],
                     ),
                   ),

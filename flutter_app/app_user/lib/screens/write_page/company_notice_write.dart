@@ -154,7 +154,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                         height: 10,
                       ),
                       buildTextField("회사 설명을 적어주세용", infoC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -184,7 +184,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                         height: 10,
                       ),
                       buildTextField("우대 조건을 적어주세용", preferentialInfoC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -210,7 +210,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                         height: 10,
                       ),
                       buildTextField("기타 설명을 적어주세요. (필수가 아닙니다.)", etcC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
