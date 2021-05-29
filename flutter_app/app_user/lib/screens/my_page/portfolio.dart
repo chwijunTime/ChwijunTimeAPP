@@ -150,77 +150,75 @@ class _PortfolioPageState extends State<PortfolioPage> {
             SizedBox(
               width: 10,
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ShowWebView(url: portList[index].portfolioUrl)));
-              },
-              child: Icon(Icons.search),
-            ),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ShowWebView(url: portList[index].portfolioUrl)));
+                },
+                icon: Icon(Icons.search)),
             SizedBox(
               width: 10,
             ),
-            InkWell(
-              onTap: () async {
-                await showDialog(
-                    context: context,
-                    builder: (BuildContext context) => EditDialog(
-                          mode: "portfolio",
-                          index: portList[index].index,
-                        ));
-                setState(() {
-                  _getPortpolio();
-                });
-              },
-              child: Icon(Icons.edit),
-            ),
+            IconButton(
+                onPressed: () async {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => EditDialog(
+                            mode: "portfolio",
+                            index: portList[index].index,
+                          ));
+                  setState(() {
+                    _getPortpolio();
+                  });
+                },
+                icon: Icon(Icons.edit)),
             SizedBox(
               width: 10,
             ),
-            InkWell(
-              onTap: () async {
-                await showDialog(
-                    context: context,
-                    builder: (BuildContext context) => StdDialog(
-                          msg: "선택한 포트폴리오를 삭제하시겠습니까?",
-                          size: Size(326, 124),
-                          btnName1: "아니요",
-                          btnCall1: () {
-                            Navigator.pop(context, false);
-                          },
-                          btnName2: "삭제하기",
-                          btnCall2: () async {
-                            final pref = await SharedPreferences.getInstance();
-                            var token = pref.getString("accessToken");
-                            try {
-                              var res = await helper.deletePortfolio(
-                                  token, portList[index].index);
-                              if (res.success) {
-                                snackBar("포트폴리오가 삭제되었습니다", context);
-                                Navigator.pop(context, true);
-                              } else {
-                                snackBar(res.msg, context);
-                                print("error: ${res.msg}");
-                                Navigator.pop(context);
+            IconButton(
+                onPressed: () async {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => StdDialog(
+                            msg: "선택한 포트폴리오를 삭제하시겠습니까?",
+                            size: Size(326, 124),
+                            btnName1: "아니요",
+                            btnCall1: () {
+                              Navigator.pop(context, false);
+                            },
+                            btnName2: "삭제하기",
+                            btnCall2: () async {
+                              final pref =
+                                  await SharedPreferences.getInstance();
+                              var token = pref.getString("accessToken");
+                              try {
+                                var res = await helper.deletePortfolio(
+                                    token, portList[index].index);
+                                if (res.success) {
+                                  snackBar("포트폴리오가 삭제되었습니다", context);
+                                  Navigator.pop(context, true);
+                                } else {
+                                  snackBar(res.msg, context);
+                                  print("error: ${res.msg}");
+                                  Navigator.pop(context);
+                                }
+                              } catch (e) {
+                                print("err: ${e}");
+                                Navigator.pop(
+                                  context,
+                                );
+                                snackBar("이미 삭제된 포트폴리오 입니다.", context);
                               }
-                            } catch (e) {
-                              print("err: ${e}");
-                              Navigator.pop(
-                                context,
-                              );
-                              snackBar("이미 삭제된 포트폴리오 입니다.", context);
-                            }
-                          },
-                        ));
-                setState(() {
-                  _getPortpolio();
-                });
-              },
-              child: Icon(Icons.delete),
-            ),
+                            },
+                          ));
+                  setState(() {
+                    _getPortpolio();
+                  });
+                },
+                icon: Icon(Icons.delete))
           ],
         ),
       ),

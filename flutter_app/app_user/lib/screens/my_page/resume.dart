@@ -126,86 +126,80 @@ class _ResumePageState extends State<ResumePage> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => StdDialog(
-                          msg: "이력서${resumeList[index].index + 1} 첨삭 요청하기",
-                          size: Size(326, 124),
-                          icon: Icon(
-                            Icons.outgoing_mail,
-                            color: Color(0xff4687ff),
-                          ),
-                          btnName2: "요청하기",
-                          btnCall2: _postResume(index),
-                          btnIcon2: Icon(
-                            Icons.outgoing_mail,
-                            color: Colors.white,
-                          ),
-                        ));
-                  },
-                  child: Icon(Icons.mail),
-                ),
+                IconButton(onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => StdDialog(
+                        msg: "이력서${resumeList[index].index + 1} 첨삭 요청하기",
+                        size: Size(326, 124),
+                        icon: Icon(
+                          Icons.outgoing_mail,
+                          color: Color(0xff4687ff),
+                        ),
+                        btnName2: "요청하기",
+                        btnCall2: _postResume(index),
+                        btnIcon2: Icon(
+                          Icons.outgoing_mail,
+                          color: Colors.white,
+                        ),
+                      ));
+                }, icon: Icon(Icons.mail)),
                 SizedBox(
                   width: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ShowWebView(url: resumeList[index].resumeUrl)));
-                  },
-                  child: Icon(Icons.search),
-                ),
+                IconButton(onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ShowWebView(url: resumeList[index].resumeUrl)));
+                }, icon: Icon(Icons.search)),
                 SizedBox(
                   width: 10,
                 ),
-                InkWell(
-                  onTap: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext context) => EditDialog(
-                          mode: "resume",
-                          index: resumeList[index].index,
-                        ));
-                    setState(() {
-                      _getResume();
-                    });
-                  },
-                  child: Icon(Icons.edit),
-                ),
+                IconButton(onPressed: () async {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => EditDialog(
+                        mode: "resume",
+                        index: resumeList[index].index,
+                      ));
+                  setState(() {
+                    _getResume();
+                  });
+                }, icon: Icon(Icons.edit)),
                 SizedBox(
                   width: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    showDialog(context: context,
-                        builder: (BuildContext context) => StdDialog(
-                          msg: "선택한 이력서를 삭제하시겠습니까?",
-                          size: Size(326, 124),
-                          btnName1: "아니요",
-                          btnCall1: () {
-                            Navigator.pop(context, false);
-                          },
-                          btnName2: "삭제하기",
-                          btnCall2: () async {
-                            final pref = await SharedPreferences.getInstance();
-                            var token = pref.getString("accessToken");
-                            try {
-                              // TODO: 포트폴리오 삭제 요청보내기
-                            } catch (e) {
-                              print("err: ${e}");
-                              Navigator.pop(context, false);
-                              snackBar("이미 삭제된 이력서 입니다.", context);
+                IconButton(onPressed: () {
+                  showDialog(context: context,
+                      builder: (BuildContext context) => StdDialog(
+                        msg: "선택한 이력서를 삭제하시겠습니까?",
+                        size: Size(326, 124),
+                        btnName1: "아니요",
+                        btnCall1: () {
+                          Navigator.pop(context, false);
+                        },
+                        btnName2: "삭제하기",
+                        btnCall2: () async {
+                          final pref = await SharedPreferences.getInstance();
+                          var token = pref.getString("accessToken");
+                          try {
+                            var res = await helper.deleteResume(token, index);
+                            if (res.success) {
+                              snackBar("성공적으로 삭제되었습니다", context);
+                            } else {
+                              snackBar(res.msg, context);
+                              print("error: ${res.msg}");
                             }
-                          },
-                        ));
-                  },
-                  child: Icon(Icons.delete),
-                ),
+                          } catch (e) {
+                            print("err: ${e}");
+                            Navigator.pop(context, false);
+                            snackBar("이미 삭제된 이력서 입니다.", context);
+                          }
+                        },
+                      ));
+                }, icon: Icon(Icons.delete)),
               ],
             ),
           ),
