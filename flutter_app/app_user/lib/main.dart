@@ -36,6 +36,7 @@ class UserApp extends StatelessWidget {
       ],
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        fontFamily: 'Nixgon',
       ),
       routes: {
         "/": (context) => MainPage(),

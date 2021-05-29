@@ -52,7 +52,7 @@ class _JoinPageState extends State<JoinPage> {
                     width: MediaQuery.of(context).size.width,
                     height: 115,
                     child: Image.asset(
-                      "images/top.png",
+                      "assets/images/top.png",
                       fit: BoxFit.fill,
                     )),
                 Padding(
@@ -146,7 +146,7 @@ class _JoinPageState extends State<JoinPage> {
                     width: MediaQuery.of(context).size.width,
                     height: 115,
                     child: Image.asset(
-                      "images/bottom.png",
+                      "assets/images/bottom.png",
                       fit: BoxFit.fill,
                     )),
                 Positioned(

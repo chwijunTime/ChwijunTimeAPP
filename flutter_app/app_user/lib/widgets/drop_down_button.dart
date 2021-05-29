@@ -17,13 +17,16 @@ Widget makeDropDownBtn(
         value: selectedValue,
         hint: Text(
           hint,
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
         ),
         items: valueList.map(
           (value) {
             return DropdownMenuItem(
               value: value,
-              child: Text(value),
+              child: Text(
+                value,
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
             );
           },
         ).toList(),

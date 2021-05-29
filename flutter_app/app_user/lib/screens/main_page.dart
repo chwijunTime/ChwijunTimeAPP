@@ -22,17 +22,25 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   List<SliderCard> sliderList = [
     SliderCard(
-        title: "협약업체", image: "images/loco.jpg", route: "/contracting_company"),
+        title: "협약업체",
+        image: "assets/images/loco.jpg",
+        route: "/contracting_company"),
     SliderCard(
-        title: "취업공고", image: "images/loco.jpg", route: "/company_notice"),
+        title: "취업공고",
+        image: "assets/images/loco.jpg",
+        route: "/company_notice"),
     SliderCard(
-        title: "면접후기", image: "images/loco.jpg", route: "/interview_review"),
+        title: "면접후기",
+        image: "assets/images/loco.jpg",
+        route: "/interview_review"),
     SliderCard(
         title: "취업 확정 현황",
-        image: "images/loco.jpg",
+        image: "assets/images/loco.jpg",
         route: "/confirmation_status"),
     SliderCard(
-        title: "꿀팁 저장소", image: "images/loco.jpg", route: "/tip_storage"),
+        title: "꿀팁 저장소",
+        image: "assets/images/loco.jpg",
+        route: "/tip_storage"),
   ];
 
   RetrofitHelper helper;
@@ -48,14 +56,17 @@ class _MainPageState extends State<MainPage> {
     widget.role = User.role;
   }
 
-  init() {
+  init() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
     Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
+      connectTimeout: 5 * 1000,
+      receiveTimeout: 5 * 1000,
+      followRedirects: false,
+      validateStatus: (status) {
+        return status < 500;
+      },
+    ));
     helper = RetrofitHelper(dio);
   }
 
@@ -88,7 +99,7 @@ class _MainPageState extends State<MainPage> {
                         "과 함께",
                         style: TextStyle(
                             fontSize: 24,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             color: Colors.black),
                       )
                     ],
@@ -100,7 +111,7 @@ class _MainPageState extends State<MainPage> {
                     "취업 준비 해요",
                     style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         color: Colors.black),
                   )
                 ],
@@ -303,7 +314,7 @@ Widget makeSlider(List<SliderCard> list) {
                 child: Stack(
                   children: [
                     Image.asset(
-                      "images/loco.jpg",
+                      "assets/images/loco.jpg",
                       fit: BoxFit.cover,
                       width: 357,
                       height: 250,

@@ -172,30 +172,30 @@ Widget buildDrawer(BuildContext context) {
                   makeBtn(
                       msg: "로그아웃",
                       onPressed: () async {
-                        // RetrofitHelper helper;
-                        // Dio dio = Dio();
-                        // dio.options = BaseOptions(
-                        //     receiveDataWhenStatusError: true,
-                        //     connectTimeout: 10 * 1000,
-                        //     receiveTimeout: 10 * 1000,
-                        //     followRedirects: false,
-                        //     validateStatus: (status) {
-                        //       return status < 500;
-                        //     });
-                        // helper = RetrofitHelper(dio);
-                        //
-                        // try {
-                        //   var res = await helper.postLogout();
-                        //   if(res.success) {
-                        //     SharedPreferences pref = await SharedPreferences.getInstance();
-                        //     await pref.clear();
-                        //     Navigator.pushReplacementNamed(context, "/login");
-                        //   } else {
-                        //     print("error: ${res.msg}");
-                        //   }
-                        // } catch (e) {
-                        //   print("err: ${e}");
-                        // }
+                        RetrofitHelper helper;
+                        Dio dio = Dio();
+                        dio.options = BaseOptions(
+                            receiveDataWhenStatusError: true,
+                            connectTimeout: 10 * 1000,
+                            receiveTimeout: 10 * 1000,
+                            followRedirects: false,
+                            validateStatus: (status) {
+                              return status < 500;
+                            });
+                        helper = RetrofitHelper(dio);
+
+                        try {
+                          var res = await helper.postLogout();
+                          if(res.success) {
+                            SharedPreferences pref = await SharedPreferences.getInstance();
+                            await pref.clear();
+                            Navigator.pushReplacementNamed(context, "/login");
+                          } else {
+                            print("error: ${res.msg}");
+                          }
+                        } catch (e) {
+                          print("err: ${e}");
+                        }
 
                         Navigator.pushReplacementNamed(context, "/login");
                       },
@@ -238,7 +238,7 @@ Widget customListTile(
           ),
           Text(
             title,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
           ),
         ],
       ),

@@ -12,7 +12,8 @@ Widget buildTextField(String hint, TextEditingController controller,
     Icon prefixIcon,
     String suffixText,
     Function textInput,
-    bool multiLine = false}) {
+    bool multiLine = false,
+    bool isCounterText = false}) {
   return TextField(
     controller: controller,
     keyboardType: type,
@@ -35,6 +36,7 @@ Widget buildTextField(String hint, TextEditingController controller,
             ? OutlineInputBorder(borderSide: BorderSide(color: Colors.grey))
             : null,
         prefixIcon: prefixIcon != null ? prefixIcon : null,
-        suffixText: suffixText),
+        suffixText: suffixText,
+    counterText: isCounterText ? "" : null),
   );
 }
