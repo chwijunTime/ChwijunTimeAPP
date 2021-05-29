@@ -12,17 +12,10 @@ class PortfolioPage extends StatefulWidget {
 class _PortfolioPageState extends State<PortfolioPage> {
   List<PortfolioVO> portList = [];
 
-  init() {
-    for (int i = 0; i < 10; i++) {
-      portList.add(PortfolioVO(
-          user: "3210_안수빈", state: "notDone", portfolioUrl: "https://naver.com"));
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    init();
   }
 
   @override
@@ -89,30 +82,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: GestureDetector(
         onTap: () {
-          showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      RequestDialog(vo: portList[index], mode: "portfolio"))
-              .then((value) {
-            if (value != null) {
-              print("value: ${value.toString()}");
-              setState(() {
-                portList[index].state = value;
-              });
-            }
-          });
+
         },
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  "${portList[index].user}",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-              ),
-              makeTag(portList[index].state)
             ],
           ),
         ),

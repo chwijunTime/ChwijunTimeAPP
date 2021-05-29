@@ -13,8 +13,6 @@ PortfolioVO _$PortfolioVOFromJson(Map<String, dynamic> json) {
         : UserInfoVO.fromJson(json['member'] as Map<String, dynamic>),
     index: json['memberPortfolioIdx'] as int,
     portfolioUrl: json['notionPortfolioURL'] as String,
-    user: json['user'] as String,
-    state: json['state'] as String,
   );
 }
 
@@ -23,6 +21,4 @@ Map<String, dynamic> _$PortfolioVOToJson(PortfolioVO instance) =>
       'member': instance.member,
       'memberPortfolioIdx': instance.index,
       'notionPortfolioURL': instance.portfolioUrl,
-      'user': instance.user,
-      'state': instance.state,
     };

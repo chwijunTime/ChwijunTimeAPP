@@ -12,12 +12,8 @@ class PortfolioVO {
   @JsonKey(name: "notionPortfolioURL")
   String portfolioUrl;
 
-  String user;
-  String state;
-
-
   PortfolioVO(
-      {this.member, this.index, this.portfolioUrl, this.user, this.state});
+      {this.member, this.index, this.portfolioUrl});
 
   factory PortfolioVO.fromJson(Map<String, dynamic> json) => _$PortfolioVOFromJson(json);
 

@@ -1,4 +1,3 @@
-import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/button.dart';
@@ -6,10 +5,10 @@ import 'package:app_user/widgets/dialog/reject_dialog.dart';
 import 'package:flutter/material.dart';
 
 class RequestDialog extends StatefulWidget {
-  PortfolioVO vo;
+  int index;
   String mode;
 
-  RequestDialog({@required this.vo, @required this.mode});
+  RequestDialog({@required this.index, @required this.mode});
 
   @override
   _RequestDialog createState() => _RequestDialog();
@@ -54,7 +53,7 @@ class _RequestDialog extends State<RequestDialog> {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "${widget.vo.user} ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"}",
+                  "${widget.mode == "portfolio" ? "포트폴리오" : "이력서"}${widget.index + 1 }",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -62,25 +61,6 @@ class _RequestDialog extends State<RequestDialog> {
                 ),
               ),
             ),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.topCenter,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ShowWebView(url: widget.vo.portfolioUrl)));
-                      },
-                      child: Text(
-                        "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Color(0xff5bc7f5)),
-                      ),
-                    ))),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

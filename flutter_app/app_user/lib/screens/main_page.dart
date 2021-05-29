@@ -67,6 +67,25 @@ class _MainPageState extends State<MainPage> {
         return status < 500;
       },
     ));
+    dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      options.headers["Authorization"] = token;
+      return options;
+    }, onResponse: (Response response) async {
+
+      return response;
+    }, onError: (DioError error) async {
+      if (error.response?.statusCode == 403) {
+        dio.interceptors.requestLock.lock();
+        dio.interceptors.responseLock.lock();
+        final pref = await SharedPreferences.getInstance();
+        var token = pref.getString("refreshToken");
+        var res = await helper.postRefreshToken({"body": "body"});
+        if (res.success) {
+          // TODO??
+        }
+      }
+    }));
     helper = RetrofitHelper(dio);
   }
 

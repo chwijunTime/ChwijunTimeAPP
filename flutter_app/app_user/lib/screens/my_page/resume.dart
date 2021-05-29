@@ -1,8 +1,10 @@
 import 'package:app_user/model/resume_portfolio/resume_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
-import 'package:app_user/widgets/dialog/request_dialog.dart';
+import 'package:app_user/widgets/dialog/edit_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,19 +16,26 @@ class ResumePage extends StatefulWidget {
 }
 
 class _ResumePageState extends State<ResumePage> {
-  List<ResumeVO> portList = [];
+  RetrofitHelper helper;
+  List<ResumeVO> resumeList = [];
 
   @override
   void initState() {
     super.initState();
-    portList.add(
-        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
-    portList.add(
-        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
-    portList.add(
-        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
-    portList.add(
-        ResumeVO(user: "오잉", state: "approve", resumeUrl: "https://naver.com"));
+    initRetrofit();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio();
+    dio.options = BaseOptions(
+        receiveDataWhenStatusError: true,
+        connectTimeout: 10 * 1000,
+        receiveTimeout: 10 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        });
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -59,12 +68,12 @@ class _ResumePageState extends State<ResumePage> {
               ),
               Expanded(
                   child: FutureBuilder(
-                    future: _getPortpolio(),
+                    future: _getResume(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         return ListView.separated(
                             itemBuilder: (context, index) {
-                              return buildPortfolio(context, index);
+                              return buildResume(context, index);
                             },
                             separatorBuilder: (context, index) {
                               return Container(
@@ -72,7 +81,7 @@ class _ResumePageState extends State<ResumePage> {
                                 color: Colors.grey,
                               );
                             },
-                            itemCount: portList.length);
+                            itemCount: resumeList.length);
                       } else {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -88,13 +97,22 @@ class _ResumePageState extends State<ResumePage> {
     );
   }
 
-  Future<List<ResumeVO>> _getPortpolio() async {
-    List<ResumeVO> list = [];
-
-    return list;
+  Future<List<ResumeVO>> _getResume() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.getResumeList(token);
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("err: $e");
+    }
   }
 
-  Widget buildPortfolio(BuildContext context, int index) {
+  Widget buildResume(BuildContext context, int index) {
     return Container(
         child: Padding(
           padding: EdgeInsets.only(top: 20, bottom: 10),
@@ -110,12 +128,22 @@ class _ResumePageState extends State<ResumePage> {
                 ),
                 InkWell(
                   onTap: () {
-                    // TODO Resume 첨삭 신청하기
-                    // showDialog(
-                    //     context: context,
-                    //     builder: (BuildContext context) =>
-                    //         RequestDialog(
-                    //             vo: [index], mode: "resume"));
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => StdDialog(
+                          msg: "이력서${resumeList[index].index + 1} 첨삭 요청하기",
+                          size: Size(326, 124),
+                          icon: Icon(
+                            Icons.outgoing_mail,
+                            color: Color(0xff4687ff),
+                          ),
+                          btnName2: "요청하기",
+                          btnCall2: _postResume(index),
+                          btnIcon2: Icon(
+                            Icons.outgoing_mail,
+                            color: Colors.white,
+                          ),
+                        ));
                   },
                   child: Icon(Icons.mail),
                 ),
@@ -128,9 +156,26 @@ class _ResumePageState extends State<ResumePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ShowWebView(url: portList[index].resumeUrl)));
+                                ShowWebView(url: resumeList[index].resumeUrl)));
                   },
                   child: Icon(Icons.search),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                InkWell(
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) => EditDialog(
+                          mode: "resume",
+                          index: resumeList[index].index,
+                        ));
+                    setState(() {
+                      _getResume();
+                    });
+                  },
+                  child: Icon(Icons.edit),
                 ),
                 SizedBox(
                   width: 10,
@@ -165,5 +210,23 @@ class _ResumePageState extends State<ResumePage> {
             ),
           ),
         ));
+  }
+
+  _postResume(int index) async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.postCorrectionRequest(
+          token, "resume", resumeList[index].index);
+      if (res.success) {
+        snackBar("첨삭 요청을 완료했습니다", context);
+      } else {
+        snackBar(res.msg, context);
+        print("error: ${res.msg}");
+      }
+    } catch (e) {
+      print("err: $e");
+    }
+    Navigator.pop(context);
   }
 }

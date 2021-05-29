@@ -12,17 +12,9 @@ class IntroductionPage extends StatefulWidget {
 class _IntroductionPageState extends State<IntroductionPage> {
   List<PortfolioVO> introList = [];
 
-  init() {
-    for (int i = 0; i < 10; i++) {
-      introList.add(PortfolioVO(
-          user: "3210_안수빈", state: "notDone", portfolioUrl: "https://naver.com"));
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    init();
   }
 
   @override
@@ -89,30 +81,11 @@ class _IntroductionPageState extends State<IntroductionPage> {
           padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
           child: GestureDetector(
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      RequestDialog(vo: introList[index], mode: "introduction"))
-                  .then((value) {
-                if (value != null) {
-                  print("value: ${value.toString()}");
-                  setState(() {
-                    introList[index].state = value;
-                  });
-                }
-              });
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 10, left: 10),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      "${introList[index].user}",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  makeTag(introList[index].state)
                 ],
               ),
             ),
