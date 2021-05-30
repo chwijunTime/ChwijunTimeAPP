@@ -24,16 +24,6 @@ class _MyPageState extends State<MyPage> {
   String number = "10";
   List<String> tagList = List.generate(5, (index) => "${index}.tag");
 
-  CarouselController buttonCarouselController = CarouselController();
-  List<Widget> menuList = [
-    Image.asset(
-      "images/logo.png",
-    ),
-    Image.asset("images/loco.jpg"),
-    Image.asset("images/top.png"),
-    Image.asset("images/bottom.png"),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,37 +134,6 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
-            ),
-            Expanded(
-                child: CarouselSlider(
-                    items: menuList,
-                    carouselController: buttonCarouselController,
-                    options: CarouselOptions(
-                      autoPlay: false,
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.9,
-                      aspectRatio: 2.0,
-                      initialPage: 2,
-                    ))),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                makeBtn(
-                    msg: "←",
-                    onPressed: () {
-                      buttonCarouselController.previousPage();
-                    },
-                    mode: 3),
-                SizedBox(
-                  width: 20,
-                ),
-                makeBtn(
-                    msg: "→",
-                    onPressed: () {
-                      buttonCarouselController.nextPage();
-                    },
-                    mode: 3)
-              ],
             ),
             SizedBox(
               height: 20,
