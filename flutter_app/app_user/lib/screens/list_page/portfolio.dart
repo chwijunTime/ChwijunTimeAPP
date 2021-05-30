@@ -3,6 +3,7 @@ import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -197,7 +198,15 @@ class _PortfolioPageState extends State<PortfolioPage> {
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () async {
+          await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  CorrectionDialog(index: vo.index, mode: vo.type));
+          setState(() {
+            _getCorrection();
+          });
+          },
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Row(
