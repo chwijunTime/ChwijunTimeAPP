@@ -1438,14 +1438,14 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrection> getCorrection(token, type) async {
+  Future<ResponseCorrection> getCorrection(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
-    ArgumentError.checkNotNull(type, 'type');
+    ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/correction/$type',
+        '/v1/correction/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',

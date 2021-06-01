@@ -383,7 +383,7 @@ abstract class RetrofitHelper {
   @GET("/v1/correction/{idx}")
   Future<ResponseCorrection> getCorrection(
     @Header("Authorization") String token,
-    @Path("idx") int type,
+    @Path("idx") int index,
   );
 
   @GET("/v1/my-correction")
