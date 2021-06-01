@@ -9,23 +9,21 @@ part of 'response_corrected_list.dart';
 ResponseCorrectedList _$ResponseCorrectedListFromJson(
     Map<String, dynamic> json) {
   return ResponseCorrectedList(
-    classNumber: json['classNumber'] as String,
-    correctionVO: json['correctionApply'] == null
-        ? null
-        : CorrectionVO.fromJson(
-            json['correctionApply'] as Map<String, dynamic>),
-    content: json['correctionContent'] as String,
-    index: json['correctionIdx'] as int,
-    rejectReason: json['reasonForRejection'] as String,
+    code: json['code'] as int,
+    list: (json['list'] as List)
+        ?.map((e) =>
+            e == null ? null : CorrectedVO.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+    msg: json['msg'] as String,
+    success: json['success'] as bool,
   );
 }
 
 Map<String, dynamic> _$ResponseCorrectedListToJson(
         ResponseCorrectedList instance) =>
     <String, dynamic>{
-      'classNumber': instance.classNumber,
-      'correctionApply': instance.correctionVO,
-      'correctionContent': instance.content,
-      'correctionIdx': instance.index,
-      'reasonForRejection': instance.rejectReason,
+      'code': instance.code,
+      'list': instance.list,
+      'msg': instance.msg,
+      'success': instance.success,
     };

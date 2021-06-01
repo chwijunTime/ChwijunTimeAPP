@@ -1,28 +1,20 @@
-import 'package:app_user/model/correction/correction_vo.dart';
+import 'package:app_user/model/correction/corrected_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'response_corrected_list.g.dart';
 
 @JsonSerializable()
 class ResponseCorrectedList{
-  @JsonKey(name: "classNumber")
-  String classNumber;
-  @JsonKey(name: "correctionApply")
-  CorrectionVO correctionVO;
-  @JsonKey(name: "correctionContent")
-  String content;
-  @JsonKey(name: "correctionIdx")
-  int index;
-  @JsonKey(name: "reasonForRejection")
-  String rejectReason;
+  @JsonKey(name: "code")
+  int code;
+  @JsonKey(name: 'list')
+  List<CorrectedVO> list;
+  @JsonKey(name: 'msg')
+  String msg;
+  @JsonKey(name: 'success')
+  bool success;
 
-
-  ResponseCorrectedList(
-      {this.classNumber,
-      this.correctionVO,
-      this.content,
-      this.index,
-      this.rejectReason});
+  ResponseCorrectedList({this.code, this.list, this.msg, this.success});
 
   factory ResponseCorrectedList.fromJson(Map<String, dynamic> json) => _$ResponseCorrectedListFromJson(json);
 

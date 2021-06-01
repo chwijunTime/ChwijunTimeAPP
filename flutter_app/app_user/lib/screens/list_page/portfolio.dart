@@ -91,7 +91,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 child: FutureBuilder(
               future: _getCorrection(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.data) {
+                if (snapshot.hasData) {
                   correctionList = snapshot.data;
                   if (correctionList.length <= Consts.showItemCount) {
                     itemCount = correctionList.length;

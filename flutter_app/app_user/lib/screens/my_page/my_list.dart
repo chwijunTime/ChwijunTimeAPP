@@ -1,18 +1,22 @@
 import 'package:app_user/consts.dart';
+import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/model/consulting/consulting_user_vo.dart';
+import 'package:app_user/model/correction/corrected_vo.dart';
 import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/model/tip/tip_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:app_user/screens/detail_page/company_notice_detail.dart';
+import 'package:app_user/screens/detail_page/interview_review_detail.dart';
+import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -29,11 +33,11 @@ class _MyListPageState extends State<MyListPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
   //'취업공고', '작성한 면접 후기', "상담", "요청한 첨삭", "완료한 첨삭", "작성한 꿀팁"
-  List<CompNoticeVO> noticeList = [];
+  List<CompApplyStatusVO> noticeList = [];
   List<ReviewVO> reviewList = [];
   List<ConsultingUserVO> consultingList = [];
-  List<CorrectionVO> correctionList = [];
-  List<CorrectionVO> correctionApplyList = [];
+  List<CorrectedVO> correctionList = [];
+  List<CorrectionVO> correctionnoticeList = [];
   List<TipVO> tipList = [];
   List<CompNoticeVO> searchNoticeList = [];
   final titleC = TextEditingController();
@@ -98,7 +102,6 @@ class _MyListPageState extends State<MyListPage> {
     return Scaffold(
       key: scafforldkey,
       appBar: buildAppBar("취준타임", context),
-      drawer: buildDrawer(context),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -120,7 +123,7 @@ class _MyListPageState extends State<MyListPage> {
                             color: Color(0x832B8AC0)),
                       ),
                       Text(
-                        "취업 공고",
+                        "마이 리스트",
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
@@ -184,36 +187,50 @@ class _MyListPageState extends State<MyListPage> {
                 ],
               ),
             ),
-            Padding(
-                padding:
-                    EdgeInsets.only(right: 33, left: 33, bottom: 15, top: 15),
-                child: buildTextField("이름, 지역, 직군", titleC,
-                    autoFocus: false, prefixIcon: Icon(Icons.search),
-                    textInput: (String key) async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
-                  var res = await helper.getCompListKeyword(token, key);
-                  if (res.success)
-                    setState(() {
-                      searchNoticeList = res.list;
-                      if (searchNoticeList.length <= Consts.showItemCount) {
-                        itemCount = searchNoticeList.length;
-                        print(searchNoticeList.length);
-                        msg = "검색된 취업공고가 없습니다.";
-                      }
-                    });
-                })),
-            Expanded(child: selectValue == valueList[0] ? _companyListBuilder() : _getConsultingList() ),
+            Expanded(child: _myList()),
           ],
         ),
       ),
     );
   }
 
+  Widget _myList() {
+    switch (selectValue) {
+      case "취업공고":
+        {
+          return _companyListBuilder();
+        }
+      case "작성한 면접 후기":
+        {
+          return _reviewListBuilder();
+        }
+      case "상담":
+        {
+          return _consultingListBuilder();
+        }
+      case "요청한 첨삭":
+        {
+          return _correctionListBuilder();
+        }
+      case "완료한 첨삭":
+        {
+          return _correctionAppyListBuilder();
+        }
+      case "작성한 꿀팁":
+        {
+          return _tipListBuilder();
+        }
+      default:
+        {
+          return _companyListBuilder();
+        }
+    }
+  }
+
   // region 취업공고
   Widget _companyListBuilder() {
     return FutureBuilder(
-        future: _getCompany(),
+        future: _getCompNoticeList(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -224,7 +241,7 @@ class _MyListPageState extends State<MyListPage> {
             if (noticeList.length <= Consts.showItemCount) {
               itemCount = noticeList.length;
             }
-            return ListView.builder(
+            return ListView.separated(
               controller: _scrollController,
               itemCount: itemCount + 1,
               itemBuilder: (context, index) {
@@ -239,14 +256,14 @@ class _MyListPageState extends State<MyListPage> {
                         child: Padding(
                             padding: EdgeInsets.all(Consts.padding),
                             child: Text(
-                              msg,
+                              "등록된 협약업체가 없습니다.",
                               style: TextStyle(fontWeight: FontWeight.w700),
                             )),
                       ),
                     );
                   } else if (index == noticeList.length) {
                     return Padding(
-                      padding: EdgeInsets.all(Consts.padding),
+                      padding: EdgeInsets.all(20),
                       child: makeGradientBtn(
                           msg: "맨 처음으로",
                           onPressed: () {
@@ -262,22 +279,25 @@ class _MyListPageState extends State<MyListPage> {
                           )),
                     );
                   } else {
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18)),
-                      elevation: 5,
-                      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(Consts.padding),
-                          child: CircularProgressIndicator(),
-                        ),
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator(),
                       ),
                     );
                   }
                 } else {
-                  return buildItemCompany(context, index, noticeList);
+                  return buildItemApply(context, index);
                 }
+              },
+              separatorBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    height: 1,
+                    color: Colors.grey,
+                  ),
+                );
               },
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -286,40 +306,191 @@ class _MyListPageState extends State<MyListPage> {
         });
   }
 
-  Future<List<CompNoticeVO>> _getCompany() async {
+  Future<List<CompApplyStatusVO>> _getCompNoticeList() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    print("token: ${token}");
     try {
-      var res = await helper.getCompList(token);
-      print("res.success: ${res.success}");
+      var res = await helper.getMyApplyCompNotice(token);
       if (res.success) {
-        return res.list.toList();
+        return res.list;
       } else {
-        return null;
+        print("error: ${res.msg}");
+        snackBar(res.msg, context);
       }
     } catch (e) {
-      print("error: $e");
+      print("err: $e");
     }
   }
 
-  Widget buildItemCompany(
-      BuildContext context, int index, List<CompNoticeVO> list) {
+  Widget buildItemApply(BuildContext context, int index) {
+    var status = noticeList[index].status;
+    return Container(
+        child: Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "${noticeList[index].classNumber}_${noticeList[index].title}",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+          ),
+          status == "Wait"
+              ? Container(
+                  width: 48,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(40)),
+                      border: Border.all(color: Colors.grey)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      "대기중",
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : status == "Approve"
+                  ? Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Color(0xff4687ff))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "수락함",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff4687ff)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Color(0xffFF7777))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "거절함",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xffFF7777)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+          SizedBox(
+            width: 10,
+          ),
+          Icon(Icons.arrow_forward_ios_rounded)
+        ],
+      ),
+    ));
+  }
+
+  //endregion
+
+  //region 면접 후기
+  Widget _reviewListBuilder() {
+    return FutureBuilder(
+        future: _getReview(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            reviewList = snapshot.data;
+            if (reviewList.length <= Consts.showItemCount) {
+              itemCount = reviewList.length;
+            }
+            return ListView.builder(
+                controller: _scrollController,
+                itemCount: itemCount + 1,
+                itemBuilder: (context, index) {
+                  if (index == itemCount) {
+                    if (index == 0) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18)),
+                        elevation: 5,
+                        margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                        child: Center(
+                          child: Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: Text(
+                                "등록된 리뷰가 없습니다.",
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              )),
+                        ),
+                      );
+                    } else if (index == reviewList.length) {
+                      return Padding(
+                        padding: EdgeInsets.all(Consts.padding),
+                        child: makeGradientBtn(
+                            msg: "맨 처음으로",
+                            onPressed: () {
+                              _scrollController.animateTo(
+                                  _scrollController.position.minScrollExtent,
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.elasticOut);
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.arrow_upward,
+                              color: Colors.white,
+                            )),
+                      );
+                    } else {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18)),
+                        elevation: 5,
+                        margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(Consts.padding),
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    }
+                  } else {
+                    return buildItemReview(context, index, reviewList);
+                  }
+                });
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget buildItemReview(BuildContext context, int index, List<ReviewVO> list) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: InkWell(
+      child: GestureDetector(
         onTap: () async {
+          print("눌림");
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CompanyNoticeDetailPage(
+                  builder: (countext) => InterviewReviewDetail(
                         index: list[index].index,
                       )));
           setState(() {
-            _getCompany();
-            selectValue = valueList[0];
+            _getReview();
           });
         },
         child: Padding(
@@ -333,34 +504,18 @@ class _MyListPageState extends State<MyListPage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
-                child: Container(
-                  height: 60,
-                  child: AutoSizeText(
-                    "${list[index].info}, ",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
-                    minFontSize: 14,
-                  ),
+                child: Text(
+                  "${list[index].review}",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
               SizedBox(
                 height: 22,
                 child: Row(
-                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
-                      children: List.generate(
-                          list[index].tag.length < 2 ? 1 : 2, (indextag) {
-                        return buildItemTag(list[index].tag, indextag);
-                      }),
-                    ),
-                    list[index].tag.length < 3
-                        ? SizedBox()
-                        : Container(
+                    buildItemTag(list[index].tag, 0),
+                    list[index].tag.length > 1
+                        ? Container(
                             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
                             margin: EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
@@ -370,22 +525,22 @@ class _MyListPageState extends State<MyListPage> {
                                 )),
                             child: Center(
                               child: Text(
-                                "외 ${list[index].tag.length - 2}개",
+                                "외 ${list[index].tag.length - 1}개",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w400),
                               ),
                             ),
-                          ),
+                          )
+                        : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "마감일: ${list[index].deadLine}",
+                          "지원날짜: ${list[index].applyDate}",
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
-                          ),
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                     )
@@ -398,11 +553,27 @@ class _MyListPageState extends State<MyListPage> {
       ),
     );
   }
-  
+
+  Future<List<ReviewVO>> _getReview() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print("token: ${token}");
+    try {
+      var res = await helper.getMyReview(token);
+      if (res.success) {
+        return res.list.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   //endregion
 
   // region 상담
-  Widget _getConsultingList() {
+  Widget _consultingListBuilder() {
     return FutureBuilder(
       future: getCounselingUserList(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -427,8 +598,7 @@ class _MyListPageState extends State<MyListPage> {
                           padding: EdgeInsets.all(Consts.padding),
                           child: Text(
                             "상담 신청이 없습니다.",
-                            style:
-                            TextStyle(fontWeight: FontWeight.w700),
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           )),
                     ),
                   );
@@ -439,8 +609,7 @@ class _MyListPageState extends State<MyListPage> {
                         msg: "맨 처음으로",
                         onPressed: () {
                           _scrollController.animateTo(
-                              _scrollController
-                                  .position.minScrollExtent,
+                              _scrollController.position.minScrollExtent,
                               duration: Duration(milliseconds: 200),
                               curve: Curves.elasticOut);
                         },
@@ -482,7 +651,7 @@ class _MyListPageState extends State<MyListPage> {
 
   Widget buildCounselingUser(BuildContext context, int index) {
     var tempDate =
-    DateFormat("yyyy-MM-dd hh:mm").parse(consultingList[index].applyDate);
+        DateFormat("yyyy-MM-dd hh:mm").parse(consultingList[index].applyDate);
     var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
     return Card(
         shape: RoundedRectangleBorder(
@@ -496,13 +665,11 @@ class _MyListPageState extends State<MyListPage> {
             children: [
               Text(
                 "${consultingList[index].classNumber} ${consultingList[index].name}님의 신청",
-                style:
-                TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
               Text(
                 strDate,
-                style:
-                TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               )
             ],
           ),
@@ -514,7 +681,7 @@ class _MyListPageState extends State<MyListPage> {
     var token = pref.getString("accessToken");
     print("token: ${token}");
     try {
-      var res = await helper.getConsultingUserList(token);
+      var res = await helper.getMyConsulting(token);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.list;
@@ -525,5 +692,517 @@ class _MyListPageState extends State<MyListPage> {
       print("error: $e");
     }
   }
+
   // endregion
+
+  //region 첨삭
+  Widget _correctionListBuilder() {
+    return FutureBuilder(
+      future: _getCorrection(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          correctionList = snapshot.data;
+          if (correctionList.length <= Consts.showItemCount) {
+            itemCount = correctionList.length;
+          }
+          return ListView.separated(
+            controller: _scrollController,
+            itemCount: itemCount + 1,
+            itemBuilder: (context, index) {
+              if (index == itemCount) {
+                if (correctionList.length == 0) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(Consts.padding),
+                          child: Text(
+                            "등록된 요청이 없습니다.",
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          )),
+                    ),
+                  );
+                } else if (index == correctionList.length) {
+                  return Padding(
+                    padding: EdgeInsets.all(Consts.padding),
+                    child: makeGradientBtn(
+                        msg: "맨 처음으로",
+                        onPressed: () {
+                          _scrollController.animateTo(
+                              _scrollController.position.minScrollExtent,
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.elasticOut);
+                        },
+                        mode: 1,
+                        icon: Icon(
+                          Icons.arrow_upward,
+                          color: Colors.white,
+                        )),
+                  );
+                } else {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(Consts.padding),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                return buildPortfolio(context, index);
+              }
+            },
+            separatorBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Container(
+                  height: 1,
+                  color: Colors.grey,
+                ),
+              );
+            },
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: ScrollPhysics(),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  Future<List<CorrectedVO>> _getCorrection() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.getMyCorrection(token);
+      if (res.success) {
+        return res.list;
+      }
+    } catch (e) {
+      print("err: $e");
+    }
+  }
+
+  Widget buildPortfolio(BuildContext context, int index) {
+    CorrectedVO vo = correctionList[index];
+    return Container(
+        child: Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: GestureDetector(
+        onTap: () async {
+          await showDialog(
+              context: context,
+              builder: (BuildContext context) => CorrectionDialog(
+                  index: vo.index, mode: vo.correctionVO.type));
+          setState(() {
+            _getCorrection();
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(
+                      "${vo.classNumber}${vo.correctionVO.type == "portfolio" ? "포트폴리오" : "이력서"}")),
+              vo.correctionVO.status == "Wait"
+                  ? Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Colors.grey)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "대기중",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : vo.correctionVO.status == "Approve"
+                      ? Container(
+                          width: 48,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(color: Color(0xff4687ff))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Text(
+                              "수락함",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff4687ff)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 48,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(color: Color(0xffFF7777))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Text(
+                              "거절함",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xffFF7777)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+
+  // endregion
+
+  //region 첨삭 요청
+  Widget _correctionAppyListBuilder() {
+    return FutureBuilder(
+      future: _getCorrectionApply(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          correctionnoticeList = snapshot.data;
+          if (correctionnoticeList.length <= Consts.showItemCount) {
+            itemCount = correctionnoticeList.length;
+          }
+          return ListView.separated(
+            controller: _scrollController,
+            itemCount: itemCount + 1,
+            itemBuilder: (context, index) {
+              if (index == itemCount) {
+                if (correctionnoticeList.length == 0) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(Consts.padding),
+                          child: Text(
+                            "등록된 요청이 없습니다.",
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          )),
+                    ),
+                  );
+                } else if (index == correctionnoticeList.length) {
+                  return Padding(
+                    padding: EdgeInsets.all(Consts.padding),
+                    child: makeGradientBtn(
+                        msg: "맨 처음으로",
+                        onPressed: () {
+                          _scrollController.animateTo(
+                              _scrollController.position.minScrollExtent,
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.elasticOut);
+                        },
+                        mode: 1,
+                        icon: Icon(
+                          Icons.arrow_upward,
+                          color: Colors.white,
+                        )),
+                  );
+                } else {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                    elevation: 5,
+                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(Consts.padding),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                return buildPortfolio(context, index);
+              }
+            },
+            separatorBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Container(
+                  height: 1,
+                  color: Colors.grey,
+                ),
+              );
+            },
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: ScrollPhysics(),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  Future<List<CorrectionVO>> _getCorrectionApply() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.getMyCorrectionApply(token);
+      if (res.success) {
+        return res.list;
+      }
+    } catch (e) {
+      print("err: $e");
+    }
+  }
+
+  Widget buildCorrectionApply(BuildContext context, int index) {
+    CorrectionVO vo = correctionnoticeList[index];
+    return Container(
+        child: Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: GestureDetector(
+        onTap: () async {
+          await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  CorrectionDialog(index: vo.index, mode: vo.type));
+          setState(() {
+            _getCorrection();
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(
+                      "${vo.member.classNumber}${vo.type == "portfolio" ? "포트폴리오" : "이력서"}")),
+              vo.status == "Wait"
+                  ? Container(
+                      width: 48,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          border: Border.all(color: Colors.grey)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          "대기중",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : vo.status == "Approve"
+                      ? Container(
+                          width: 48,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(color: Color(0xff4687ff))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Text(
+                              "수락함",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff4687ff)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 48,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(color: Color(0xffFF7777))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Text(
+                              "거절함",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xffFF7777)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+
+  //endregion
+
+  //region 꿀팁
+  Widget _tipListBuilder() {
+    return FutureBuilder(
+        future: _getTipList(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            tipList = snapshot.data;
+            if (tipList.length <= Consts.showItemCount) {
+              itemCount = tipList.length;
+            }
+            return Align(
+              child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: itemCount + 1,
+                  itemBuilder: (context, index) {
+                    if (index == itemCount) {
+                      if (tipList.length == 0) {
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18)),
+                          elevation: 5,
+                          margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                          child: Center(
+                            child: Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: Text(
+                                  msg,
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                )),
+                          ),
+                        );
+                      } else if (index == tipList.length) {
+                        return Padding(
+                          padding: EdgeInsets.all(Consts.padding),
+                          child: makeGradientBtn(
+                              msg: "맨 처음으로",
+                              onPressed: () {
+                                _scrollController.animateTo(
+                                    _scrollController.position.minScrollExtent,
+                                    duration: Duration(milliseconds: 200),
+                                    curve: Curves.elasticOut);
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.arrow_upward,
+                                color: Colors.white,
+                              )),
+                        );
+                      } else {
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18)),
+                          elevation: 5,
+                          margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      return buildItemTip(context, index, tipList);
+                    }
+                  }),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget buildItemTip(BuildContext context, int index, List<TipVO> list) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      elevation: 5,
+      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+      child: InkWell(
+        onTap: () async {
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      TipStorageDetail(index: list[index].index)));
+          setState(() {
+            _getTipList();
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${list[index].title}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6, bottom: 6),
+                child: Text(
+                  "${list[index].tipInfo}",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<List<TipVO>> _getTipList() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    print(token);
+    try {
+      var res = await helper.getMyTip(token);
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+//endregion
 }

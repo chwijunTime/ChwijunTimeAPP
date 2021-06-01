@@ -1,3 +1,4 @@
+import 'package:app_user/screens/my_page/my_list.dart';
 import 'package:app_user/screens/my_page/my_profile_create.dart';
 import 'package:app_user/screens/my_page/my_profile_modify.dart';
 import 'package:app_user/screens/my_page/portfolio.dart';
@@ -44,6 +45,7 @@ class _MyPageState extends State<MyPage> {
                     padding: const EdgeInsets.all(22),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "${widget.studentId} ${widget.name}님!",
@@ -74,7 +76,7 @@ class _MyPageState extends State<MyPage> {
               height: 10,
             ),
             Card(
-              margin: EdgeInsets.fromLTRB(25, 22, 25, 10),
+              margin: EdgeInsets.fromLTRB(25, 22, 25, 22),
               elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18))),
@@ -91,7 +93,7 @@ class _MyPageState extends State<MyPage> {
                     ),
                     IconButton(
                         icon: Icon(
-                          Icons.file_download,
+                          Icons.arrow_forward_ios_rounded,
                           size: 28,
                         ),
                         onPressed: () {
@@ -105,7 +107,7 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
             Card(
-              margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
+              margin: EdgeInsets.fromLTRB(25, 0, 25,22),
               elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18))),
@@ -122,7 +124,7 @@ class _MyPageState extends State<MyPage> {
                     ),
                     IconButton(
                         icon: Icon(
-                          Icons.file_download,
+                          Icons.arrow_forward_ios_rounded,
                           size: 28,
                         ),
                         onPressed: () {
@@ -135,23 +137,56 @@ class _MyPageState extends State<MyPage> {
                 ),
               ),
             ),
+            Card(
+              margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18))),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "마이 리스트 보러가기",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 18),
+                      ),
+                    ),
+                    IconButton(
+                        icon: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 28,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyListPage()));
+                        })
+                  ],
+                ),
+              ),
+            ),
             SizedBox(
               height: 20,
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                  padding: EdgeInsets.only(right: 25, bottom: 25),
-                  child: makeGradientBtn(
-                      msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
-                      onPressed: widget.isCreated
-                          ? _moveProfileModif
-                          : _moveProfileCreate,
-                      mode: 1,
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ))),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                    padding: EdgeInsets.only(right: 25, bottom: 40),
+                    child: makeGradientBtn(
+                        msg: widget.isCreated ? "프로필 수정하기" : "프로필 생성하기",
+                        onPressed: widget.isCreated
+                            ? _moveProfileModif
+                            : _moveProfileCreate,
+                        mode: 1,
+                        icon: Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        ))),
+              ),
             ),
           ],
         ),
