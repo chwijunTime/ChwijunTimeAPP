@@ -21,9 +21,9 @@ Widget buildDrawer(BuildContext context) {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                Color(0xff4FB8F3),
-                Color(0xff9342FA),
-                Color(0xff2400FF)
+                Color(0xcf4FB8F3),
+                Color(0xcf9342FA),
+                Color(0xcf2400FF)
               ])),
           padding: EdgeInsets.only(left: 20),
           child: Column(
