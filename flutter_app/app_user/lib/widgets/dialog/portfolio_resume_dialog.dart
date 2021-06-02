@@ -158,6 +158,7 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
     } else {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
+      print("token: $token");
       try {
         var res =
             await helper.postResume(token, {"resumeFileURL": titleC.text});

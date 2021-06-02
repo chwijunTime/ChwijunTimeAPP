@@ -176,9 +176,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                           ));
                 },
                 icon: Icon(Icons.mail)),
-            SizedBox(
-              width: 10,
-            ),
             IconButton(
                 onPressed: () {
                   Navigator.push(
@@ -188,9 +185,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                               ShowWebView(url: portList[index].portfolioUrl)));
                 },
                 icon: Icon(Icons.search)),
-            SizedBox(
-              width: 10,
-            ),
             IconButton(
                 onPressed: () async {
                   await showDialog(
@@ -204,9 +198,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   });
                 },
                 icon: Icon(Icons.edit)),
-            SizedBox(
-              width: 10,
-            ),
             IconButton(
                 onPressed: () async {
                   await showDialog(

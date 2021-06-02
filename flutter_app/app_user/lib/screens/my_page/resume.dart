@@ -2,14 +2,18 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/model/resume_portfolio/resume_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
+import 'package:app_user/widgets/dialog/edit_dialog.dart';
 import 'package:app_user/widgets/dialog/portfolio_resume_dialog.dart';
-import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../search_page.dart';
 
 class ResumePage extends StatefulWidget {
   @override
@@ -18,7 +22,7 @@ class ResumePage extends StatefulWidget {
 
 class _ResumePageState extends State<ResumePage> {
   RetrofitHelper helper;
-  List<CorrectionVO> correctionList = [];
+  List<ResumeVO> resumeList = [];
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
 
@@ -45,10 +49,10 @@ class _ResumePageState extends State<ResumePage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != correctionList.length) {
-          if ((correctionList.length - itemCount) ~/ Consts.showItemCount <=
+        if (itemCount != resumeList.length) {
+          if ((resumeList.length - itemCount) ~/ Consts.showItemCount <=
               0) {
-            itemCount += correctionList.length % Consts.showItemCount;
+            itemCount += resumeList.length % Consts.showItemCount;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -114,16 +118,16 @@ class _ResumePageState extends State<ResumePage> {
                   future: _getResume(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      correctionList = snapshot.data;
-                      if (correctionList.length <= Consts.showItemCount) {
-                        itemCount = correctionList.length;
+                      resumeList = snapshot.data;
+                      if (resumeList.length <= Consts.showItemCount) {
+                        itemCount = resumeList.length;
                       }
                       return ListView.separated(
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
                           if (index == itemCount) {
-                            if (correctionList.length == 0) {
+                            if (resumeList.length == 0) {
                               return Card(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(18)),
@@ -139,7 +143,7 @@ class _ResumePageState extends State<ResumePage> {
                                       )),
                                 ),
                               );
-                            } else if (index == correctionList.length) {
+                            } else if (index == resumeList.length) {
                               return Padding(
                                 padding: EdgeInsets.all(Consts.padding),
                                 child: makeGradientBtn(
@@ -217,7 +221,7 @@ class _ResumePageState extends State<ResumePage> {
   }
 
   Widget buildResumeCorrection(BuildContext context, int index) {
-    CorrectionVO vo = correctionList[index];
+    ResumeVO vo = resumeList[index];
     return Container(
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -236,70 +240,116 @@ class _ResumePageState extends State<ResumePage> {
               child: Row(
                 children: [
                   Expanded(
-                      child: Text(
-                          "${vo.member.classNumber}이력서")),
-                  vo.status == "Wait"
-                      ? Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Colors.grey)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "대기중",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
-                      : vo.status == "Approve"
-                      ? Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Color(0xff4687ff))),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "수락함",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff4687ff)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
-                      : Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Color(0xffFF7777))),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "거절함",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xffFF7777)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    child: Text(
+                        "${vo.member.classNumber} 이력서", style: TextStyle(
+                      fontWeight: FontWeight.w600
+                    ),),
                   ),
+                  IconButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => StdDialog(
+                              msg: "이력서${resumeList[index].index + 1} 첨삭 요청하기",
+                              size: Size(326, 124),
+                              icon: Icon(
+                                Icons.outgoing_mail,
+                                color: Color(0xff4687ff),
+                              ),
+                              btnName2: "요청하기",
+                              btnCall2: _postResume(index),
+                              btnIcon2: Icon(
+                                Icons.outgoing_mail,
+                                color: Colors.white,
+                              ),
+                            ));
+                      },
+                      icon: Icon(Icons.mail)),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ShowWebView(url: resumeList[index].resumeUrl)));
+                      },
+                      icon: Icon(Icons.search)),
+                  IconButton(
+                      onPressed: () async {
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) => EditDialog(
+                              mode: "resume",
+                              index: resumeList[index].index,
+                            ));
+                        setState(() {
+                          _getResume();
+                        });
+                      },
+                      icon: Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () async {
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) => StdDialog(
+                              msg: "선택한 이력서를 삭제하시겠습니까?",
+                              size: Size(326, 124),
+                              btnName1: "아니요",
+                              btnCall1: () {
+                                Navigator.pop(context, false);
+                              },
+                              btnName2: "삭제하기",
+                              btnCall2: () async {
+                                final pref =
+                                await SharedPreferences.getInstance();
+                                var token = pref.getString("accessToken");
+                                try {
+                                  var res = await helper.deletePortfolio(
+                                      token, resumeList[index].index);
+                                  if (res.success) {
+                                    snackBar("이력서가 삭제되었습니다", context);
+                                    Navigator.pop(context, true);
+                                  } else {
+                                    snackBar(res.msg, context);
+                                    print("error: ${res.msg}");
+                                    Navigator.pop(context);
+                                  }
+                                } catch (e) {
+                                  print("err: ${e}");
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                  snackBar("이미 삭제된 이력서 입니다.", context);
+                                }
+                              },
+                            ));
+                        setState(() {
+                          _getResume();
+                        });
+                      },
+                      icon: Icon(Icons.delete))
                 ],
               ),
             ),
           ),
         ));
+  }
+
+  _postResume(int index) async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.postCorrectionRequest(
+          token, "resume", resumeList[index].index);
+      if (res.success) {
+        snackBar("첨삭 요청을 완료했습니다", context);
+      } else {
+        snackBar(res.msg, context);
+        print("error: ${res.msg}");
+      }
+    } catch (e) {
+      print("err: $e");
+    }
+    Navigator.pop(context);
   }
 }
