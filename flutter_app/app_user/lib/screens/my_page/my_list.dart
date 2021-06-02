@@ -13,10 +13,8 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
-import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +35,7 @@ class _MyListPageState extends State<MyListPage> {
   List<ReviewVO> reviewList = [];
   List<ConsultingUserVO> consultingList = [];
   List<CorrectedVO> correctionList = [];
-  List<CorrectionVO> correctionnoticeList = [];
+  List<CorrectionVO> correctionApplyList = [];
   List<TipVO> tipList = [];
   List<CompNoticeVO> searchNoticeList = [];
   final titleC = TextEditingController();
@@ -210,11 +208,11 @@ class _MyListPageState extends State<MyListPage> {
         }
       case "요청한 첨삭":
         {
-          return _correctionListBuilder();
+          return _correctionApplyListBuilder();
         }
       case "완료한 첨삭":
         {
-          return _correctionAppyListBuilder();
+          return _correctionListBuilder();
         }
       case "작성한 꿀팁":
         {
@@ -805,7 +803,7 @@ class _MyListPageState extends State<MyListPage> {
           await showDialog(
               context: context,
               builder: (BuildContext context) => CorrectionDialog(
-                  index: vo.index, mode: vo.correctionVO.type));
+                  index: vo.index));
           setState(() {
             _getCorrection();
           });
@@ -885,21 +883,21 @@ class _MyListPageState extends State<MyListPage> {
   // endregion
 
   //region 첨삭 요청
-  Widget _correctionAppyListBuilder() {
+  Widget _correctionApplyListBuilder() {
     return FutureBuilder(
       future: _getCorrectionApply(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          correctionnoticeList = snapshot.data;
-          if (correctionnoticeList.length <= Consts.showItemCount) {
-            itemCount = correctionnoticeList.length;
+          correctionApplyList = snapshot.data;
+          if (correctionApplyList.length <= Consts.showItemCount) {
+            itemCount = correctionApplyList.length;
           }
           return ListView.separated(
             controller: _scrollController,
             itemCount: itemCount + 1,
             itemBuilder: (context, index) {
               if (index == itemCount) {
-                if (correctionnoticeList.length == 0) {
+                if (correctionApplyList.length == 0) {
                   return Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18)),
@@ -914,7 +912,7 @@ class _MyListPageState extends State<MyListPage> {
                           )),
                     ),
                   );
-                } else if (index == correctionnoticeList.length) {
+                } else if (index == correctionApplyList.length) {
                   return Padding(
                     padding: EdgeInsets.all(Consts.padding),
                     child: makeGradientBtn(
@@ -985,7 +983,7 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Widget buildCorrectionApply(BuildContext context, int index) {
-    CorrectionVO vo = correctionnoticeList[index];
+    CorrectionVO vo = correctionApplyList[index];
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -994,7 +992,7 @@ class _MyListPageState extends State<MyListPage> {
           await showDialog(
               context: context,
               builder: (BuildContext context) =>
-                  CorrectionDialog(index: vo.index, mode: vo.type));
+                  CorrectionDialog(index: vo.index));
           setState(() {
             _getCorrection();
           });

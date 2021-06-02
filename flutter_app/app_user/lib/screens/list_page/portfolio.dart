@@ -150,7 +150,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                           );
                         }
                       } else {
-                        return buildPortfolio(context, index);
+                        return buildPortfolioCorrection(context, index);
                       }
                     },
                     separatorBuilder: (context, index) {
@@ -185,14 +185,20 @@ class _PortfolioPageState extends State<PortfolioPage> {
     try {
       var res = await helper.getCorrectionList(token);
       if (res.success) {
-        return res.list;
+        List<CorrectionVO> list = [];
+        for (int i=0; i< res.list.length; i++) {
+          if (res.list[i].status == "portfolio") {
+            list.add(res.list[i]);
+          }
+        }
+        return list;
       }
     } catch (e) {
       print("err: $e");
     }
   }
 
-  Widget buildPortfolio(BuildContext context, int index) {
+  Widget buildPortfolioCorrection(BuildContext context, int index) {
     CorrectionVO vo = correctionList[index];
     return Container(
         child: Padding(
@@ -202,7 +208,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
           await showDialog(
               context: context,
               builder: (BuildContext context) =>
-                  CorrectionDialog(index: vo.index, mode: vo.type));
+                  CorrectionDialog(index: vo.index));
           setState(() {
             _getCorrection();
           });
@@ -213,7 +219,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.member.classNumber}${vo.type == "portfolio" ? "포트폴리오" : "이력서"}")),
+                      "${vo.member.classNumber}포트폴리오")),
               vo.status == "Wait"
                   ? Container(
                       width: 48,

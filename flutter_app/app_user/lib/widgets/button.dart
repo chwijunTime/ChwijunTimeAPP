@@ -32,6 +32,11 @@ Widget makeGradientBtn(
     _width = 130;
     _height = 33;
     _borderRadius = 5;
+  } else if (mode == 6) {
+    // 긴 네모 버튼
+    _width = 355;
+    _height = 33;
+    _borderRadius = 5;
   } else {
     // 작은 네모 버튼
     _width = 175;

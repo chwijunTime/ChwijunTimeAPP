@@ -3,7 +3,9 @@ import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/edit_dialog.dart';
+import 'package:app_user/widgets/dialog/portfolio_resume_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -49,19 +51,47 @@ class _PortfolioPageState extends State<PortfolioPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "취준타임",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0x832B8AC0)),
-              ),
-              Text(
-                "포트폴리오",
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
+                      ),
+                      Text(
+                        "포트폴리오",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  makeGradientBtn(
+                      msg: "포트폴리오 등록하기",
+                      onPressed: () async {
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                PortfolioResumeDialog(
+                                  mode: "portfolio",
+                                ));
+                        setState(() {
+                          _getPortpolio();
+                          print("호잇");
+                        });
+                      },
+                      mode: 2,
+                      icon: Icon(
+                        Icons.note_add,
+                        color: Colors.white,
+                      ))
+                ],
               ),
               SizedBox(
                 height: 20,
@@ -126,27 +156,26 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) => StdDialog(
-                          msg: "포트폴리오${portList[index].index + 1} 첨삭 요청하기",
-                          size: Size(326, 124),
-                          icon: Icon(
-                            Icons.outgoing_mail,
-                            color: Color(0xff4687ff),
-                          ),
-                          btnName2: "요청하기",
-                          btnCall2: _postRequest(index),
-                          btnIcon2: Icon(
-                            Icons.outgoing_mail,
-                            color: Colors.white,
-                          ),
-                        ));
-              },
-              child: Icon(Icons.mail),
-            ),
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => StdDialog(
+                            msg: "포트폴리오${portList[index].index + 1} 첨삭 요청하기",
+                            size: Size(326, 124),
+                            icon: Icon(
+                              Icons.outgoing_mail,
+                              color: Color(0xff4687ff),
+                            ),
+                            btnName2: "요청하기",
+                            btnCall2: _postRequest(index),
+                            btnIcon2: Icon(
+                              Icons.outgoing_mail,
+                              color: Colors.white,
+                            ),
+                          ));
+                },
+                icon: Icon(Icons.mail)),
             SizedBox(
               width: 10,
             ),

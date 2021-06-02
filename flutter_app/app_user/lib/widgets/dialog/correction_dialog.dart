@@ -9,11 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CorrectionDialog extends StatefulWidget {
-  String mode;
   int index;
   CorrectionVO vo;
 
-  CorrectionDialog({@required this.index, @required this.mode});
+  CorrectionDialog({@required this.index});
 
   @override
   _CorrectionDialog createState() => _CorrectionDialog();
@@ -83,7 +82,7 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      "${widget.vo.member.classNumber}_${widget.mode == "portfolio" ? "포트폴리오" : "이력서"}${widget.vo.index} 신청",
+                      "${widget.vo.member.classNumber}_${widget.vo.type == "portfolio" ? "포트폴리오" : "이력서"}${widget.vo.index} 신청",
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -99,12 +98,12 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ShowWebView(
-                                  url: widget.mode == "portfolio"
+                                  url: widget.vo.type == "portfolio"
                                       ? widget.vo.portfolio.portfolioUrl
                                       : widget.vo.resume.resumeUrl)));
                     },
                     child: Text(
-                      "해당 ${widget.mode == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
+                      "해당 ${widget.vo.type == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
