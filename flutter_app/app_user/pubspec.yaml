@@ -82,15 +82,16 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-  #  - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+     - family: StdFont
+       fonts:
+         - asset: assets/fonts/AppleSDGothicNeoB.ttf
+           weight: 300
      - family: Nixgon
        fonts:
          - asset: assets/fonts/NIXGONFONTS_M.ttf
            weight: 600
+
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

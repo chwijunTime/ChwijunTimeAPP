@@ -25,9 +25,10 @@ Widget buildTextField(String hint, TextEditingController controller,
     maxLines: maxLine,
     maxLength: maxLength <= 1 ? null : maxLength,
     enabled: !disable,
+    style: TextStyle(fontFamily: password ? "StdFont" : "Nixgon", fontWeight: password ? FontWeight.w100 : FontWeight.w800),
     decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+        hintStyle: TextStyle(color: Colors.grey, fontWeight: password ? FontWeight.w100 : FontWeight.w800),
         focusedBorder: deco
             ? OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blueAccent))
