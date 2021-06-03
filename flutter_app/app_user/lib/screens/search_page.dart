@@ -292,7 +292,7 @@ class _SearchPageState extends State<SearchPage> {
 void snackBar(String msg, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(msg),
-    duration: Duration(milliseconds: 1000),
+    duration: Duration(milliseconds: 1500),
     backgroundColor: Colors.red[200],
   ));
 }

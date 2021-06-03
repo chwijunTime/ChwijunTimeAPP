@@ -76,7 +76,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -140,7 +140,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
                                   child: Padding(
                                       padding: EdgeInsets.all(Consts.padding),
                                       child: Text(
-                                        "등록된 협약업체가 없습니다.",
+                                        "요청된 취업공고가 없습니다.",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700),
                                       )),
@@ -248,8 +248,10 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
         onTap: () async {
           await showDialog(
               context: context,
-              builder: (BuildContext context) =>
-                  ApplyDialog(index: applyList[index].index, statusVo: applyList[index],));
+              builder: (BuildContext context) => ApplyDialog(
+                    index: applyList[index].index,
+                    statusVo: applyList[index],
+                  ));
           setState(() {
             _getList();
           });
@@ -262,62 +264,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ),
-            status == "Wait"
-                ? Container(
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(40)),
-                        border: Border.all(color: Colors.grey)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        "대기중",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
-                : status == "Approve"
-                    ? Container(
-                        width: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
-                            border: Border.all(color: Color(0xff4687ff))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            "수락함",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xff4687ff)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        width: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
-                            border: Border.all(color: Color(0xffFF7777))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            "거절함",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xffFF7777)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
+            makeTag(applyList[index].status),
             SizedBox(
               width: 10,
             ),
@@ -326,5 +273,38 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
         ),
       ),
     ));
+  }
+
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "Wait") {
+      msg = "대기중";
+      color = Colors.grey;
+    } else if (str == "Approve") {
+      msg = "수락함";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "거절함";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

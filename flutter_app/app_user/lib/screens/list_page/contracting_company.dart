@@ -101,7 +101,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -214,6 +214,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
+                          print("index: $index, counList.length: ${contractingList.length}, itemCount: $itemCount");
                           if (index == itemCount) {
                             if (searchContractingList.length == 0) {
                               return Card(

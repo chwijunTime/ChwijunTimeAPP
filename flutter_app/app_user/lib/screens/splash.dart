@@ -1,4 +1,6 @@
 import 'package:app_user/model/user.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,13 +10,27 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  RetrofitHelper helper;
+
   var value = 0.0;
   String msg = "";
 
   @override
   void initState() {
     super.initState();
+    initRetrofit();
     _init();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   void _init() async {
@@ -24,17 +40,15 @@ class _SplashPageState extends State<SplashPage> {
       msg = "회원 정보 확인중...";
     });
     var prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString("role") ?? "user";
+    var role = prefs.getString("role") ?? User.admin;
     var token = prefs.getString("accessToken");
     print("role, main: ${role}");
-    User.role = User.admin;
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       msg = "완료!";
     });
+    User.role = role;
     await Future.delayed(Duration(milliseconds: 500));
-    token = "1";
-    role = "2";
     if (token != null && role != null) {
       Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
     } else {
@@ -57,7 +71,7 @@ class _SplashPageState extends State<SplashPage> {
               children: [
                 Text("이제는 준비할 시간"),
                 Image.asset(
-                  "images/logo.png",
+                  "assets/images/logo.png",
                   width: 150,
                   height: 150,
                 ),

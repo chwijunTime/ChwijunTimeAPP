@@ -120,8 +120,9 @@ class _CounselingManageState extends State<CounselingManage> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,27 +143,23 @@ class _CounselingManageState extends State<CounselingManage> {
                       )
                     ],
                   ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                      child: makeGradientBtn(
-                          msg: "상담 등록하기",
-                          onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CounselingWrite()));
-                            setState(() {
-                              getCounselingAdminList();
-                              print("호잇");
-                            });
-                          },
-                          mode: 1,
-                          icon: Icon(
-                            Icons.note_add,
-                            color: Colors.white,
-                          )))
+                  makeGradientBtn(
+                      msg: "상담 등록하기",
+                      onPressed: () async {
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CounselingWrite()));
+                        setState(() {
+                          getCounselingAdminList();
+                          print("호잇");
+                        });
+                      },
+                      mode: 1,
+                      icon: Icon(
+                        Icons.note_add,
+                        color: Colors.white,
+                      ))
                 ],
               ),
             ),
@@ -175,159 +172,164 @@ class _CounselingManageState extends State<CounselingManage> {
                   });
                 },
                 hint: "보기"),
-            selectValue == valueList[0] ? Expanded(
-                child: FutureBuilder(
-              future: getCounselingAdminList(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  counAdminList = snapshot.data;
-                  if (counAdminList.length <= Consts.showItemCount) {
-                    itemCount = counAdminList.length;
-                  }
-                  print(counAdminList.length);
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: itemCount + 1,
-                    itemBuilder: (context, index) {
-                      print("index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
-                      if (index == itemCount) {
-                        if (counAdminList.length == 0) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18)),
-                            elevation: 5,
-                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                            child: Center(
-                              child: Padding(
-                                  padding: EdgeInsets.all(Consts.padding),
-                                  child: Text(
-                                    "등록된 상담이 없습니다.",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                            ),
-                          );
-                        } else if (index == counAdminList.length) {
-                          return Padding(
-                            padding: EdgeInsets.all(Consts.padding),
-                            child: makeGradientBtn(
-                                msg: "맨 처음으로",
-                                onPressed: () {
-                                  _scrollController.animateTo(
-                                      _scrollController
-                                          .position.minScrollExtent,
-                                      duration: Duration(milliseconds: 200),
-                                      curve: Curves.elasticOut);
-                                },
-                                mode: 1,
-                                icon: Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.white,
-                                )),
-                          );
-                        } else {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18)),
-                            elevation: 5,
-                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          );
+            selectValue == valueList[0]
+                ? Expanded(
+                    child: FutureBuilder(
+                    future: getCounselingAdminList(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        counAdminList = snapshot.data;
+                        if (counAdminList.length <= Consts.showItemCount) {
+                          itemCount = counAdminList.length;
                         }
+                        print(counAdminList.length);
+                        return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: itemCount + 1,
+                          itemBuilder: (context, index) {
+                            print(
+                                "index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
+                            if (index == itemCount) {
+                              if (counAdminList.length == 0) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: Text(
+                                          "등록된 상담이 없습니다.",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700),
+                                        )),
+                                  ),
+                                );
+                              } else if (index == counAdminList.length) {
+                                return Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: makeGradientBtn(
+                                      msg: "맨 처음으로",
+                                      onPressed: () {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.minScrollExtent,
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            curve: Curves.elasticOut);
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.white,
+                                      )),
+                                );
+                              } else {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              return buildCounseling(context, index);
+                            }
+                          },
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                        );
                       } else {
-                        return buildCounseling(context, index);
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
                     },
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            )) : Expanded(
-                child: FutureBuilder(
-                  future: getCounselingUserList(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      counUserList = snapshot.data;
-                      if (counUserList.length <= Consts.showItemCount) {
-                        itemCount = counUserList.length;
-                      }
-                      return ListView.builder(
-                        controller: _scrollController,
-                        itemCount: itemCount + 1,
-                        itemBuilder: (context, index) {
-                          if (index == itemCount) {
-                            if (counUserList.length == 0) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: Text(
-                                        "상담 신청이 없습니다.",
-                                        style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                      )),
-                                ),
-                              );
-                            } else if (index == counUserList.length) {
-                              return Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: makeGradientBtn(
-                                    msg: "맨 처음으로",
-                                    onPressed: () {
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                    },
-                                    mode: 1,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Colors.white,
-                                    )),
-                              );
-                            } else {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: CircularProgressIndicator(),
+                  ))
+                : Expanded(
+                    child: FutureBuilder(
+                    future: getCounselingUserList(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        counUserList = snapshot.data;
+                        if (counUserList.length <= Consts.showItemCount) {
+                          itemCount = counUserList.length;
+                        }
+                        return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: itemCount + 1,
+                          itemBuilder: (context, index) {
+                            if (index == itemCount) {
+                              if (counUserList.length == 0) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: Text(
+                                          "상담 신청이 없습니다.",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700),
+                                        )),
                                   ),
-                                ),
-                              );
+                                );
+                              } else if (index == counUserList.length) {
+                                return Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: makeGradientBtn(
+                                      msg: "맨 처음으로",
+                                      onPressed: () {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.minScrollExtent,
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            curve: Curves.elasticOut);
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.white,
+                                      )),
+                                );
+                              } else {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              return buildCounselingUser(context, index);
                             }
-                          } else {
-                            return buildCounselingUser(context, index);
-                          }
-                        },
-                        shrinkWrap: true,
-                        physics: ScrollPhysics(),
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                )),
+                          },
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  )),
           ],
         ),
       ),
@@ -336,7 +338,7 @@ class _CounselingManageState extends State<CounselingManage> {
 
   Widget buildCounseling(BuildContext context, int index) {
     var tempDate =
-    DateFormat("yyyy-MM-dd hh:mm").parse(counAdminList[index].applyDate);
+        DateFormat("yyyy-MM-dd hh:mm").parse(counAdminList[index].applyDate);
     var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
     return GestureDetector(
       onTap: () {
@@ -368,7 +370,7 @@ class _CounselingManageState extends State<CounselingManage> {
                             borderRadius: BorderRadius.all(Radius.circular(40)),
                             border: Border.all(color: Color(0xffFF7777))),
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
+                          padding: const EdgeInsets.only(bottom: 2, top: 2),
                           child: Text(
                             "마감",
                             style: TextStyle(
@@ -386,7 +388,7 @@ class _CounselingManageState extends State<CounselingManage> {
                             borderRadius: BorderRadius.all(Radius.circular(40)),
                             border: Border.all(color: Color(0xff5BC7F5))),
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
+                          padding: const EdgeInsets.only(bottom: 2, top: 2),
                           child: Text(
                             "진행중",
                             style: TextStyle(
@@ -405,7 +407,7 @@ class _CounselingManageState extends State<CounselingManage> {
 
   Widget buildCounselingUser(BuildContext context, int index) {
     var tempDate =
-    DateFormat("yyyy-MM-dd hh:mm").parse(counUserList[index].applyDate);
+        DateFormat("yyyy-MM-dd hh:mm").parse(counUserList[index].applyDate);
     var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
     return Card(
         shape: RoundedRectangleBorder(
@@ -413,19 +415,20 @@ class _CounselingManageState extends State<CounselingManage> {
         elevation: 5,
         margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
         child: Padding(
-          padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
+          padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${counUserList[index].classNumber} ${counUserList[index].name}님의 신청",
-                style:
-                TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                strDate,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 5,
               ),
               Text(
-                strDate,
-                style:
-                TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                "${counUserList[index].classNumber} ${counUserList[index].name}님의 신청",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               )
             ],
           ),

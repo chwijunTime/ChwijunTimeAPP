@@ -92,7 +92,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(26),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -114,7 +114,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: 25),
+                  padding: EdgeInsets.only(right: 25 ),
                   child: FloatingActionButton(
                     onPressed: () async {
                       var res = await Navigator.push(
@@ -208,7 +208,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
-                          print("index: $index, itemCount: $itemCount");
                           if (index == itemCount) {
                             if (searchReviewList.length == 0) {
                               return Card(
@@ -226,8 +225,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                       )),
                                 ),
                               );
-                            }
-                            else if (index == searchReviewList.length) {
+                            } else if (index == searchReviewList.length) {
                               return Padding(
                                 padding: EdgeInsets.all(Consts.padding),
                                 child: makeGradientBtn(
@@ -359,15 +357,15 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
           print("눌림");
           await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (countext) => InterviewReviewDetail(
-                        index: list[index].index,
-                      )));
+                    index: list[index].index,
+                  )));
           setState(() {
             _getReview();
           });
@@ -395,21 +393,21 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                     buildItemTag(list[index].tag, 0),
                     list[index].tag.length > 1
                         ? Container(
-                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                            margin: EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.blue[400],
-                                )),
-                            child: Center(
-                              child: Text(
-                                "외 ${list[index].tag.length - 1}개",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          )
+                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                      margin: EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.blue[400],
+                          )),
+                      child: Center(
+                        child: Text(
+                          "외 ${list[index].tag.length - 1}개",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    )
                         : SizedBox(),
                     Expanded(
                       child: Align(

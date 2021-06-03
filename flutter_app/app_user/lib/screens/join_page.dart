@@ -119,7 +119,8 @@ class _JoinPageState extends State<JoinPage> {
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
-                                letterSpacing: -1)),
+                                letterSpacing: -1,
+                                fontFamily: "Nixgon")),
                         TextSpan(
                             text: '이용약관',
                             style: TextStyle(
@@ -127,13 +128,15 @@ class _JoinPageState extends State<JoinPage> {
                                 color: Colors.grey,
                                 letterSpacing: -1,
                                 decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.w600)),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Nixgon")),
                         TextSpan(
                             text: ' 동의로 간주합니다.',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
-                                letterSpacing: -1))
+                                letterSpacing: -1,
+                                fontFamily: "Nixgon"))
                       ])),
                     )
                   ],
@@ -165,17 +168,17 @@ class _JoinPageState extends State<JoinPage> {
                             TextSpan(
                                 text: "취준타임",
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 20,
-                                )),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 20,
+                                    fontFamily: "Nixgon")),
                             TextSpan(
                                 text: "과 함께\n취업성공해요!",
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                )),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    fontFamily: "Nixgon")),
                           ]),
                         )
                       ],
@@ -194,7 +197,7 @@ class _JoinPageState extends State<JoinPage> {
     if (emailC.text.isEmpty ||
         passwordC.text.isEmpty ||
         rePasswordC.text.isEmpty ||
-        stIDC.text.isEmpty ) {
+        stIDC.text.isEmpty) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -222,8 +225,8 @@ class _JoinPageState extends State<JoinPage> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("입력 에러"),
-              alertSubtitle:
-                  richSubtitle("비밀번호를 다시 확인해주세요.\n비밀번호는 '8~15글자, 특수문자 포함입니다.'로 해야합니다."),
+              alertSubtitle: richSubtitle(
+                  "비밀번호를 다시 확인해주세요.\n비밀번호는 '8~15글자, 특수문자 포함입니다.'로 해야합니다."),
               alertType: RichAlertType.ERROR,
               actions: [
                 FlatButton(

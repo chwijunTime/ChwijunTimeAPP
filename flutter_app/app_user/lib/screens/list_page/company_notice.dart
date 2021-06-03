@@ -36,7 +36,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   int itemCount = Consts.showItemCount;
   List<String> valueList = ['전체보기', '검색하기'];
   String selectValue = "전체보기";
-  String msg = "검색된 협약업체가 없습니다.";
+  String msg = "등록된 취업공고가 없습니다.";
 
   RetrofitHelper helper;
 
@@ -99,7 +99,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -134,6 +134,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                             msg = "이름, 지역, 직군으로 검색하기";
                           } else {
                             titleC.text = "";
+                            msg = "등록된 취업공고가 없습니다.";
                           }
                         });
                       },

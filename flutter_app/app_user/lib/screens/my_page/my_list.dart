@@ -1,6 +1,5 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
-import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/model/consulting/consulting_user_vo.dart';
 import 'package:app_user/model/correction/corrected_vo.dart';
@@ -12,6 +11,7 @@ import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/corrected_dialog.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
@@ -31,14 +31,12 @@ class _MyListPageState extends State<MyListPage> {
   final scafforldkey = GlobalKey<ScaffoldState>();
 
   //'취업공고', '작성한 면접 후기', "상담", "요청한 첨삭", "완료한 첨삭", "작성한 꿀팁"
-  List<CompApplyStatusVO> noticeList = [];
-  List<ReviewVO> reviewList = [];
-  List<ConsultingUserVO> consultingList = [];
-  List<CorrectedVO> correctionList = [];
-  List<CorrectionVO> correctionApplyList = [];
-  List<TipVO> tipList = [];
-  List<CompNoticeVO> searchNoticeList = [];
-  final titleC = TextEditingController();
+  List<CompApplyStatusVO> noticeList = []; // 취업고고
+  List<ReviewVO> reviewList = []; // 작성한 면접후기
+  List<ConsultingUserVO> consultingList = []; // 상담
+  List<CorrectedVO> correctedList = []; // 완료한 첨삭
+  List<CorrectionVO> correctionApplyList = []; // 요청한 첨삭
+  List<TipVO> tipList = []; // 작성한 꿀팁
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
   List<String> valueList = [
@@ -64,7 +62,6 @@ class _MyListPageState extends State<MyListPage> {
   @override
   void dispose() {
     _scrollController.dispose();
-    titleC.dispose();
     super.dispose();
   }
 
@@ -158,7 +155,7 @@ class _MyListPageState extends State<MyListPage> {
                               }
                             case "완료한 첨삭":
                               {
-                                msg = "완료한 첨삭이 없습니다.";
+                                msg = "완료된 첨삭이 없습니다.";
                                 break;
                               }
                             case "작성한 꿀팁":
@@ -171,13 +168,6 @@ class _MyListPageState extends State<MyListPage> {
                                 msg = "신청한 취업공고가 없습니다.";
                                 break;
                               }
-                          }
-                          if (selectValue == valueList[1]) {
-                            itemCount = 0;
-                            searchNoticeList.clear();
-                            msg = "이름, 지역, 직군으로 검색하기";
-                          } else {
-                            titleC.text = "";
                           }
                         });
                       },
@@ -212,7 +202,7 @@ class _MyListPageState extends State<MyListPage> {
         }
       case "완료한 첨삭":
         {
-          return _correctionListBuilder();
+          return _correctedListBuilder();
         }
       case "작성한 꿀팁":
         {
@@ -254,7 +244,7 @@ class _MyListPageState extends State<MyListPage> {
                         child: Padding(
                             padding: EdgeInsets.all(Consts.padding),
                             child: Text(
-                              "등록된 협약업체가 없습니다.",
+                              msg,
                               style: TextStyle(fontWeight: FontWeight.w700),
                             )),
                       ),
@@ -333,62 +323,7 @@ class _MyListPageState extends State<MyListPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
           ),
-          status == "Wait"
-              ? Container(
-                  width: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(40)),
-                      border: Border.all(color: Colors.grey)),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 2),
-                    child: Text(
-                      "대기중",
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              : status == "Approve"
-                  ? Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Color(0xff4687ff))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "수락함",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff4687ff)),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Color(0xffFF7777))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "거절함",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xffFF7777)),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
+          makeTag(noticeList[index].status),
           SizedBox(
             width: 10,
           ),
@@ -478,9 +413,8 @@ class _MyListPageState extends State<MyListPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
-          print("눌림");
           await Navigator.push(
               context,
               MaterialPageRoute(
@@ -662,13 +596,13 @@ class _MyListPageState extends State<MyListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${consultingList[index].classNumber} ${consultingList[index].name}님의 신청",
+                strDate,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
-              Text(
-                strDate,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              )
+              SizedBox(
+                height: 5,
+              ),
+              Text("상담")
             ],
           ),
         ));
@@ -694,21 +628,21 @@ class _MyListPageState extends State<MyListPage> {
   // endregion
 
   //region 첨삭
-  Widget _correctionListBuilder() {
+  Widget _correctedListBuilder() {
     return FutureBuilder(
       future: _getCorrection(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          correctionList = snapshot.data;
-          if (correctionList.length <= Consts.showItemCount) {
-            itemCount = correctionList.length;
+          correctedList = snapshot.data;
+          if (correctedList.length <= Consts.showItemCount) {
+            itemCount = correctedList.length;
           }
           return ListView.separated(
             controller: _scrollController,
             itemCount: itemCount + 1,
             itemBuilder: (context, index) {
               if (index == itemCount) {
-                if (correctionList.length == 0) {
+                if (correctedList.length == 0) {
                   return Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18)),
@@ -718,12 +652,12 @@ class _MyListPageState extends State<MyListPage> {
                       child: Padding(
                           padding: EdgeInsets.all(Consts.padding),
                           child: Text(
-                            "등록된 요청이 없습니다.",
+                            msg,
                             style: TextStyle(fontWeight: FontWeight.w700),
                           )),
                     ),
                   );
-                } else if (index == correctionList.length) {
+                } else if (index == correctedList.length) {
                   return Padding(
                     padding: EdgeInsets.all(Consts.padding),
                     child: makeGradientBtn(
@@ -755,7 +689,7 @@ class _MyListPageState extends State<MyListPage> {
                   );
                 }
               } else {
-                return buildPortfolio(context, index);
+                return buildCorrection(context, index);
               }
             },
             separatorBuilder: (context, index) {
@@ -793,17 +727,17 @@ class _MyListPageState extends State<MyListPage> {
     }
   }
 
-  Widget buildPortfolio(BuildContext context, int index) {
-    CorrectedVO vo = correctionList[index];
+  Widget buildCorrection(BuildContext context, int index) {
+    CorrectedVO vo = correctedList[index];
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
           await showDialog(
               context: context,
-              builder: (BuildContext context) => CorrectionDialog(
-                  index: vo.index));
+              builder: (BuildContext context) =>
+                  CorrectedDialog(list: vo));
           setState(() {
             _getCorrection();
           });
@@ -814,65 +748,8 @@ class _MyListPageState extends State<MyListPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.classNumber}${vo.correctionVO.type == "portfolio" ? "포트폴리오" : "이력서"}")),
-              vo.correctionVO.status == "Wait"
-                  ? Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Colors.grey)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "대기중",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : vo.correctionVO.status == "Approve"
-                      ? Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xff4687ff))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "수락함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xff4687ff)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xffFF7777))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "거절함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xffFF7777)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
+                      "${vo.classNumber}_${vo.correctionVO.type == "Portfolio" ? "포트폴리오" : "이력서"}")),
+              makeTag(vo.correctionVO.status)
             ],
           ),
         ),
@@ -944,7 +821,7 @@ class _MyListPageState extends State<MyListPage> {
                   );
                 }
               } else {
-                return buildPortfolio(context, index);
+                return buildCorrectionApply(context, index);
               }
             },
             separatorBuilder: (context, index) {
@@ -975,7 +852,7 @@ class _MyListPageState extends State<MyListPage> {
     try {
       var res = await helper.getMyCorrectionApply(token);
       if (res.success) {
-        return res.list;
+        return res.list.reversed.toList();
       }
     } catch (e) {
       print("err: $e");
@@ -1003,65 +880,8 @@ class _MyListPageState extends State<MyListPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.member.classNumber}${vo.type == "portfolio" ? "포트폴리오" : "이력서"}")),
-              vo.status == "Wait"
-                  ? Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Colors.grey)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "대기중",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : vo.status == "Approve"
-                      ? Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xff4687ff))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "수락함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xff4687ff)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xffFF7777))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "거절함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xffFF7777)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
+                      "${vo.member.classNumber}_${vo.type == "Portfolio" ? "포트폴리오" : "이력서"}")),
+              makeTag(vo.status)
             ],
           ),
         ),
@@ -1202,5 +1022,42 @@ class _MyListPageState extends State<MyListPage> {
       print(e);
     }
   }
+
 //endregion
+
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "Correction_Applying" || str == "Wait") {
+      msg = "대기중";
+      color = Colors.grey;
+    } else if (str == "Correction_Successful") {
+      msg = "완료함";
+      color = Color(0xff5BC7F5);
+    } else if (str == "Approve") {
+      msg = "수락함";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "거절함";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
 }

@@ -66,7 +66,7 @@ class _CounselingDialogState extends State<CounselingDialog> {
   buildDialog(BuildContext context) {
     return Container(
       width: 311,
-      height: 233,
+      height: 140,
       padding: EdgeInsets.all(20),
       margin: EdgeInsets.only(top: 60),
       decoration: new BoxDecoration(
@@ -82,7 +82,6 @@ class _CounselingDialogState extends State<CounselingDialog> {
             )
           ]),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             strDate,
@@ -104,7 +103,7 @@ class _CounselingDialogState extends State<CounselingDialog> {
                   borderRadius: BorderRadius.all(Radius.circular(40)),
                   border: Border.all(color: Color(0xff5BC7F5))),
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 2),
+                padding: const EdgeInsets.only(bottom: 2, top: 2),
                 child: Text(
                   "진행중",
                   style: TextStyle(
@@ -121,7 +120,7 @@ class _CounselingDialogState extends State<CounselingDialog> {
                   borderRadius: BorderRadius.all(Radius.circular(40)),
                   border: Border.all(color: Color(0xffFF7777))),
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 2),
+                padding: const EdgeInsets.only(bottom: 2, top: 2),
                 child: Text(
                   "마감",
                   style: TextStyle(

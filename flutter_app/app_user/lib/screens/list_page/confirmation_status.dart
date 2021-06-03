@@ -92,7 +92,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -261,7 +261,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     try {
       var res = await helper.getConfList(token);
       if (res.success) {
-        return res.list.reversed.toList();
+        return res.list;
       } else {
         return null;
       }

@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     Dio dio = Dio();
     dio.options = BaseOptions(
         receiveDataWhenStatusError: true,
-        connectTimeout: 10 * 1000,
+        connectTimeout: 20 * 1000,
         receiveTimeout: 10 * 1000,
         followRedirects: false,
         validateStatus: (status) {
@@ -50,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString("role", res.data.roles);
         Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
         User.role = res.data.roles;
+        User.role = User.admin;   // TODO 삭제해야함
       } else {
         snackBar(res.msg, context);
       }
@@ -80,11 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width,
                     height: 250,
                     child: Image.asset(
-                      "images/top.png",
+                      "assets/images/top.png",
                       fit: BoxFit.fill,
                     )),
                 Padding(
-                  padding: const EdgeInsets.only(top: 54, left: 38),
+                  padding: const EdgeInsets.only(top: 40, left: 30 ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width,
                 height: 250,
                 child: Image.asset(
-                  "images/bottom.png",
+                  "assets/images/bottom.png",
                   fit: BoxFit.fill,
                 ))
           ],

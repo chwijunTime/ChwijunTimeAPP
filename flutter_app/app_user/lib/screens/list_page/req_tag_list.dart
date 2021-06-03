@@ -6,7 +6,6 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:app_user/widgets/drawer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +82,7 @@ class _ReqTagListState extends State<ReqTagList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -116,7 +115,7 @@ class _ReqTagListState extends State<ReqTagList> {
                         },
                         mode: 1,
                         icon: Icon(
-                          Icons.delete,
+                          Icons.save_alt,
                           color: Colors.white,
                         )),
                     makeGradientBtn(
@@ -317,6 +316,7 @@ class _ReqTagListState extends State<ReqTagList> {
       if (res != null && res) {
         setState(() {
           _getReqTagList();
+          snackBar("성공적으로 추가했습니다.", context);
         });
       }
     }
