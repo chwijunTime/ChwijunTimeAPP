@@ -21,6 +21,7 @@ import 'package:app_user/model/response_find_pw.dart';
 import 'package:app_user/model/response_login.dart';
 import 'package:app_user/model/resume_portfolio/response_portfolio.dart';
 import 'package:app_user/model/resume_portfolio/response_portfolio_list.dart';
+import 'package:app_user/model/resume_portfolio/response_resume.dart';
 import 'package:app_user/model/resume_portfolio/response_resume_list.dart';
 import 'package:app_user/model/tag/response_tag.dart';
 import 'package:app_user/model/tag/response_tag_list.dart';
@@ -323,7 +324,7 @@ abstract class RetrofitHelper {
   Future<ResponseData> putPortfolio(
       @Header("Authorization") String token,
       @Path("portfolioIdx") int index,
-      @Body() Map<String, dynamic> body // TODO "notionPortfolioURL": "string"
+      @Body() Map<String, dynamic> body
       );
 
   @DELETE("/v1/portfolio/{portfolioIdx}")
@@ -334,23 +335,23 @@ abstract class RetrofitHelper {
   Future<ResponseResumeList> getResumeList(
       @Header("Authorization") String token);
 
-  @POST("/v1/portfolio")
+  @POST("/v1/resume")
   Future<ResponseData> postResume(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> body // TODO "resumeFileURL": "string"
+      @Body() Map<String, dynamic> body
       );
 
-  @GET("/v1/portfolio/{resumeIdx}")
-  Future<ResponsePortfolio> getResume(
+  @GET("/v1/resume/{resumeIdx}")
+  Future<ResponseResume> getResume(
       @Header("Authorization") String token, @Path("resumeIdx") int index);
 
-  @PUT("/v1/portfolio/{resumeIdx}")
+  @PUT("/v1/resume/{resumeIdx}")
   Future<ResponseData> putResume(
       @Header("Authorization") String token,
       @Path("resumeIdx") int index,
       @Body() Map<String, dynamic> body // TODO "resumeFileURL": "string"
       );
 
-  @DELETE("/v1/portfolio/{resumeIdx}")
+  @DELETE("/v1/resume/{resumeIdx}")
   Future<ResponseData> deleteResume(
       @Header("Authorization") String token, @Path("resumeIdx") int index);
 

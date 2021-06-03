@@ -1,3 +1,4 @@
+import 'package:app_user/consts.dart';
 import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -20,10 +21,13 @@ class PortfolioPage extends StatefulWidget {
 class _PortfolioPageState extends State<PortfolioPage> {
   List<PortfolioVO> portList = [];
   RetrofitHelper helper;
+  final _scrollController = ScrollController();
+  int itemCount = Consts.showItemCount;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_scrollListener);
     initRetrofit();
   }
 
@@ -40,21 +44,39 @@ class _PortfolioPageState extends State<PortfolioPage> {
     helper = RetrofitHelper(dio);
   }
 
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != portList.length) {
+          if ((portList.length - itemCount) ~/ Consts.showItemCount <=
+              0) {
+            itemCount += portList.length % Consts.showItemCount;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar("취준타임", context),
       body: Container(
         color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "취준타임",
@@ -93,35 +115,97 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       ))
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Expanded(
-                  child: FutureBuilder(
-                future: _getPortpolio(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    portList = snapshot.data;
-                    return ListView.separated(
-                        itemBuilder: (context, index) {
-                          return buildPortfolio(context, index);
-                        },
-                        separatorBuilder: (context, index) {
-                          return Container(
-                            height: 1,
-                            color: Colors.grey,
-                          );
-                        },
-                        itemCount: portList.length);
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(
+                child: FutureBuilder(
+              future: _getPortpolio(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  portList = snapshot.data;
+                  if (portList.length <= Consts.showItemCount) {
+                    itemCount = portList.length;
                   }
-                },
-              ))
-            ],
-          ),
+                  return ListView.separated(
+                    controller: _scrollController,
+                    itemCount: itemCount + 1,
+                    itemBuilder: (context, index) {
+                      if (index == itemCount) {
+                        if (portList.length == 0) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 5,
+                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                            child: Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: Text(
+                                    "등록된 이력서가 없습니다.",
+                                    style:
+                                    TextStyle(fontWeight: FontWeight.w700),
+                                  )),
+                            ),
+                          );
+                        } else if (index == portList.length) {
+                          return Padding(
+                            padding: EdgeInsets.all(Consts.padding),
+                            child: makeGradientBtn(
+                                msg: "맨 처음으로",
+                                onPressed: () {
+                                  _scrollController.animateTo(
+                                      _scrollController
+                                          .position.minScrollExtent,
+                                      duration: Duration(milliseconds: 200),
+                                      curve: Curves.elasticOut);
+                                },
+                                mode: 1,
+                                icon: Icon(
+                                  Icons.arrow_upward,
+                                  color: Colors.white,
+                                )),
+                          );
+                        } else {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 5,
+                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(Consts.padding),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        return buildPortfolio(context, index);
+                      }
+                    },
+                    separatorBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Container(
+                          height: 1,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ))
+          ],
         ),
       ),
     );
@@ -130,6 +214,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Future<List<PortfolioVO>> _getPortpolio() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
+    print(token);
     try {
       var res = await helper.getPortfolioList(token);
       if (res.success) {
@@ -145,14 +230,14 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Widget buildPortfolio(BuildContext context, int index) {
     return Container(
         child: Padding(
-      padding: EdgeInsets.only(top: 20, bottom: 10),
+      padding: EdgeInsets.fromLTRB(20,0,20,0),
       child: GestureDetector(
         onTap: () {},
         child: Row(
           children: [
             Expanded(
               child: Text(
-                "포트폴리오 ${portList[index].index + 1}",
+                "포트폴리오 ${portList[index].index+ 1}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
@@ -168,7 +253,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
                               color: Color(0xff4687ff),
                             ),
                             btnName2: "요청하기",
-                            btnCall2: _postRequest(index),
+                            btnCall2: (){
+                              _postRequest(index);
+                            },
                             btnIcon2: Icon(
                               Icons.outgoing_mail,
                               color: Colors.white,
@@ -248,9 +335,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
   _postRequest(int index) async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
+    print(token);
     try {
       var res = await helper.postCorrectionRequest(
-          token, "portfolio", portList[index].index);
+          token, "Portfolio", portList[index].index);
       if (res.success) {
         snackBar("첨삭 요청을 완료했습니다", context);
       } else {

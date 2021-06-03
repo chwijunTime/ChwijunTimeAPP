@@ -9,12 +9,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PortfolioPage extends StatefulWidget {
+class CorrectionPortfolioPage extends StatefulWidget {
   @override
-  _PortfolioPageState createState() => _PortfolioPageState();
+  _CorrectionPortfolioPageState createState() => _CorrectionPortfolioPageState();
 }
 
-class _PortfolioPageState extends State<PortfolioPage> {
+class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
   RetrofitHelper helper;
   List<CorrectionVO> correctionList = [];
   final _scrollController = ScrollController();
@@ -187,7 +187,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
       if (res.success) {
         List<CorrectionVO> list = [];
         for (int i=0; i< res.list.length; i++) {
-          if (res.list[i].status == "portfolio") {
+          if (res.list[i].type == "Portfolio") {
             list.add(res.list[i]);
           }
         }
@@ -203,12 +203,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
           await showDialog(
               context: context,
               builder: (BuildContext context) =>
-                  CorrectionDialog(index: vo.index));
+                  CorrectionDialog(index: vo.index,));
           setState(() {
             _getCorrection();
           });
@@ -219,69 +219,48 @@ class _PortfolioPageState extends State<PortfolioPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.member.classNumber}포트폴리오")),
-              vo.status == "Wait"
-                  ? Container(
-                      width: 48,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                          border: Border.all(color: Colors.grey)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "대기중",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : vo.status == "Approve"
-                      ? Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xff4687ff))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "수락함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xff4687ff)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 48,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Color(0xffFF7777))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              "거절함",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xffFF7777)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
+                      "${vo.member.classNumber}_포트폴리오", style: TextStyle(fontWeight: FontWeight.w600),)),
+              makeTag(vo.status)
             ],
           ),
         ),
       ),
     ));
+  }
+
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "Correction_Applying") {
+      msg = "대기중";
+      color = Colors.grey;
+    } else if (str == "Correction_Successful") {
+      msg = "완료함";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "거절함";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius:
+          BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

@@ -11,13 +11,15 @@ class ResumeVO {
   int index;
   @JsonKey(name: "notionResumeURL")
   String resumeUrl;
+  @JsonKey(name: "resumeFileURL")
+  String resResumeUrl;
 
   String user;
   String state;
 
 
   ResumeVO(
-      {this.member, this.index, this.resumeUrl, this.user, this.state});
+      {this.member, this.index, this.resumeUrl, this.user, this.state, this.resResumeUrl});
 
   factory ResumeVO.fromJson(Map<String, dynamic> json) => _$ResumeVOFromJson(json);
 

@@ -15,6 +15,7 @@ ResumeVO _$ResumeVOFromJson(Map<String, dynamic> json) {
     resumeUrl: json['notionResumeURL'] as String,
     user: json['user'] as String,
     state: json['state'] as String,
+    resResumeUrl: json['resumeFileURL'] as String,
   );
 }
 
@@ -22,6 +23,7 @@ Map<String, dynamic> _$ResumeVOToJson(ResumeVO instance) => <String, dynamic>{
       'member': instance.member,
       'memberResumeIdx': instance.index,
       'notionResumeURL': instance.resumeUrl,
+      'resumeFileURL': instance.resResumeUrl,
       'user': instance.user,
       'state': instance.state,
     };

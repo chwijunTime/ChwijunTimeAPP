@@ -1,9 +1,9 @@
 import 'package:app_user/model/correction/correction_vo.dart';
-import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/accept_dialog.dart';
+import 'package:app_user/widgets/dialog/reject_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,7 +53,7 @@ class _CorrectionDialog extends State<CorrectionDialog> {
   dialogContent(BuildContext context) {
     return Container(
       width: 385,
-      height: 200,
+      height: 150,
       padding: EdgeInsets.all(20),
       margin: EdgeInsets.only(top: 60),
       decoration: new BoxDecoration(
@@ -76,18 +76,16 @@ class _CorrectionDialog extends State<CorrectionDialog> {
             widget.vo = snapshot.data;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "${widget.vo.member.classNumber}_${widget.vo.type == "portfolio" ? "포트폴리오" : "이력서"}${widget.vo.index} 신청",
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black),
-                    ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "${widget.vo.member.classNumber}_${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"}",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black),
                   ),
                 ),
                 Padding(
@@ -98,12 +96,12 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ShowWebView(
-                                  url: widget.vo.type == "portfolio"
+                                  url: widget.vo.type == "Portfolio"
                                       ? widget.vo.portfolio.portfolioUrl
-                                      : widget.vo.resume.resumeUrl)));
+                                      : widget.vo.resume.resResumeUrl)));
                     },
                     child: Text(
-                      "해당 ${widget.vo.type == "portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
+                      "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -111,44 +109,35 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                User.role == User.user
-                    ? Expanded(
-                        child: Text(
-                            '${widget.vo.status == "Approve" ? "승인" : "거절"}된 요청입니다'))
-                    : Expanded(
-                        child: widget.vo.status == "Wait"
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  makeGradientBtn(
-                                      msg: "요청 승인",
-                                      onPressed: _postAccept,
-                                      mode: 5,
-                                      icon: Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                      )),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  makeGradientBtn(
-                                      msg: "요청 거절",
-                                      onPressed: _postReject,
-                                      mode: 5,
-                                      icon: Icon(
-                                        Icons.remove_circle_outline,
-                                        color: Colors.white,
-                                      )),
-                                ],
-                              )
-                            : Text(
-                                '이미 ${widget.vo.status == "Approve" ? "승인" : "거절"}된 요청입니다.',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
+                widget.vo.status == "Correction_Applying"
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          makeGradientBtn(
+                              msg: "요청 승인",
+                              onPressed: _postAccept,
+                              mode: 5,
+                              icon: Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          makeGradientBtn(
+                              msg: "요청 거절",
+                              onPressed: _postReject,
+                              mode: 5,
+                              icon: Icon(
+                                Icons.remove_circle_outline,
+                                color: Colors.white,
+                              )),
+                        ],
                       )
+                    : Text(
+                        '${widget.vo.status == "Correction_Successful" ? "승인된" : "거절된"} 요청입니다',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
               ],
             );
           } else {
@@ -177,38 +166,22 @@ class _CorrectionDialog extends State<CorrectionDialog> {
   }
 
   _postAccept() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    try {
-      var res =
-          await helper.postCorrectionApproval(token, {"": ""}, widget.index);
-      if (res.success) {
-        snackBar("승인되었습니다.", context);
-      } else {
-        print("error: ${res.msg}");
-        snackBar(res.msg, context);
-      }
-      Navigator.pop(context);
-    } catch (e) {
-      print("err: $e");
-    }
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) => AcceptDialog(
+              vo: widget.vo,
+            ));
+    setState(() {
+      _getCorrection();
+    });
   }
 
   _postReject() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    try {
-      var res =
-          await helper.postCorrectionReject(token, {"": ""}, widget.index);
-      if (res.success) {
-        snackBar("거절되었습니다.", context);
-      } else {
-        print("error: ${res.msg}");
-        snackBar(res.msg, context);
-      }
-      Navigator.pop(context);
-    } catch (e) {
-      print("err: $e");
-    }
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) => RejectDialog(vo: widget.vo));
+    setState(() {
+      _getCorrection();
+    });
   }
 }

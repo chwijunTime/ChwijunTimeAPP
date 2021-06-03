@@ -139,7 +139,7 @@ Widget buildDrawer(BuildContext context) {
             : SizedBox(),
         role != User.user
             ? customListTile(
-                title: "자기소개서 첨삭",
+                title: "이력서 첨삭",
                 leading: Icon(
                   Icons.sticky_note_2_outlined,
                   color: Colors.grey,

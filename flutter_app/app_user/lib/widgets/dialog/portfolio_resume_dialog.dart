@@ -145,6 +145,7 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
         } else {
           print("error: ${res.msg}");
           snackBar(res.msg, context);
+          Navigator.pop(context);
         }
       } catch (e) {
         print("err: $e");
@@ -154,20 +155,20 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
 
   postResume() async {
     if (titleC.text.isEmpty) {
-      snackBar("URL을 입력해주세요.", context);
+      snackBar("URL 입력해주세요.", context);
     } else {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
-      print("token: $token");
       try {
         var res =
-            await helper.postResume(token, {"resumeFileURL": titleC.text});
+        await helper.postResume(token, {"resumeFileURL": titleC.text});
         if (res.success) {
           Navigator.pop(context);
-          snackBar("이력서를 등록했습니다.", context);
+          snackBar("포트폴리오를 등록했습니다.", context);
         } else {
           print("error: ${res.msg}");
           snackBar(res.msg, context);
+          Navigator.pop(context);
         }
       } catch (e) {
         print("err: $e");

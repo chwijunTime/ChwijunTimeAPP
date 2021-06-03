@@ -1277,7 +1277,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/portfolio',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/resume',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -1290,14 +1290,14 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponsePortfolio> getResume(token, index) async {
+  Future<ResponseResume> getResume(token, index) async {
     ArgumentError.checkNotNull(token, 'token');
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/portfolio/$index',
+        '/v1/resume/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -1305,7 +1305,7 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponsePortfolio.fromJson(_result.data);
+    final value = ResponseResume.fromJson(_result.data);
     return value;
   }
 
@@ -1319,7 +1319,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/portfolio/$index',
+        '/v1/resume/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -1339,7 +1339,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/portfolio/$index',
+        '/v1/resume/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
