@@ -8,6 +8,7 @@ import 'package:app_user/screens/my_page/portfolio.dart';
 import 'package:app_user/screens/my_page/resume.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
+import 'package:app_user/widgets/dialog/edit_password_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:dio/dio.dart';
@@ -46,6 +47,7 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: buildDrawer(context),
       appBar: buildAppBar("취준타임", context),
       body: Container(
@@ -263,18 +265,34 @@ class _MyPageState extends State<MyPage> {
                           alignment: Alignment.bottomRight,
                           child: Padding(
                               padding: EdgeInsets.only(right: 25, bottom: 40),
-                              child: makeGradientBtn(
-                                  msg: widget.isCreated
-                                      ? "프로필 수정하기"
-                                      : "프로필 생성하기",
-                                  onPressed: widget.isCreated
-                                      ? _moveProfileModif
-                                      : _moveProfileCreate,
-                                  mode: 1,
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    color: Colors.white,
-                                  ))))),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  makeBtn(
+                                      msg: "비밀번호 변경하기",
+                                      onPressed: _modifyPassword,
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.lock,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  makeGradientBtn(
+                                      msg: widget.isCreated
+                                          ? "프로필 수정하기"
+                                          : "프로필 생성하기",
+                                      onPressed: widget.isCreated
+                                          ? _moveProfileModif
+                                          : _moveProfileCreate,
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_forward,
+                                        color: Colors.white,
+                                      )),
+                                ],
+                              )))),
                 ],
               );
             } else {
@@ -301,6 +319,12 @@ class _MyPageState extends State<MyPage> {
     } catch (e) {
       print("err: $e");
     }
+  }
+
+  _modifyPassword() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => EditPasswordDialog());
   }
 
   _moveProfileCreate() async {
