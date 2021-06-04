@@ -74,7 +74,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        "비밀번호 바꾸기",
+                        "비밀번호 변경하기",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
@@ -194,7 +194,7 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
     } else {
       try {
         var res = await helper.getCheckFindPw(classNumber.text, email.text);
-        if (res.success) {
+        if (res.success && res.data.prop1) {
           var res = await helper.postSendEmail(email.text);
           if (res.success) {
             showDialog(
@@ -215,10 +215,11 @@ class _FindPasswordPageState extends State<FindPasswordPage> {
               ),
             );
           } else {
-            snackBar(res.msg, context);
+
+            print("error: ${res.msg}");
           }
         } else {
-          snackBar(res.msg, context);
+          snackBar("존재하지 않은 계정입니다.", context);
         }
       } catch (e) {
         print("err: $e");
