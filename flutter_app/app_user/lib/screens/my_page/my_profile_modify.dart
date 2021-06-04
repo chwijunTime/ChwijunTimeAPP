@@ -1,41 +1,55 @@
+import 'package:app_user/model/user/profile_vo.dart';
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProfileModify extends StatefulWidget {
-  String address;
-  String classNumber;
-  String number;
-  String phone;
-  List<String> tagList = [];
+  ProfileVO vo;
 
-  MyProfileModify(
-      {@required this.address,
-      @required this.classNumber,
-      @required this.number,
-      @required this.phone,
-      @required this.tagList});
+  MyProfileModify({this.vo});
 
   @override
   _MyProfileModifyState createState() => _MyProfileModifyState();
 }
 
 class _MyProfileModifyState extends State<MyProfileModify> {
-  var addressC = TextEditingController();
-  var classC = TextEditingController();
-  var numberC = TextEditingController();
+  RetrofitHelper helper;
+
+  var phoneC = TextEditingController();
+  var etcC = TextEditingController();
+  List<String> tagList = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      addressC.text = widget.address;
-      classC.text = widget.classNumber;
-      numberC.text = widget.number;
-    });
+    initRetrofit();
+    phoneC.text = widget.vo.member.phone;
+    etcC.text = widget.vo.member.etc;
+    tagList = widget.vo.tag;
+  }
+
+  @override
+  void dispose() {
+    phoneC.dispose();
+    etcC.dispose();
+    super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -70,79 +84,51 @@ class _MyProfileModifyState extends State<MyProfileModify> {
                 ],
               ),
             ),
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              elevation: 5,
-              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-              child: Container(
-                width: 400,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "TEL. ${widget.phone}",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
             Expanded(
               child: Padding(
                   padding: EdgeInsets.only(right: 34, left: 34),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      buildTextField("집주소", addressC),
+                      buildTextField("전화번호", phoneC, type: TextInputType.phone),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 2,
-                              child: buildTextField("반", classC,
-                                  type: TextInputType.number)),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                              flex: 3,
-                              child: buildTextField("번호", numberC,
-                                  type: TextInputType.number))
-                        ],
-                      ),
+                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 3, maxLength: 50),
                       SizedBox(
-                        height: 10,
+                        height: 30,
                       ),
+                      makeBtn(
+                          msg: "태그 선택하러 가기",
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage()));
+                            setState(() {
+                              if (result != null) {
+                                tagList = result;
+                              }
+                            });
+                            print("tagList: $tagList");
+                          },
+                          mode: 4,
+                          icon: Icon(
+                            Icons.tag,
+                            color: Colors.white,
+                          )),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(right: 15, left: 15, top: 10),
+                        padding: const EdgeInsets.only(top: 20),
                         child: Align(
                             alignment: Alignment.center,
                             child: makeTagWidget(
-                                tag: widget.tagList,
-                                size: Size(360, 27),
-                                mode: 1)),
+                                tag: tagList, size: Size(360, 27), mode: 1)),
                       ),
                     ],
                   )),
             ),
-            Center(
-              child: Text(
-                "집주소와 반, 번호만 수정이 가능합니다.",
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey),
-              ),
-            ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             Center(
               child: Padding(
@@ -163,14 +149,27 @@ class _MyProfileModifyState extends State<MyProfileModify> {
     );
   }
 
-  _postModifyProfile() {
-    if (addressC.text.isEmpty || classC.text.isEmpty || numberC.text.isEmpty) {
+  _postModifyProfile() async {
+    if (phoneC.text.isEmpty || etcC.text.isEmpty || tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      Map<String, String> result = {
-        "address" : addressC.text, "class": classC.text, "number": numberC.text
-      };
-      Navigator.pop(context, result);
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      try {
+        var res = await helper.putProfile(token, {
+          "memberETC": etcC.text,
+          "memberPhoneNumber": phoneC.text,
+          "tagName": tagList
+        });
+        if (res.success) {
+          snackBar("프로필을 수정했습니다.", context);
+          Navigator.pop(context);
+        } else {
+          snackBar(res.msg, context);
+        }
+      } catch (e) {
+        print("err: $e");
+      }
     }
   }
 }

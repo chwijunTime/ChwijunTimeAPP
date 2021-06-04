@@ -1,9 +1,12 @@
+import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProfileCreate extends StatefulWidget {
   @override
@@ -11,12 +14,34 @@ class MyProfileCreate extends StatefulWidget {
 }
 
 class _MyProfileCreateState extends State<MyProfileCreate> {
+  RetrofitHelper helper;
+
   var phoneC = TextEditingController();
+  var etcC = TextEditingController();
   List<String> tagList = [];
 
   @override
   void initState() {
     super.initState();
+    initRetrofit();
+  }
+
+  @override
+  void dispose() {
+    phoneC.dispose();
+    etcC.dispose();
+    super.dispose();
+  }
+
+  initRetrofit() {
+    Dio dio = Dio(BaseOptions(
+        connectTimeout: 5 * 1000,
+        receiveTimeout: 5 * 1000,
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        }));
+    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -30,7 +55,7 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.all(26),
+              padding: EdgeInsets.only(left: 20, top: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -51,55 +76,44 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 20,
+            ),
             Expanded(
               child: Padding(
                   padding: EdgeInsets.only(right: 34, left: 34),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       buildTextField("전화번호", phoneC, type: TextInputType.phone),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      LayoutBuilder(
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SearchPage()));
-                              setState(() {
-                                if (result != null) {
-                                  tagList = result;
-                                }
-                              });
-                              print("tagList: $tagList");
-                            },
-                            child: Container(
-                              width: constraints.maxWidth,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 16, bottom: 16),
-                                child: Text(
-                                  "태그 선택하러 가기",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 4),
+                      SizedBox(
+                        height: 30,
                       ),
+                      makeBtn(
+                          msg: "태그 선택하러 가기",
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage()));
+                            setState(() {
+                              if (result != null) {
+                                tagList = result;
+                              }
+                            });
+                            print("tagList: $tagList");
+                          },
+                          mode: 4,
+                          icon: Icon(
+                            Icons.tag,
+                            color: Colors.white,
+                          )),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(right: 15, left: 15, top: 10),
+                        padding: const EdgeInsets.only(top: 20),
                         child: Align(
                             alignment: Alignment.center,
                             child: makeTagWidget(
@@ -108,17 +122,8 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                     ],
                   )),
             ),
-            Center(
-              child: Text(
-                "전화번호와 태그는 프로필 생성후 수정이 불가능합니다.",
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey),
-              ),
-            ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             Center(
               child: Padding(
@@ -139,12 +144,25 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
     );
   }
 
-  _postCreateProfile() {
-    if (phoneC.text.isEmpty ||
-        tagList.isEmpty) {
+  _postCreateProfile() async {
+    if (phoneC.text.isEmpty || tagList.isEmpty || etcC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      Navigator.pop(context, true);
+      final pref = await SharedPreferences.getInstance();
+      var token = pref.getString("accessToken");
+      try {
+        var res = await helper.postProfile(token, {
+          "memberETC": etcC.text,
+          "memberPhoneNumber": phoneC.text,
+          "tagName": tagList
+        });
+        if (res.success) {
+          snackBar("프로필을 생성했습니다.", context);
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        print("err: $e");
+      }
     }
   }
 }

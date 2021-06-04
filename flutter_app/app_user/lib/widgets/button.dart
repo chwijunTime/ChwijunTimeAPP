@@ -101,6 +101,10 @@ Widget makeBtn(
     _width = 47;
     _height = 33;
     _borderRadius = 5;
+  } else if (mode == 4) {
+    _width = 190;
+    _height = 33;
+    _borderRadius = 5;
   } else {
     // 기본 네모 버튼 1
     _width = 175;

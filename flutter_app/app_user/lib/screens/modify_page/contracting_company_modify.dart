@@ -188,23 +188,27 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
       print(widget.list.index);
-      final res = await helper.putCont(
-          token,
-          widget.list.index,
-          ContractingVO(
-                  salary: priceC.text,
-                  info: infoC.text,
-                  postTag: tagList,
-                  title: titleC.text,
-                  address: addressC.text,
-                  field: fieldC.text)
-              .toJson());
-      if (res.success) {
-        Navigator.pop(context, true);
-      } else {
-        Navigator.pop(context, false);
-        snackBar("서버오류", context);
-        print("e: ${res.msg}");
+      try {
+        final res = await helper.putCont(
+            token,
+            widget.list.index,
+            ContractingVO(
+                salary: priceC.text,
+                info: infoC.text,
+                postTag: tagList,
+                title: titleC.text,
+                address: addressC.text,
+                field: fieldC.text)
+                .toJson());
+        if (res.success) {
+          Navigator.pop(context, true);
+        } else {
+          Navigator.pop(context, false);
+          snackBar(res.msg, context);
+          print("error: ${res.msg}");
+        }
+      } catch (e) {
+        print("err: $e");
       }
     }
   }
