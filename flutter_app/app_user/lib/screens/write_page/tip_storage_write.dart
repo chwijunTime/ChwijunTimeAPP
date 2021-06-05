@@ -94,8 +94,10 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                 child: makeBtn(
                     msg: "태그 선택하러 가기",
                     onPressed: () async {
-                      final result = await Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SearchPage()));
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage()));
                       setState(() {
                         if (result != null) {
                           tagList = result;
@@ -103,7 +105,8 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                       });
                       print("tagList: $tagList");
                     },
-                    mode: 2),
+                    mode: 4,
+                    icon: Icon(Icons.tag, color: Colors.white,)),
               ),
               Align(
                   alignment: Alignment.center,

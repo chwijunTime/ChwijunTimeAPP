@@ -221,8 +221,10 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
               child: makeBtn(
                   msg: "태그 선택하러 가기",
                   onPressed: () async {
-                    final result = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SearchPage()));
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchPage()));
                     setState(() {
                       if (result != null) {
                         tagList = result;
@@ -230,7 +232,8 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                     });
                     print("tagList: $tagList");
                   },
-                  mode: 2),
+                  mode: 4,
+                  icon: Icon(Icons.tag, color: Colors.white,)),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15, left: 15),

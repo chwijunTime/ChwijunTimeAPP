@@ -48,10 +48,13 @@ class _TagListState extends State<TagList> {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
         if (itemCount != tagList.length) {
+          print("hihi: ${itemCount}, tagList.length: ${tagList.length}");
           if ((tagList.length - itemCount) ~/ Consts.showItemCount <= 0) {
             itemCount += tagList.length % Consts.showItemCount;
+            print("여기다!");
           } else {
             itemCount += Consts.showItemCount;
+            print("여기야");
           }
         }
       });
@@ -178,6 +181,7 @@ class _TagListState extends State<TagList> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
+                          print("index: $index, itemCount: $itemCount, tagList.length: ${tagList.length}");
                           if (index == itemCount) {
                             if (index == 0) {
                               return Card(
@@ -348,6 +352,7 @@ class _TagListState extends State<TagList> {
                       var res = await helper.deleteTag(token, deleteList[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
+                        itemCount --;
                         deleteTag.clear();
                       } else {
                         print("errorr: ${res.msg}");

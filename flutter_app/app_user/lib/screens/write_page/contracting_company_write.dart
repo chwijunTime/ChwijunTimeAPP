@@ -120,7 +120,8 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                       });
                       print("tagList: $tagList");
                     },
-                    mode: 2),
+                    mode: 4,
+                    icon: Icon(Icons.tag, color: Colors.white,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),

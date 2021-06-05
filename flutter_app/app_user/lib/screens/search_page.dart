@@ -293,6 +293,6 @@ void snackBar(String msg, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(msg),
     duration: Duration(milliseconds: 1500),
-    backgroundColor: Colors.red[200],
+    backgroundColor: Colors.indigo[700],
   ));
 }

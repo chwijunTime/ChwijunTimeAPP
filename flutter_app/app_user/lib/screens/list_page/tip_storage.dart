@@ -266,7 +266,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
                               );
                             }
                           } else {
-                            return buildItemTip(context, index, tipList);
+                            return buildItemTip(context, index, searchTipList);
                           }
                         }),
                   )
