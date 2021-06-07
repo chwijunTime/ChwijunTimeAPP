@@ -117,9 +117,10 @@ class _CounselingWriteState extends State<CounselingWrite> {
                                   strTime = "오후 ${pickTime.hour == 12 ? 12 : pickTime.hour -12 }시 ${pickTime.minute}분";
                                 }
                               });
-                              final f = DateFormat("hh:mm");
+                              final f = DateFormat("HH:mm");
                               final now = DateTime.now();
                               time = f.format(DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute));
+                              print(time);
                             }
                           },
                           child: Container(

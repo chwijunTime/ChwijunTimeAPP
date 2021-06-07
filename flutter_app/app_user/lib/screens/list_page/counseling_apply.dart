@@ -93,6 +93,9 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
             Expanded(
                 child: FutureBuilder(
               future: getCounselingAdminList(),

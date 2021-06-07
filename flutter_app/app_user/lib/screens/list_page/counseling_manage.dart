@@ -87,11 +87,23 @@ class _CounselingManageState extends State<CounselingManage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != counAdminList.length) {
-          if ((counAdminList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += counAdminList.length % Consts.showItemCount;
-          } else {
-            itemCount += Consts.showItemCount;
+        if (selectValue == valueList[0]) {
+          if (itemCount != counAdminList.length) {
+            if ((counAdminList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
+              itemCount = counAdminList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
+          }
+        } else {
+          if (itemCount != counUserList.length) {
+            if ((counUserList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
+              itemCount = counUserList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
           }
         }
       });
@@ -152,7 +164,12 @@ class _CounselingManageState extends State<CounselingManage> {
                                 builder: (context) => CounselingWrite()));
                         setState(() {
                           getCounselingAdminList();
-                          print("호잇");
+                          _scrollController.animateTo(
+                              _scrollController
+                                  .position.minScrollExtent,
+                              duration:
+                              Duration(milliseconds: 200),
+                              curve: Curves.elasticOut);
                         });
                       },
                       mode: 1,
@@ -167,11 +184,20 @@ class _CounselingManageState extends State<CounselingManage> {
                 valueList: valueList,
                 selectedValue: selectValue,
                 onSetState: (value) {
+                  selectValue = value;
                   setState(() {
-                    selectValue = value;
+                    if (selectValue == valueList[1]){
+                      itemCount = 0;
+                      counUserList.clear();
+                    }else {
+                      itemCount = Consts.showItemCount;
+                    }
                   });
                 },
                 hint: "보기"),
+            SizedBox(
+              height: 10,
+            ),
             selectValue == valueList[0]
                 ? Expanded(
                     child: FutureBuilder(
@@ -338,8 +364,8 @@ class _CounselingManageState extends State<CounselingManage> {
 
   Widget buildCounseling(BuildContext context, int index) {
     var tempDate =
-        DateFormat("yyyy-MM-dd hh:mm").parse(counAdminList[index].applyDate);
-    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+        DateFormat("yyyy-MM-dd HH:mm").parse(counAdminList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
     return GestureDetector(
       onTap: () {
         showDialog(
