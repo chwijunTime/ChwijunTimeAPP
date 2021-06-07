@@ -488,6 +488,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           setState(() {
             _getCompany();
             selectValue = valueList[0];
+            if (noticeList.length - itemCount == 0) {
+              itemCount = noticeList.length;
+            }
           });
         },
         child: Padding(

@@ -56,7 +56,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       setState(() {
         if (itemCount != reviewList.length) {
           if ((reviewList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += reviewList.length % Consts.showItemCount;
+            itemCount = reviewList.length;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -359,7 +359,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: InkWell(
         onTap: () async {
-          print("눌림");
           await Navigator.push(
               context,
               MaterialPageRoute(
@@ -368,6 +367,9 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                   )));
           setState(() {
             _getReview();
+            if (reviewList.length - itemCount == 0) {
+              itemCount = reviewList.length;
+            }
           });
         },
         child: Padding(
