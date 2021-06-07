@@ -39,6 +39,7 @@ class _TagListState extends State<TagList> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -50,7 +51,7 @@ class _TagListState extends State<TagList> {
         if (itemCount != tagList.length) {
           print("hihi: ${itemCount}, tagList.length: ${tagList.length}");
           if ((tagList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += tagList.length % Consts.showItemCount;
+            itemCount += tagList.length - itemCount;
             print("여기다!");
           } else {
             itemCount += Consts.showItemCount;
@@ -114,8 +115,14 @@ class _TagListState extends State<TagList> {
                           msg: "요청 태그 보기",
                           onPressed: () async {
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
+                            print("다녀왔어오");
                             setState(() {
                               _getTagList();
+                              print("이거봐 tagList.length: ${tagList.length}");
+                              if (tagList.length - itemCount == 1) {
+                                itemCount = tagList.length;
+                                print("itemCount 아니: $itemCount");
+                              }
                             });
                           },
                           mode: 1,
@@ -143,6 +150,10 @@ class _TagListState extends State<TagList> {
                                 ));
                         if (res != null && res) {
                           setState(() {
+                            if (tagList.length - itemCount <= 1) {
+                              itemCount ++;
+                            }
+                            print("itemcount: $itemCount");
                             _getTagList();
                           });
                         }
@@ -346,7 +357,6 @@ class _TagListState extends State<TagList> {
                 btnCall2: () async {
                   final pref = await SharedPreferences.getInstance();
                   var token = pref.getString("accessToken");
-                  print("token: ${token}");
                   try {
                     for (int i = 0; i < deleteList.length; i++) {
                       var res = await helper.deleteTag(token, deleteList[i]);
@@ -355,7 +365,7 @@ class _TagListState extends State<TagList> {
                         itemCount --;
                         deleteTag.clear();
                       } else {
-                        print("errorr: ${res.msg}");
+                        snackBar(res.msg, context);
                       }
                     }
                     Navigator.pop(context, true);

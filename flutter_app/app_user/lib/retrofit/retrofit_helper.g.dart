@@ -9,7 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://10.120.71.242:8082/';
+    baseUrl ??= 'http://10.53.68.170:8082/';
   }
 
   final Dio _dio;
