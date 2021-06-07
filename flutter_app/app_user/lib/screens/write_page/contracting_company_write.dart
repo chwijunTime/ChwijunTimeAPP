@@ -19,7 +19,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   RetrofitHelper helper;
 
   var titleC = TextEditingController();
-  var fieldC = TextEditingController();
+  var areaC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
@@ -35,7 +35,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   @override
   void dispose() {
     titleC.dispose();
-    fieldC..dispose();
+    areaC..dispose();
     addressC.dispose();
     priceC.dispose();
     infoC.dispose();
@@ -78,7 +78,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                     children: [
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
-                      buildTextField("사업 분야", fieldC,
+                      buildTextField("지역", areaC,
                           deco: false, autoFocus: false),
                       buildTextField("주소", addressC,
                           deco: false, autoFocus: false),
@@ -105,7 +105,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                 height: 15,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 100, right: 100),
+                padding: const EdgeInsets.only(left: 50, right: 50, bottom: 10),
                 child: makeBtn(
                     msg: "태그 선택하러 가기",
                     onPressed: () async {
@@ -158,7 +158,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
         addressC.text.isEmpty ||
         priceC.text.isEmpty ||
         infoC.text.isEmpty ||
-        fieldC.text.isEmpty ||
+        areaC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
@@ -167,7 +167,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
           address: addressC.text,
           salary: priceC.text,
           title: titleC.text,
-          field: fieldC.text,
+          area: areaC.text,
           postTag: tagList);
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

@@ -23,7 +23,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   RetrofitHelper helper;
 
   var titleC = TextEditingController();
-  var fieldC = TextEditingController();
+  var areaC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
@@ -36,7 +36,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     infoC.text = widget.list.info;
     priceC.text = widget.list.salary;
     titleC.text = widget.list.title;
-    fieldC.text = widget.list.field;
+    areaC.text = widget.list.area;
     addressC.text = widget.list.address;
     tagList = widget.list.tag;
   }
@@ -44,7 +44,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   @override
   void dispose() {
     titleC.dispose();
-    fieldC.dispose();
+    areaC.dispose();
     addressC.dispose();
     priceC.dispose();
     infoC.dispose();
@@ -89,7 +89,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                     children: [
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
-                      buildTextField("사업분야", fieldC,
+                      buildTextField("지역", areaC,
                           deco: false, autoFocus: false),
                       buildTextField("주소", addressC,
                           deco: false, autoFocus: false),
@@ -182,7 +182,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
         tagList.isEmpty ||
         titleC.text.isEmpty ||
         addressC.text.isEmpty ||
-        fieldC.text.isEmpty) {
+        areaC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       final pref = await SharedPreferences.getInstance();
@@ -198,7 +198,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                 postTag: tagList,
                 title: titleC.text,
                 address: addressC.text,
-                field: fieldC.text)
+                area: areaC.text)
                 .toJson());
         if (res.success) {
           Navigator.pop(context, true);

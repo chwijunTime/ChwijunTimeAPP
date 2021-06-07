@@ -8,7 +8,7 @@ part of 'contracting_vo.dart';
 
 ContractingVO _$ContractingVOFromJson(Map<String, dynamic> json) {
   return ContractingVO(
-    field: json['contractingBusinessAreas'] as String,
+    area: json['contractingBusinessAreas'] as String,
     info: json['contractingCompanyAboutUs'] as String,
     address: json['contractingCompanyAddress'] as String,
     salary: json['contractingCompanyAverageAnnualSalary'] as String,
@@ -23,7 +23,7 @@ ContractingVO _$ContractingVOFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ContractingVOToJson(ContractingVO instance) =>
     <String, dynamic>{
-      'contractingBusinessAreas': instance.field,
+      'contractingBusinessAreas': instance.area,
       'contractingCompanyAboutUs': instance.info,
       'contractingCompanyAddress': instance.address,
       'contractingCompanyAverageAnnualSalary': instance.salary,

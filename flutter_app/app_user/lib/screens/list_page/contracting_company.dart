@@ -33,7 +33,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   List<ContractingVO> searchContractingList = [];
   final titleC = TextEditingController();
   List<bool> deleteList = [];
-  var itemCount = 0;
+  var itemCount = Consts.showItemCount;
   List<String> valueList = ['전체보기', '검색하기'];
   String selectValue = "전체보기";
   String msg = "검색된 협약업체가 없습니다.";
@@ -60,7 +60,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         if (itemCount != contractingList.length) {
           if ((contractingList.length - itemCount) ~/ Consts.showItemCount <=
               0) {
-            itemCount += contractingList.length % Consts.showItemCount;
+            itemCount = contractingList.length;
+            print("으잉: ${contractingList.length}");
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -131,11 +132,12 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                             setState(() {
                               selectValue = value;
                               if (selectValue == valueList[1]) {
+                                titleC.text = "";
                                 itemCount = 0;
                                 searchContractingList.clear();
                                 msg = "회사명, 지역명으로 검색하기";
                               } else {
-                                titleC.text = "";
+                                itemCount = Consts.showItemCount;
                               }
                             });
                           },
@@ -204,6 +206,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                             itemCount = searchContractingList.length;
                             print(searchContractingList.length);
                             msg = "검색된 리뷰가 없습니다.";
+                          } else {
+                            itemCount = Consts.showItemCount;
                           }
                         });
                     }))
@@ -390,7 +394,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
           await Navigator.push(
               context,
@@ -516,8 +520,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         setState(() {
                           print("삭제함: ${res.msg}");
                           deleteList.clear();
+                          itemCount --;
                         });
                       } else {
+                        snackBar(res.msg, context);
                         print("errorr: ${res.msg}");
                       }
                     }

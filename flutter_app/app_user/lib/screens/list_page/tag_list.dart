@@ -51,8 +51,7 @@ class _TagListState extends State<TagList> {
         if (itemCount != tagList.length) {
           print("hihi: ${itemCount}, tagList.length: ${tagList.length}");
           if ((tagList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += tagList.length - itemCount;
-            print("여기다!");
+            itemCount = tagList.length;
           } else {
             itemCount += Consts.showItemCount;
             print("여기야");
@@ -115,13 +114,10 @@ class _TagListState extends State<TagList> {
                           msg: "요청 태그 보기",
                           onPressed: () async {
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
-                            print("다녀왔어오");
                             setState(() {
                               _getTagList();
-                              print("이거봐 tagList.length: ${tagList.length}");
                               if (tagList.length - itemCount == 1) {
                                 itemCount = tagList.length;
-                                print("itemCount 아니: $itemCount");
                               }
                             });
                           },

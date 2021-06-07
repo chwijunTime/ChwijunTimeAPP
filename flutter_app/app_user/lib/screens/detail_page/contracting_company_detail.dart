@@ -124,7 +124,7 @@ class _ContractingCompanyDetailPageState
                             ],
                           ),
                           Text(
-                            "사업 분야: ${widget.list.field}",
+                            "지역: ${widget.list.area}",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),

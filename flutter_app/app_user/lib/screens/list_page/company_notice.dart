@@ -59,11 +59,21 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != noticeList.length) {
-          if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += noticeList.length % Consts.showItemCount;
-          } else {
-            itemCount += Consts.showItemCount;
+        if (selectValue == valueList[0]) {
+          if (itemCount != noticeList.length) {
+            if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+              itemCount = noticeList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
+          }
+        } else {
+          if (itemCount != searchNoticeList.length) {
+            if ((searchNoticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+              itemCount = searchNoticeList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
           }
         }
       });
@@ -129,12 +139,13 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                         setState(() {
                           selectValue = value;
                           if (selectValue == valueList[1]) {
+                            titleC.text = "";
                             itemCount = 0;
                             searchNoticeList.clear();
                             msg = "이름, 지역, 직군으로 검색하기";
                           } else {
-                            titleC.text = "";
                             msg = "등록된 취업공고가 없습니다.";
+                            itemCount = Consts.showItemCount;
                           }
                         });
                       },
@@ -155,7 +166,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                             makeGradientBtn(
                                 msg: "취업 공고 등록",
                                 onPressed: () async {
-                                  print("등록하자");
                                   var res = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -164,6 +174,12 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                   if (res != null && res) {
                                     setState(() {
                                       _getCompany();
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration:
+                                          Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
                                     });
                                   }
                                 },
@@ -204,15 +220,18 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       final pref = await SharedPreferences.getInstance();
                       var token = pref.getString("accessToken");
                       var res = await helper.getCompListKeyword(token, key);
-                      if (res.success)
+                      if (res.success){
                         setState(() {
                           searchNoticeList = res.list;
                           if (searchNoticeList.length <= Consts.showItemCount) {
                             itemCount = searchNoticeList.length;
                             print(searchNoticeList.length);
                             msg = "검색된 취업공고가 없습니다.";
+                          } else {
+                            itemCount = Consts.showItemCount;
                           }
                         });
+                      }
                     }))
                 : SizedBox(),
             selectValue == valueList[1]
@@ -221,6 +240,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     controller: _scrollController,
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
+                      print("index: $index, itemCount: $itemCount, tagList.length: ${searchNoticeList.length}");
                       print("index: $index");
                       if (index == itemCount) {
                         if (searchNoticeList.length == 0) {
@@ -240,6 +260,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                             ),
                           );
                         } else if (index == searchNoticeList.length) {
+                          print(itemCount);
                           return Padding(
                             padding: EdgeInsets.all(Consts.padding),
                             child: makeGradientBtn(
@@ -420,6 +441,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       final res = await helper.deleteComp(token, arr[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
+                        itemCount --;
                       } else {
                         print("errorr: ${res.msg}");
                         if (res.msg == "작성자의 권한이 필요합니다.") {
