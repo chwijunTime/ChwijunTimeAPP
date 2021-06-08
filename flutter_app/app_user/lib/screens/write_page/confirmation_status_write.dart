@@ -110,7 +110,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                         height: 10,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -152,7 +152,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
               child: makeGradientBtn(
                   msg: "등록하기",
                   onPressed: () {
-                    onReviewPost();
+                    onConfirmationPost();
                   },
                   mode: 4,
                   icon: Icon(
@@ -169,7 +169,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
     );
   }
 
-  onReviewPost() async {
+  onConfirmationPost() async {
     if (titleC.text.isEmpty ||
         siteUrl.text.isEmpty ||
         addressC.text.isEmpty ||
@@ -196,8 +196,9 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
         if (res.success) {
           Navigator.pop(context, true);
         } else {
-          snackBar("서버오류", context);
+          snackBar(res.msg, context);
           print("error: ${res.msg}");
+          print("res: ${res.toJson()}");
         }
       } catch (e) {
         print(e);

@@ -9,6 +9,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,12 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   final _scrollController = ScrollController();
   final titleC = TextEditingController();
   int itemCount = Consts.showItemCount;
+  List<String> valueList = ['전체보기', '검색하기'];
+  String selectValue = "전체보기";
+  String msg = "등록된 취업확정현황이 없습니다.";
 
   List<ConfirmationVO> confList = [];
+  List<ConfirmationVO> searchConfList = [];
   List<bool> checkList = [];
 
   _onCheckPressed(int index) {
@@ -58,11 +63,22 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != confList.length) {
-          if ((confList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += confList.length % Consts.showItemCount;
-          } else {
-            itemCount += Consts.showItemCount;
+        if (selectValue == valueList[0]) {
+          if (itemCount != confList.length) {
+            if ((confList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+              itemCount = confList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
+          }
+        } else {
+          if (itemCount != searchConfList.length) {
+            if ((searchConfList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
+              itemCount = searchConfList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
           }
         }
       });
@@ -93,39 +109,58 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           children: [
             Padding(
               padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "취준타임",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0x832B8AC0)),
+                      ),
+                      Text(
+                        "취업확정 현황",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black),
+                      )
+                    ],
                   ),
-                  Text(
-                    "취업확정 현황",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
-                  )
+                  makeDropDownBtn(
+                      valueList: valueList,
+                      selectedValue: selectValue,
+                      onSetState: (value) {
+                        setState(() {
+                          selectValue = value;
+                          if (selectValue == valueList[1]) {
+                            titleC.text = "";
+                            itemCount = 0;
+                            searchConfList.clear();
+                            checkList.clear();
+                            msg = "회사명, 기수, 지역으로 검색하기";
+                          } else {
+                            msg = "등록된 취업확정현황이 없습니다.";
+                            itemCount = Consts.showItemCount;
+                            checkList.clear();
+                          }
+                        });
+                      },
+                      hint: "보기"),
                 ],
               ),
             ),
             widget.role == User.user
-                ? Padding(
-                    padding: EdgeInsets.only(right: 33, left: 33, bottom: 26),
-                    child: buildTextField("회사 이름, 기수, 지역", titleC,
-                        autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) {
-                      print(key);
-                    }))
+                ? SizedBox()
                 : Padding(
                     padding:
                         const EdgeInsets.only(right: 20, left: 20, bottom: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         makeGradientBtn(
                             msg: "취업 현황 등록",
@@ -159,94 +194,197 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       ],
                     ),
                   ),
-            Expanded(
-              child: FutureBuilder(
-                  future: _getComfirmation(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      confList = snapshot.data;
-                      for (int i = 0; i < confList.length; i++) {
-                        checkList.add(false);
-                      }
-                      if (confList.length <= Consts.showItemCount) {
-                        itemCount = confList.length;
-                      }
-                      return ListView.separated(
-                        controller: _scrollController,
-                        itemCount: itemCount + 1,
-                        itemBuilder: (context, index) {
-                          if (index == itemCount) {
-                            if (confList.length == 0) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: Text(
-                                        "등록된 취업 확정 현황이 없습니다.",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700),
-                                      )),
-                                ),
-                              );
-                            } else if (index == confList.length) {
-                              return Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: makeGradientBtn(
-                                    msg: "맨 처음으로",
-                                    onPressed: () {
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                    },
-                                    mode: 1,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Colors.white,
-                                    )),
-                              );
-                            } else {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              );
-                            }
-                          } else {
-                            return buildState(context, index);
+            selectValue == valueList[1]
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        right: 33, left: 33, bottom: 15, top: 15),
+                    child: buildTextField("회사명, 기수, 지역", titleC,
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) async {
+                      final pref = await SharedPreferences.getInstance();
+                      var token = pref.getString("accessToken");
+                      var res = await helper.getConfListKeyword(token, key);
+                      if (res.success) {
+                        setState(() {
+                          searchConfList = res.list;
+                          for (int i = 0; i < searchConfList.length; i++) {
+                            checkList.add(false);
                           }
-                        },
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Container(
-                              height: 1,
-                              color: Colors.grey,
-                            ),
+                          if (searchConfList.length <= Consts.showItemCount) {
+                            itemCount = searchConfList.length;
+                            print(searchConfList.length);
+                            msg = "검색된 취업확정현황이 없습니다.";
+                          } else {
+                            itemCount = Consts.showItemCount;
+                          }
+                        });
+                      }
+                    }))
+                : SizedBox(),
+            Expanded(
+              child: selectValue == valueList[1]
+                  ? ListView.separated(
+                      controller: _scrollController,
+                      itemCount: itemCount + 1,
+                      itemBuilder: (context, index) {
+                        if (index == itemCount) {
+                          if (searchConfList.length == 0) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: Text(
+                                      msg,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700),
+                                    )),
+                              ),
+                            );
+                          } else if (index == searchConfList.length) {
+                            return Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: makeGradientBtn(
+                                  msg: "맨 처음으로",
+                                  onPressed: () {
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                  },
+                                  mode: 1,
+                                  icon: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.white,
+                                  )),
+                            );
+                          } else {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          return buildState(context, index, searchConfList);
+                        }
+                      },
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            height: 1,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                    )
+                  : FutureBuilder(
+                      future: _getComfirmation(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          confList = snapshot.data;
+                          for (int i = 0; i < confList.length; i++) {
+                            checkList.add(false);
+                          }
+                          if (confList.length <= Consts.showItemCount) {
+                            itemCount = confList.length;
+                          }
+                          return ListView.separated(
+                            controller: _scrollController,
+                            itemCount: itemCount + 1,
+                            itemBuilder: (context, index) {
+                              if (index == itemCount) {
+                                if (confList.length == 0) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
+                                          child: Text(
+                                            msg,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )),
+                                    ),
+                                  );
+                                } else if (index == confList.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: makeGradientBtn(
+                                        msg: "맨 처음으로",
+                                        onPressed: () {
+                                          _scrollController.animateTo(
+                                              _scrollController
+                                                  .position.minScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.elasticOut);
+                                        },
+                                        mode: 1,
+                                        icon: Icon(
+                                          Icons.arrow_upward,
+                                          color: Colors.white,
+                                        )),
+                                  );
+                                } else {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                return buildState(context, index, confList);
+                              }
+                            },
+                            separatorBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: Container(
+                                  height: 1,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            physics: ScrollPhysics(),
                           );
-                        },
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        physics: ScrollPhysics(),
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }),
             ),
           ],
         ),
@@ -321,7 +459,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     }
   }
 
-  Widget buildState(BuildContext context, int index) {
+  Widget buildState(BuildContext context, int index, List<ConfirmationVO> vo) {
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -331,7 +469,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => ConfirmationStatusDetail(
-                        index: confList[index].index,
+                        index: vo[index].index,
                       )));
           setState(() {
             print("이?잉");
@@ -342,12 +480,12 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           children: [
             Expanded(
               child: Text(
-                "${confList[index].jockey}기 ${confList[index].name} - ${confList[index].title}",
+                "${vo[index].jockey}기 ${vo[index].name} - ${vo[index].title}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
             Text(
-              "${confList[index].area}",
+              "${vo[index].area}",
               style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -363,7 +501,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ConfirmationStatusDetail(
-                                    index: confList[index].index,
+                                    index: vo[index].index,
                                   )));
                     },
                     child: Icon(Icons.arrow_forward_ios_rounded),
