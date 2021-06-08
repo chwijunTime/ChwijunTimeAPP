@@ -241,7 +241,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
                       print("index: $index, itemCount: $itemCount, tagList.length: ${searchNoticeList.length}");
-                      print("index: $index");
                       if (index == itemCount) {
                         if (searchNoticeList.length == 0) {
                           return Card(
@@ -479,7 +478,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: InkWell(
         onTap: () async {
-          await Navigator.push(
+          var res = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => CompanyNoticeDetailPage(
@@ -488,8 +487,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           setState(() {
             _getCompany();
             selectValue = valueList[0];
-            if (noticeList.length - itemCount == 0) {
-              itemCount = noticeList.length;
+            if (res != null && res == "delete") {
+              itemCount --;
             }
           });
         },

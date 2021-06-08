@@ -52,7 +52,7 @@ class _NotificationPageState extends State<NotificationPage> {
       setState(() {
         if (itemCount != noticeList.length) {
           if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += noticeList.length % Consts.showItemCount;
+            itemCount = noticeList.length;
           } else {
             itemCount += Consts.showItemCount;
           }

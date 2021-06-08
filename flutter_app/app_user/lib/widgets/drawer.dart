@@ -82,7 +82,7 @@ Widget buildDrawer(BuildContext context) {
         role == User.user
             ? customListTile(
                 title: "상담 신청",
-                leading: Icon(Icons.account_box_outlined,
+                leading: Icon(Icons.headset,
                     color: Colors.grey, size: 28),
                 page: "/counseling_apply",
                 context: context)

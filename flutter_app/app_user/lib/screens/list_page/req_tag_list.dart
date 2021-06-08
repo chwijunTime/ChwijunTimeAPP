@@ -46,7 +46,7 @@ class _ReqTagListState extends State<ReqTagList> {
       setState(() {
         if (itemCount != reqTagList.length) {
           if ((reqTagList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += reqTagList.length % Consts.showItemCount;
+            itemCount = reqTagList.length;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -304,21 +304,18 @@ class _ReqTagListState extends State<ReqTagList> {
                         selectTag.clear();
                       } else {
                         print("errorr: ${res.msg}");
+                        snackBar(res.msg, context);
+                        Navigator.pop(context,);
+                        return;
                       }
                     }
-                    Navigator.pop(context, true);
+                    Navigator.pop(context,);
                   } catch (e) {
                     print(e);
                   }
                 },
               ),
           barrierDismissible: false);
-      if (res != null && res) {
-        setState(() {
-          _getReqTagList();
-          snackBar("성공적으로 추가했습니다.", context);
-        });
-      }
     }
   }
 
@@ -353,6 +350,7 @@ class _ReqTagListState extends State<ReqTagList> {
                       if (res.success) {
                         print("삭제함: ${res.msg}");
                         selectTag.clear();
+                        itemCount --;
                       } else {
                         print("errorr: ${res.msg}");
                       }

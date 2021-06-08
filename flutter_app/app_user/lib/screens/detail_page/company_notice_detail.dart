@@ -410,7 +410,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
             }),
         barrierDismissible: false);
     if (result == "yes") {
-      Navigator.pop(context, true);
+      Navigator.pop(context, "delete");
     }
   }
 

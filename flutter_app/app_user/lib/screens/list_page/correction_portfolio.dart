@@ -46,7 +46,7 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
         if (itemCount != correctionList.length) {
           if ((correctionList.length - itemCount) ~/ Consts.showItemCount <=
               0) {
-            itemCount += correctionList.length % Consts.showItemCount;
+            itemCount = correctionList.length;
           } else {
             itemCount += Consts.showItemCount;
           }

@@ -237,7 +237,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
           children: [
             Expanded(
               child: Text(
-                "포트폴리오 ${portList[index].index+ 1}",
+                "포트폴리오 ${portList[index].index}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
@@ -246,7 +246,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) => StdDialog(
-                            msg: "포트폴리오${portList[index].index + 1} 첨삭 요청하기",
+                            msg: "포트폴리오${portList[index].index} 첨삭 요청하기",
                             size: Size(326, 124),
                             icon: Icon(
                               Icons.outgoing_mail,

@@ -241,7 +241,7 @@ class _ResumePageState extends State<ResumePage> {
             children: [
               Expanded(
                 child: Text(
-                  "이력서 ${resumeList[index].index + 1}",
+                  "이력서 ${resumeList[index].index}",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -250,7 +250,7 @@ class _ResumePageState extends State<ResumePage> {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) => StdDialog(
-                              msg: "이력서${resumeList[index].index + 1} 첨삭 요청하기",
+                              msg: "이력서${resumeList[index].index} 첨삭 요청하기",
                               size: Size(326, 124),
                               icon: Icon(
                                 Icons.outgoing_mail,

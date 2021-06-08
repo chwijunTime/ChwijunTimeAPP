@@ -46,7 +46,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
       setState(() {
         if (itemCount != applyList.length) {
           if ((applyList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += applyList.length % Consts.showItemCount;
+            itemCount = applyList.length;
           } else {
             itemCount += Consts.showItemCount;
           }
