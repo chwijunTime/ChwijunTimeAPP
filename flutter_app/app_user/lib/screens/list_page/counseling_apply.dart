@@ -52,7 +52,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
       setState(() {
         if (itemCount != counAdminList.length) {
           if ((counAdminList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += counAdminList.length % Consts.showItemCount;
+            itemCount = counAdminList.length;
           } else {
             itemCount += Consts.showItemCount;
           }
@@ -223,7 +223,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                   ],
                 ),
               ),
-              counAdminList[index].type == "No_Application"
+              counAdminList[index].status == "No_Application"
                   ? IconButton(
                       icon: Icon(
                         Icons.outgoing_mail,
@@ -257,5 +257,34 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
             ],
           ),
         ));
+  }
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "No_Application") {
+      msg = "마감";
+      color = Color(0xffFF7777);
+    } else {
+      msg = "진행중";
+      color = Color(0xff5BC7F5);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

@@ -9,9 +9,9 @@ class ConsultingAdminVO{
   @JsonKey(name: "consultingIdx")
   int index;
   @JsonKey(name: "consultingStatus")
-  String type;
+  String status;
 
-  ConsultingAdminVO({this.applyDate, this.index, this.type});
+  ConsultingAdminVO({this.applyDate, this.index, this.status});
 
   factory ConsultingAdminVO.fromJson(Map<String, dynamic> json) => _$ConsultingAdminVOFromJson(json);
 

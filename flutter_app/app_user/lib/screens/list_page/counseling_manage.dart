@@ -366,12 +366,18 @@ class _CounselingManageState extends State<CounselingManage> {
     var tempDate =
         DateFormat("yyyy-MM-dd HH:mm").parse(counAdminList[index].applyDate);
     var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
-    return GestureDetector(
-      onTap: () {
-        showDialog(
+    return InkWell(
+      onTap: () async {
+        var res = await showDialog(
             context: context,
             builder: (BuildContext context) =>
                 CounselingDialog(index: counAdminList[index].index));
+        if (res != null && res == "delete") {
+          print("하이");
+          setState(() {
+            itemCount --;
+          });
+        }
       },
       child: Card(
           shape: RoundedRectangleBorder(
@@ -388,53 +394,47 @@ class _CounselingManageState extends State<CounselingManage> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
-                counAdminList[index].type != "No_Application"
-                    ? Container(
-                        width: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
-                            border: Border.all(color: Color(0xffFF7777))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2, top: 2),
-                          child: Text(
-                            "마감",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xffFF7777)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        width: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
-                            border: Border.all(color: Color(0xff5BC7F5))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 2, top: 2),
-                          child: Text(
-                            "진행중",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xff5BC7F5)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
+                makeTag(counAdminList[index].status)
               ],
             ),
           )),
     );
   }
 
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "No_Application") {
+      msg = "진행중";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "마감";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   Widget buildCounselingUser(BuildContext context, int index) {
     var tempDate =
-        DateFormat("yyyy-MM-dd hh:mm").parse(counUserList[index].applyDate);
-    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+        DateFormat("yyyy-MM-dd HH:mm").parse(counUserList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
     return Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18))),

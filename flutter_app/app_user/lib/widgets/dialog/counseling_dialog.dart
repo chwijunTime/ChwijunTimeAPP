@@ -42,25 +42,27 @@ class _CounselingDialogState extends State<CounselingDialog> {
   @override
   build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: FutureBuilder (
-        future: _getConsulting(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            widget.list = snapshot.data;
-            var tempDate = DateFormat("yyyy-MM-dd hh:mm").parse(widget.list.applyDate);
-            strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
-            return buildDialog(context);
-          } else {
-            return Center(child: CircularProgressIndicator(),);
-          }
-        },
-      )
-    );
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: FutureBuilder(
+          future: _getConsulting(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              widget.list = snapshot.data;
+              var tempDate =
+                  DateFormat("yyyy-MM-dd HH:mm").parse(widget.list.applyDate);
+              strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
+              return buildDialog(context);
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ));
   }
 
   buildDialog(BuildContext context) {
@@ -89,50 +91,73 @@ class _CounselingDialogState extends State<CounselingDialog> {
           ),
           Expanded(
               child: Center(
-                child: Text(
-                  widget.list.type == "No_Application" ? "해당 상담은 아직 신청자가 없습니다." : "해당 상담은 마감되었습니다.",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-              )),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: widget.list.type == "No_Application" ? Container(
-              width: 48,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(color: Color(0xff5BC7F5))),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 2, top: 2),
-                child: Text(
-                  "진행중",
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff5BC7F5)),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ) :Container(
-              width: 48,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(color: Color(0xffFF7777))),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 2, top: 2),
-                child: Text(
-                  "마감",
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xffFF7777)),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+            child: Text(
+              widget.list.status == "No_Application"
+                  ? "해당 상담은 아직 신청자가 없습니다."
+                  : "해당 상담은 마감되었습니다.",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
+          )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              makeTag(widget.list.status),
+              GestureDetector(
+                onTap: _onDelete,
+                child: Icon(Icons.delete),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  _onDelete() async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.deleteConsulting(token, widget.index);
+      if (res.success) {
+        snackBar("성공적으로 삭제되었습니다.", context);
+        Navigator.pop(context, "delete");
+      } else {
+        snackBar(res.msg, context);
+        print("err: ${res.msg}");
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print("error: $e");
+    }
+  }
+
+  Widget makeTag(String str) {
+    String msg;
+    Color color;
+
+    if (str == "No_Application") {
+      msg = "진행중";
+      color = Color(0xff5BC7F5);
+    } else {
+      msg = "마감";
+      color = Color(0xffFF7777);
+    }
+
+    return Container(
+      width: 48,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(40)),
+          border: Border.all(color: color)),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2, top: 2),
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
@@ -140,12 +165,16 @@ class _CounselingDialogState extends State<CounselingDialog> {
   Future<ConsultingAdminVO> _getConsulting() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    var res = await helper.getConsultingAdmin(token, widget.index);
-    if (res.success) {
-      return res.data;
-    } else {
-      snackBar(res.msg, context);
-      print("error: ${res.msg}");
+    try {
+      var res = await helper.getConsultingAdmin(token, widget.index);
+      if (res.success) {
+        return res.data;
+      } else {
+        snackBar(res.msg, context);
+        print("err: ${res.msg}");
+      }
+    } catch (e) {
+      print("error: $e");
     }
   }
 }

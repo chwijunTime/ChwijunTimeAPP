@@ -55,7 +55,7 @@ class _CounselingWriteState extends State<CounselingWrite> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "상담이 가능한 날짜와 시간, 장소를 입력해주세요!",
+                          "상담이 가능한 날짜와 시간을 입력해주세요!",
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,

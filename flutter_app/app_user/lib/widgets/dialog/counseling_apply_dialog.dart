@@ -63,8 +63,8 @@ class _CounselingApplyDialogState extends State<CounselingApplyDialog> {
 
   dialogContent(BuildContext context) {
     var tempDate =
-        DateFormat("yyyy-MM-dd hh:mm").parse(widget.list.applyDate);
-    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+        DateFormat("yyyy-MM-dd HH:mm").parse(widget.list.applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Container(
