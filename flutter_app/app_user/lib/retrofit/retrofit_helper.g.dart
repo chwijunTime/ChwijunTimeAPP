@@ -946,7 +946,8 @@ class _RetrofitHelper implements RetrofitHelper {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/request-tag',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/admin/request-tag',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -986,7 +987,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/request-tag/$index',
+        '/v1/admin/request-tag/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -1006,7 +1007,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/request-tag/$index',
+        '/v1/admin/request-tag/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -1044,7 +1045,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/admin/tag',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -1084,7 +1085,8 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/admin/tag/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -1103,7 +1105,8 @@ class _RetrofitHelper implements RetrofitHelper {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/tag/$index',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/admin/tag/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',

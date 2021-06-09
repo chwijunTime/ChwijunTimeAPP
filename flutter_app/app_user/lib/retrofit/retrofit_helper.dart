@@ -260,25 +260,25 @@ abstract class RetrofitHelper {
   // endregion
 
   //region 7. 태그
-  @GET("/v1/request-tag")
+  @GET("/v1/admin/request-tag")
   Future<ResponseTagList> getReqTagList(@Header("Authorization") String token);
 
   @POST("/v1/request-tag")
   Future<ResponseData> postReqTag(
       @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
-  @GET("/v1/request-tag/{rtagidx}")
+  @GET("/v1/admin/request-tag/{rtagidx}")
   Future<ResponseTag> getReqTag(
       @Header("Authorization") String token, @Path("rtagidx") int index);
 
-  @DELETE("/v1/request-tag/{rtagidx}")
+  @DELETE("/v1/admin/request-tag/{rtagidx}")
   Future<ResponseData> deleteReqTag(
       @Header("Authorization") String token, @Path("rtagidx") int index);
 
   @GET("/v1/tag")
   Future<ResponseTagList> getTagList(@Header("Authorization") String token);
 
-  @POST("/v1/tag")
+  @POST("/v1/admin/tag")
   Future<ResponseData> postTag(
       @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
@@ -286,11 +286,11 @@ abstract class RetrofitHelper {
   Future<ResponseTag> getTag(
       @Header("Authorization") String token, @Path("tagIdx") int index);
 
-  @PUT("/v1/tag/{tagIdx}")
+  @PUT("/v1/admin/tag/{tagIdx}")
   Future<ResponseTag> putTag(@Header("Authorization") String token,
       @Path("tagIdx") int index, @Body() Map<String, dynamic> body);
 
-  @DELETE("/v1/tag/{tagIdx}")
+  @DELETE("/v1/admin/tag/{tagIdx}")
   Future<ResponseData> deleteTag(
     @Header("Authorization") String token,
     @Path("tagIdx") int index,
