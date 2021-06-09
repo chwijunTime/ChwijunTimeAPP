@@ -42,12 +42,14 @@ class _SplashPageState extends State<SplashPage> {
     var prefs = await SharedPreferences.getInstance();
     var role = prefs.getString("role") ?? User.admin;
     var token = prefs.getString("accessToken");
+    var classNumber = prefs.getString("classNumber");
     print("role, main: ${role}");
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       msg = "완료!";
     });
     User.role = role;
+    User.classNumber = classNumber;
     await Future.delayed(Duration(milliseconds: 500));
     if (token != null && role != null) {
       Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);

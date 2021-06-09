@@ -158,10 +158,13 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
         });
         if (res.success) {
           snackBar("프로필을 생성했습니다.", context);
-          Navigator.pop(context);
+        } else {
+          snackBar(res.msg, context);
         }
+        Navigator.pop(context);
       } catch (e) {
         print("err: $e");
+        Navigator.pop(context);
       }
     }
   }

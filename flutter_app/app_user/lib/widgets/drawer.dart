@@ -1,4 +1,5 @@
 import 'package:app_user/model/user.dart';
+import 'package:app_user/model/user/userinfo_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
@@ -8,8 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Widget buildDrawer(BuildContext context) {
   String role;
+  String classNumber;
 
   role = User.role;
+  classNumber = User.classNumber;
   print("User.role: ${role}");
   return Drawer(
     child: Column(
@@ -31,7 +34,7 @@ Widget buildDrawer(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "3210 안수빈님!",
+                "${classNumber} ${role == User.user ? "학생" : "선생"}님!!",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,

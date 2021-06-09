@@ -70,12 +70,91 @@ class _MyListPageState extends State<MyListPage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != noticeList.length) {
-          if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += noticeList.length % Consts.showItemCount;
-          } else {
-            itemCount += Consts.showItemCount;
-          }
+        switch (selectValue) {
+          case "취업공고":
+            {
+              if (itemCount != noticeList.length) {
+                if ((noticeList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = noticeList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          case "작성한 면접 후기":
+            {
+              if (itemCount != reviewList.length) {
+                if ((reviewList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = reviewList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          case "상담":
+            {
+              if (itemCount != consultingList.length) {
+                if ((consultingList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = consultingList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          case "요청한 첨삭":
+            {
+              if (itemCount != correctionApplyList.length) {
+                if ((correctionApplyList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = correctionApplyList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          case "완료한 첨삭":
+            {
+              if (itemCount != correctedList.length) {
+                if ((correctedList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = correctedList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          case "작성한 꿀팁":
+            {
+              if (itemCount != tipList.length) {
+                if ((tipList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = tipList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
+          default:
+            {
+              if (itemCount != noticeList.length) {
+                if ((noticeList.length - itemCount) ~/ Consts.showItemCount <=
+                    0) {
+                  itemCount = noticeList.length;
+                } else {
+                  itemCount += Consts.showItemCount;
+                }
+              }
+              break;
+            }
         }
       });
     }
@@ -736,8 +815,7 @@ class _MyListPageState extends State<MyListPage> {
         onTap: () async {
           await showDialog(
               context: context,
-              builder: (BuildContext context) =>
-                  CorrectedDialog(list: vo));
+              builder: (BuildContext context) => CorrectedDialog(list: vo));
           setState(() {
             _getCorrection();
           });

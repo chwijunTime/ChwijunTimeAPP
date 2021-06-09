@@ -48,9 +48,10 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString("accessToken", "Bearer ${res.data.accessToken}");
         prefs.setString("refreshToken", res.data.refreshToken);
         prefs.setString("role", res.data.roles);
+        prefs.setString("classNumber", res.data.memberClassNumber);
         Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
         User.role = res.data.roles;
-        User.role = User.admin;   // TODO 삭제해야함
+        User.classNumber = res.data.memberClassNumber;
       } else {
         snackBar(res.msg, context);
       }
