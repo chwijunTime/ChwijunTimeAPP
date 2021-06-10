@@ -74,7 +74,8 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postLogout() async {
+  Future<ResponseData> postLogout(token) async {
+    ArgumentError.checkNotNull(token, 'token');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -82,7 +83,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{},
+            headers: <String, dynamic>{r'Authorization': token},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -398,7 +399,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(vo ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/contracting-company',
+        '/v1/admin/contracting-company',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -460,7 +461,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/contracting-company/$index',
+        '/v1/admin/contracting-company/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -480,7 +481,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/contracting-company/$index',
+        '/v1/admin/contracting-company/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -500,7 +501,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/application-accept/$index',
+        '/v1/admin/application-accept/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -520,7 +521,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/application-reject/$index',
+        '/v1/admin/application-reject/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -560,7 +561,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{r'status': status};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/application-status',
+        '/v1/admin/application-status',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -580,7 +581,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/application/$index',
+        '/v1/admin/application/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -643,7 +644,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(employmentAnnouncementSaveDto ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-announcement',
+        '/v1/admin/employment-announcement',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -687,7 +688,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(employmentAnnouncementSaveDto ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-announcement/$index',
+        '/v1/admin/employment-announcement/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -707,7 +708,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-announcement/$index',
+        '/v1/admin/employment-announcement/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -748,7 +749,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(employmentConfirmationIdx ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-confirmation',
+        '/v1/admin/employment-confirmation',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -811,7 +812,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(employmentConfirmationIdx ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-confirmation/$index',
+        '/v1/admin/employment-confirmation/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -831,7 +832,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/employment-confirmation/$index',
+        '/v1/admin/employment-confirmation/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -869,7 +870,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(noticeSaveDto ?? <String, dynamic>{});
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/notice',
+    final _result = await _dio.request<Map<String, dynamic>>('/v1/admin/notice',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -909,7 +910,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(noticeSaveDto ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/notice/$index',
+        '/v1/admin/notice/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
@@ -928,7 +929,7 @@ class _RetrofitHelper implements RetrofitHelper {
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/notice/$index',
+        '/v1/admin/notice/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -1360,7 +1361,8 @@ class _RetrofitHelper implements RetrofitHelper {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/v1/correction',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/v1/admin/correction',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -1382,7 +1384,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/correction-approval',
+        '/v1/admin/correction-approval',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -1404,7 +1406,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/correction-rejection',
+        '/v1/admin/correction-rejection',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -1448,7 +1450,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/correction/$index',
+        '/v1/admin/correction/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -1507,7 +1509,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/consulting-admin',
+        '/v1/admin/consulting-admin',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -1547,7 +1549,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/consulting-admin/$index',
+        '/v1/admin/consulting-admin/$index',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -1566,7 +1568,7 @@ class _RetrofitHelper implements RetrofitHelper {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>(
-        '/v1/consulting-user',
+        '/v1/admin/consulting-user',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -1869,6 +1871,24 @@ class _RetrofitHelper implements RetrofitHelper {
             baseUrl: baseUrl),
         data: _data);
     final value = ResponseData.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<String> getPermission(email) async {
+    ArgumentError.checkNotNull(email, 'email');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'email': email};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<String>('/v1/abdodn/check/permissions',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
     return value;
   }
 }

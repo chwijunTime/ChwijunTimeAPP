@@ -6,9 +6,9 @@ import 'package:app_user/model/company_review/response_review.dart';
 import 'package:app_user/model/company_review/response_review_list.dart';
 import 'package:app_user/model/confirmation/response_comfirmation_list.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
-import 'package:app_user/model/consulting/response_consulting_user_list.dart';
-import 'package:app_user/model/consulting/response_consulting_admin_list.dart';
 import 'package:app_user/model/consulting/response_consulting_admin.dart';
+import 'package:app_user/model/consulting/response_consulting_admin_list.dart';
+import 'package:app_user/model/consulting/response_consulting_user_list.dart';
 import 'package:app_user/model/contracting_company/response_contracting.dart';
 import 'package:app_user/model/contracting_company/response_contracting_list.dart';
 import 'package:app_user/model/correction/response_corrected_list.dart';
@@ -49,7 +49,7 @@ abstract class RetrofitHelper {
   Future<ResponseData> postEmailCheck(@Body() Map<String, dynamic> body);
 
   @POST("/v1/logout")
-  Future<ResponseData> postLogout();
+  Future<ResponseData> postLogout(@Header("Authorization") String token);
 
   @POST("/v1/auth/refresh")
   Future<ResponseData> postRefreshToken(@Body() Map<String, dynamic> body);
@@ -121,7 +121,7 @@ abstract class RetrofitHelper {
     @Header("Authorization") String token,
   );
 
-  @POST("/v1/contracting-company")
+  @POST("/v1/admin/contracting-company")
   Future<ResponseData> postCont(
       @Header("Authorization") String token, @Body() Map<String, dynamic> vo);
 
@@ -134,22 +134,22 @@ abstract class RetrofitHelper {
   Future<ResponseContracting> getCont(
       @Header("Authorization") String token, @Path("companyidx") int index);
 
-  @PUT("/v1/contracting-company/{companyidx}")
+  @PUT("/v1/admin/contracting-company/{companyidx}")
   Future<ResponseData> putCont(@Header("Authorization") String token,
       @Path("companyidx") int index, @Body() Map<String, dynamic> body);
 
-  @DELETE("/v1/contracting-company/{companyidx}")
+  @DELETE("/v1/admin/contracting-company/{companyidx}")
   Future<ResponseData> deleteCont(
       @Header("Authorization") String token, @Path("companyidx") int index);
 
   //endregion
 
   //region 4. 취업 공고
-  @POST("/v1/application-accept/{applicationIdx}")
+  @POST("/v1/admin/application-accept/{applicationIdx}")
   Future<ResponseData> postCompNoticeAcc(
       @Header("Authorization") String token, @Path("applicationIdx") int index);
 
-  @POST("/v1/application-reject/{applicationIdx}")
+  @POST("/v1/admin/application-reject/{applicationIdx}")
   Future<ResponseData> postCompNoticeRej(
       @Header("Authorization") String token, @Path("applicationIdx") int index);
 
@@ -158,12 +158,12 @@ abstract class RetrofitHelper {
       @Header("Authorization") String token,
       @Query("keyword", encoded: true) String keyword);
 
-  @GET("/v1/application-status")
+  @GET("/v1/admin/application-status")
   Future<ResponseCompStatusList> getCompApplyStatusList(
       @Header("Authorization") String token,
       @Query("status", encoded: true) String status);
 
-  @GET("/v1/application/{applicationIdx}")
+  @GET("/v1/admin/application/{applicationIdx}")
   Future<ResponseCompStatusDetail> getCompApplyStatus(
       @Header("Authorization") String token, @Path("applicationIdx") int index);
 
@@ -178,7 +178,7 @@ abstract class RetrofitHelper {
   Future<ResponseCompNoticeList> getCompList(
       @Header("Authorization") String token);
 
-  @POST("/v1/employment-announcement")
+  @POST("/v1/admin/employment-announcement")
   Future<ResponseData> postComp(@Header("Authorization") String token,
       @Body() Map<String, dynamic> employmentAnnouncementSaveDto);
 
@@ -186,13 +186,13 @@ abstract class RetrofitHelper {
   Future<ResponseNoticeComp> getComp(@Header("Authorization") String token,
       @Path("employmentAnnouncementIdx") int index);
 
-  @PUT("/v1/employment-announcement/{employmentAnnouncementIdx}")
+  @PUT("/v1/admin/employment-announcement/{employmentAnnouncementIdx}")
   Future<ResponseData> putComp(
       @Header("Authorization") String token,
       @Path("employmentAnnouncementIdx") int index,
       @Body() Map<String, dynamic> employmentAnnouncementSaveDto);
 
-  @DELETE("/v1/employment-announcement/{employmentAnnouncementIdx}")
+  @DELETE("/v1/admin/employment-announcement/{employmentAnnouncementIdx}")
   Future<ResponseData> deleteComp(
     @Header("Authorization") String token,
     @Path("employmentAnnouncementIdx") int index,
@@ -205,7 +205,7 @@ abstract class RetrofitHelper {
   Future<ResponseConfirmationList> getConfList(
       @Header("Authorization") String token);
 
-  @POST("/v1/employment-confirmation")
+  @POST("/v1/admin/employment-confirmation")
   Future<ResponseData> postConf(@Header("Authorization") String token,
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
@@ -220,13 +220,13 @@ abstract class RetrofitHelper {
     @Path("employmentConfirmationIdx") int index,
   );
 
-  @PUT("/v1/employment-confirmation/{employmentConfirmationIdx}")
+  @PUT("/v1/admin/employment-confirmation/{employmentConfirmationIdx}")
   Future<ResponseData> putConf(
       @Header("Authorization") String token,
       @Path("employmentConfirmationIdx") int index,
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
-  @DELETE("/v1/employment-confirmation/{employmentConfirmationIdx}")
+  @DELETE("/v1/admin/employment-confirmation/{employmentConfirmationIdx}")
   Future<ResponseData> deleteConf(
     @Header("Authorization") String token,
     @Path("employmentConfirmationIdx") int index,
@@ -239,7 +239,7 @@ abstract class RetrofitHelper {
   Future<ResponseNoticeList> getNoticeList(
       @Header("Authorization") String token);
 
-  @POST("/v1/notice")
+  @POST("/v1/admin/notice")
   Future<ResponseData> postNotice(@Header("Authorization") String token,
       @Body() Map<String, dynamic> noticeSaveDto);
 
@@ -247,13 +247,13 @@ abstract class RetrofitHelper {
   Future<ResponseNotice> getNotice(
       @Header("Authorization") String token, @Path("noticeidx") int index);
 
-  @PUT("/v1/notice/{noticeidx}")
+  @PUT("/v1/admin/notice/{noticeidx}")
   Future<ResponseData> putNotice(
       {@Header("Authorization") String token,
       @Path("noticeidx") int index,
       @Body() Map<String, dynamic> noticeSaveDto});
 
-  @DELETE("/v1/notice/{noticeidx}")
+  @DELETE("/v1/admin/notice/{noticeidx}")
   Future<ResponseData> deleteNotice(
       {@Header("Authorization") String token, @Path("noticeidx") int index});
 
@@ -321,11 +321,8 @@ abstract class RetrofitHelper {
       @Header("Authorization") String token, @Path("portfolioIdx") int index);
 
   @PUT("/v1/portfolio/{portfolioIdx}")
-  Future<ResponseData> putPortfolio(
-      @Header("Authorization") String token,
-      @Path("portfolioIdx") int index,
-      @Body() Map<String, dynamic> body
-      );
+  Future<ResponseData> putPortfolio(@Header("Authorization") String token,
+      @Path("portfolioIdx") int index, @Body() Map<String, dynamic> body);
 
   @DELETE("/v1/portfolio/{portfolioIdx}")
   Future<ResponseData> deletePortfolio(
@@ -336,9 +333,8 @@ abstract class RetrofitHelper {
       @Header("Authorization") String token);
 
   @POST("/v1/resume")
-  Future<ResponseData> postResume(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> body
-      );
+  Future<ResponseData> postResume(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
 
   @GET("/v1/resume/{resumeIdx}")
   Future<ResponseResume> getResume(
@@ -358,18 +354,18 @@ abstract class RetrofitHelper {
 //endregion
 
   //region 9. 이력서 및 포트폴리오 첨삭
-  @GET("/v1/correction")
+  @GET("/v1/admin/correction")
   Future<ResponseCorrectionList> getCorrectionList(
     @Header("Authorization") String token,
   );
 
-  @POST("/v1/correction-approval")
+  @POST("/v1/admin/correction-approval")
   Future<ResponseData> postCorrectionApproval(
       @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
       @Query("idx", encoded: true) int index);
 
-  @POST("/v1/correction-rejection")
+  @POST("/v1/admin/correction-rejection")
   Future<ResponseData> postCorrectionReject(
       @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
@@ -381,7 +377,7 @@ abstract class RetrofitHelper {
       @Query("correctionType", encoded: true) String type,
       @Query("idx", encoded: true) int index);
 
-  @GET("/v1/correction/{idx}")
+  @GET("/v1/admin/correction/{idx}")
   Future<ResponseCorrection> getCorrection(
     @Header("Authorization") String token,
     @Path("idx") int index,
@@ -400,7 +396,7 @@ abstract class RetrofitHelper {
     @Header("Authorization") String token,
   );
 
-  @POST("/v1/consulting-admin")
+  @POST("/v1/admin/consulting-admin")
   Future<ResponseData> postConsultingAdmin(
     @Header("Authorization") String token,
     @Body() Map<String, dynamic> body, // TODO  "applicationDate": "string"
@@ -410,11 +406,11 @@ abstract class RetrofitHelper {
   Future<ResponseConsultingAdmin> getConsultingAdmin(
       @Header("Authorization") String token, @Path("consultingIdx") int index);
 
-  @DELETE("/v1/consulting-admin/{consultingIdx}")
+  @DELETE("/v1/admin/consulting-admin/{consultingIdx}")
   Future<ResponseData> deleteConsulting(
       @Header("Authorization") String token, @Path("consultingIdx") int index);
 
-  @GET("/v1/consulting-user")
+  @GET("/v1/admin/consulting-user")
   Future<ResponseConsultingUserList> getConsultingUserList(
     @Header("Authorization") String token,
   );
@@ -499,5 +495,10 @@ abstract class RetrofitHelper {
   Future<ResponseData> deleteTip(
       @Header("Authorization") String token, @Path("tipidx") int idx);
 
+//endregion
+
+  //region Dev
+  @GET("/v1/abdodn/check/permissions")
+  Future<String> getPermission(@Query("email", encoded: true) String email);
 //endregion
 }
