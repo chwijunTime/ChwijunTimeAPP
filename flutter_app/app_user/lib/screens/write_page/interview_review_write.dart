@@ -34,7 +34,6 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
     initRetrofit();
   }
 
-
   @override
   void dispose() {
     titleC.dispose();
@@ -88,11 +87,9 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                   if (picked != null) {
                     setState(() {
                       selectedDate = picked;
-                      strDate =
-                          "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
+                      strDate = DateFormat("yyyy년 MM월 dd일").format(selectedDate);
+                      date = DateFormat("yyyy-MM-dd").format(selectedDate);
                     });
-                    final f = DateFormat("yyyy-MM-dd");
-                    date = f.format(selectedDate);
                   }
                 },
                 child: Container(
@@ -105,8 +102,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                       strDate,
                       style: TextStyle(
                           fontSize: 16,
-                          color:
-                              strDate == "지원날짜" ? Colors.grey : Colors.black),
+                          color: strDate == "지원날짜" ? Colors.grey : Colors.black,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -136,7 +133,10 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                         height: 5,
                       ),
                       buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 6, maxLength: 100, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 25,
+                          maxLength: 1000,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -162,7 +162,10 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                         height: 5,
                       ),
                       buildTextField("자주 나온 질문을 작성해주세요.", questionC,
-                          maxLine: 6, maxLength: 100, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 10,
+                          maxLength: 255,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -173,10 +176,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
               child: makeBtn(
                   msg: "태그 선택하러 가기",
                   onPressed: () async {
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchPage()));
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
                     setState(() {
                       if (result != null) {
                         tagList = result;
@@ -185,7 +186,10 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                     print("tagList: $tagList");
                   },
                   mode: 4,
-                  icon: Icon(Icons.tag, color: Colors.white,)),
+                  icon: Icon(
+                    Icons.tag,
+                    color: Colors.white,
+                  )),
             ),
             Align(
                 alignment: Alignment.center,

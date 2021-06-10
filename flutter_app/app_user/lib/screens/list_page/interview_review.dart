@@ -13,6 +13,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewPage extends StatefulWidget {
@@ -114,7 +115,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: 25 ),
+                  padding: EdgeInsets.only(right: 25),
                   child: FloatingActionButton(
                     onPressed: () async {
                       var res = await Navigator.push(
@@ -157,25 +158,27 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 )
               ],
             ),
-            User.role == User.user ? Padding(
-              padding: const EdgeInsets.fromLTRB(33.0, 0, 33, 10),
-              child: makeDropDownBtn(
-                  valueList: valueList,
-                  selectedValue: selectValue,
-                  onSetState: (value) {
-                    setState(() {
-                      selectValue = value;
-                      if (selectValue == valueList[1]) {
-                        itemCount = 0;
-                        searchReviewList.clear();
-                        msg = "회사명으로 검색하기";
-                      } else {
-                        titleC.text = "";
-                      }
-                    });
-                  },
-                  hint: "보기"),
-            ) : SizedBox(),
+            User.role == User.user
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(33.0, 0, 33, 10),
+                    child: makeDropDownBtn(
+                        valueList: valueList,
+                        selectedValue: selectValue,
+                        onSetState: (value) {
+                          setState(() {
+                            selectValue = value;
+                            if (selectValue == valueList[1]) {
+                              itemCount = 0;
+                              searchReviewList.clear();
+                              msg = "회사명으로 검색하기";
+                            } else {
+                              titleC.text = "";
+                            }
+                          });
+                        },
+                        hint: "보기"),
+                  )
+                : SizedBox(),
             User.role == User.user
                 ? selectValue == valueList[1]
                     ? Padding(
@@ -192,7 +195,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                             setState(() {});
                             setState(() {
                               searchReviewList = res.list;
-                              if (searchReviewList.length <= Consts.showItemCount) {
+                              if (searchReviewList.length <=
+                                  Consts.showItemCount) {
                                 itemCount = searchReviewList.length;
                                 print(searchReviewList.length);
                                 msg = "검색된 리뷰가 없습니다.";
@@ -363,8 +367,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
               context,
               MaterialPageRoute(
                   builder: (countext) => InterviewReviewDetail(
-                    index: list[index].index,
-                  )));
+                        index: list[index].index,
+                      )));
           setState(() {
             _getReview();
             if (reviewList.length - itemCount == 0) {
@@ -386,6 +390,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                 child: Text(
                   "${list[index].review}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               SizedBox(
@@ -395,27 +401,27 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                     buildItemTag(list[index].tag, 0),
                     list[index].tag.length > 1
                         ? Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${list[index].tag.length - 1}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    )
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${list[index].tag.length - 1}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          )
                         : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "지원날짜: ${list[index].applyDate}",
+                          "지원날짜: ${DateFormat("yyyy년 MM월 dd일").format(DateFormat("yyyy-MM-dd").parse(list[index].applyDate))}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,

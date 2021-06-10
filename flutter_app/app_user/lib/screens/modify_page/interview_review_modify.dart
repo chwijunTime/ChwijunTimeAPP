@@ -118,8 +118,8 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                       strDate,
                       style: TextStyle(
                           fontSize: 16,
-                          color:
-                              strDate == "지원날짜" ? Colors.grey : Colors.black),
+                          color: strDate == "지원날짜" ? Colors.grey : Colors.black,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -149,7 +149,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                         height: 5,
                       ),
                       buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 6, maxLength: 100)
+                          maxLine: 25, maxLength: 1000)
                     ],
                   ),
                 ),
@@ -175,7 +175,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                         height: 5,
                       ),
                       buildTextField("자주 나온 질문을 작성해주세요.", questionC,
-                          maxLine: 6, maxLength: 100)
+                          maxLine: 10, maxLength: 255)
                     ],
                   ),
                 ),
@@ -241,7 +241,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
       try {
-        print(vo.toJson());
+        print("${vo.toJson()}, ${widget.list.index}");
         var res = await helper.putReview(token, widget.list.index, vo.toJson());
         if (res.success) {
           Navigator.pop(context);
