@@ -9,9 +9,11 @@ import 'package:app_user/screens/my_page/resume.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/edit_password_dialog.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -164,99 +166,104 @@ class _MyPageState extends State<MyPage> {
                           ],
                         )),
                   ),
-                  Card(
-                    margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(18))),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "이력서 보러가기",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
-                            ),
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 28,
+                  User.role == User.user ?
+                  Column(
+                    children: [
+                      Card(
+                        margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18))),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "이력서 보러가기",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600, fontSize: 18),
+                                ),
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ResumePage()));
-                              })
-                        ],
-                      ),
-                    ),
-                  ),
-                  Card(
-                    margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(18))),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "포트폴리오 보러가기",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
-                            ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 28,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ResumePage()));
+                                  })
+                            ],
                           ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 28,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PortfolioPage()));
-                              })
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Card(
-                    margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(18))),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "마이 리스트 보러가기",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
-                            ),
+                      Card(
+                        margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18))),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "포트폴리오 보러가기",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600, fontSize: 18),
+                                ),
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 28,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => PortfolioPage()));
+                                  })
+                            ],
                           ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 28,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MyListPage()));
-                              })
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                      Card(
+                        margin: EdgeInsets.fromLTRB(25, 0, 25, 22),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18))),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "마이 리스트 보러가기",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600, fontSize: 18),
+                                ),
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 28,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MyListPage()));
+                                  })
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ) : SizedBox(),
                   SizedBox(
                     height: 20,
                   ),
@@ -268,6 +275,115 @@ class _MyPageState extends State<MyPage> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  makeBtn(
+                                      msg: '계정 권한 확인하기',
+                                      onPressed: () async {
+                                        try {
+                                          var res = await helper
+                                              .getPermission(vo.member.email);
+                                          if (res.contains("유저")) {
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        StdDialog(
+                                                          msg:
+                                                              "이 계정은 유저 계정입니다.",
+                                                          size: Size(180, 100),
+                                                          icon: Icon(
+                                                            Icons.person,
+                                                            color: Colors
+                                                                .blueAccent,
+                                                          ),
+                                                        ));
+                                          } else {
+                                            if (User.role == User.admin) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                      StdDialog(
+                                                        msg:
+                                                        "이 계정은 어드민 계정입니다.",
+                                                        size: Size(180, 100),
+                                                        icon: Icon(
+                                                          Icons.person,
+                                                          color: Colors
+                                                              .blueAccent,
+                                                        ),
+                                                      ));
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      StdDialog(
+                                                        msg:
+                                                            "이 계정은 어드민 계정입니다. \n다시 로그인해주세요.",
+                                                        size: Size(200, 150),
+                                                        icon: Icon(
+                                                          Icons
+                                                              .admin_panel_settings,
+                                                          color:
+                                                              Colors.blueAccent,
+                                                        ),
+                                                        btnIcon2: Icon(
+                                                          Icons.check,
+                                                          color: Colors.white,
+                                                        ),
+                                                        btnCall2: () async {
+                                                          try {
+                                                            final pref =
+                                                                await SharedPreferences
+                                                                    .getInstance();
+                                                            var token =
+                                                                pref.getString(
+                                                                    "accessToken");
+                                                            var res =
+                                                                await helper
+                                                                    .postLogout(
+                                                                        token);
+                                                            if (res.success) {
+                                                              SharedPreferences
+                                                                  pref =
+                                                                  await SharedPreferences
+                                                                      .getInstance();
+                                                              await pref
+                                                                  .clear();
+                                                              Navigator
+                                                                  .pushReplacementNamed(
+                                                                      context,
+                                                                      "/login");
+                                                            } else {
+                                                              print(
+                                                                  "error: ${res.msg}");
+                                                            }
+                                                          } catch (e) {
+                                                            print("err: ${e}");
+                                                          }
+
+                                                          Navigator
+                                                              .pushReplacementNamed(
+                                                                  context,
+                                                                  "/login");
+                                                        },
+                                                        btnName2: "다시 로그인",
+                                                      ),
+                                                  barrierDismissible: false);
+                                            }
+                                          }
+                                        } catch (e) {
+                                          print("err: $e");
+                                        }
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   makeBtn(
                                       msg: "비밀번호 변경하기",
                                       onPressed: _modifyPassword,

@@ -68,6 +68,7 @@ class _StdDialog extends State<StdDialog> {
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: Colors.black),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
