@@ -12,6 +12,7 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _NotificationPageState extends State<NotificationPage> {
   List<NotificationVO> noticeList = [];
   List<bool> deleteNoti = [];
   final _scrollController = ScrollController();
-  int itemCount = 0;
+  int itemCount = Consts.showItemCount;
 
   RetrofitHelper helper;
 
@@ -131,6 +132,12 @@ class _NotificationPageState extends State<NotificationPage> {
                                 if (res) {
                                   setState(() {
                                     _getNotice();
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration:
+                                        Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
                                   });
                                 }
                               }
@@ -164,7 +171,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         for (int i = 0; i < noticeList.length; i++) {
                           deleteNoti.add(false);
                         }
-                        if (noticeList.length <= 10) {
+                        if (noticeList.length < 10) {
                           itemCount = noticeList.length;
                         }
                         return ListView.builder(
@@ -175,12 +182,14 @@ class _NotificationPageState extends State<NotificationPage> {
                                 if (index == 0) {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
                                       child: Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: Text(
                                             "등록된 공지사항이 없습니다.",
                                             style: TextStyle(
@@ -198,7 +207,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                               _scrollController
                                                   .position.minScrollExtent,
                                               duration:
-                                              Duration(milliseconds: 200),
+                                                  Duration(milliseconds: 200),
                                               curve: Curves.elasticOut);
                                         },
                                         mode: 1,
@@ -210,7 +219,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                 } else {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
@@ -222,7 +232,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                   );
                                 }
                               } else {
-                                return buildItemNotification(context, index, noticeList);
+                                return buildItemNotification(
+                                    context, index);
                               }
                             });
                       } else {
@@ -251,20 +262,20 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Widget buildItemNotification(
-      BuildContext context, int index, List<NotificationVO> list) {
-    DateTime dt = DateTime.parse(list[index].date);
-    String strDate = "${dt.year}.${dt.month}.${dt.day}";
+      BuildContext context, int index) {
+    var tempDate = DateFormat("yyyy-MM-dd").parse(noticeList[index].date);
+    var strDate = DateFormat("yyyy년 MM월 dd일").format(tempDate);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () async {
           await showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
                     index: noticeList[index].index,
-                    size: Size(346, 502),
+                    size: Size(346, 400),
                     role: widget.role,
                   ));
 
@@ -281,25 +292,13 @@ class _NotificationPageState extends State<NotificationPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "${list[index].title}",
+                      "${noticeList[index].title}",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
                   widget.role == User.user
-                      ? IconButton(
-                          icon: deleteNoti[index]
-                              ? Icon(
-                                  Icons.favorite,
-                                  size: 28,
-                                  color: Colors.red,
-                                )
-                              : Icon(
-                                  Icons.favorite_border_outlined,
-                                  size: 28,
-                                ),
-                          onPressed: () => _onHeartPressed(index),
-                        )
+                      ? SizedBox()
                       : IconButton(
                           icon: deleteNoti[index]
                               ? Icon(
@@ -317,7 +316,7 @@ class _NotificationPageState extends State<NotificationPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
                 child: Text(
-                  "${list[index].content}",
+                  "${noticeList[index].content}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -362,7 +361,6 @@ class _NotificationPageState extends State<NotificationPage> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  print("삭제할 업체들================================");
                   final pref = await SharedPreferences.getInstance();
                   var token = pref.getString("accessToken");
                   try {
@@ -370,10 +368,10 @@ class _NotificationPageState extends State<NotificationPage> {
                       final res = await helper.deleteNotice(
                           token: token, index: arr[i]);
                       if (res.success) {
-                        print("삭제함: ${res.msg}");
+                        itemCount --;
                         deleteNoti.clear();
                       } else {
-                        print("errorr: ${res.msg}");
+                        print("error: ${res.msg}");
                       }
                     }
                     Navigator.pop(context, true);
@@ -388,7 +386,6 @@ class _NotificationPageState extends State<NotificationPage> {
       if (res != null && res) {
         setState(() {
           _getNotice();
-          deleteNoti.clear();
         });
       }
     }

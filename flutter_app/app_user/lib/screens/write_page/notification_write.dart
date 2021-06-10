@@ -53,13 +53,17 @@ class _NotificationWriteState extends State<NotificationWrite> {
         child: Padding(
           padding: const EdgeInsets.only(right: 34, left: 34, top: 24),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               buildTextField("제목", titleC),
               SizedBox(
                 height: 24,
               ),
               buildTextField("공지사항 내용을 입력해주세요.", contentsC,
-                  maxLine: 16, maxLength: 1000, multiLine: true, type: TextInputType.multiline),
+                  maxLine: 12,
+                  maxLength: 250,
+                  multiLine: true,
+                  type: TextInputType.multiline),
               SizedBox(
                 height: 19,
               ),
@@ -72,7 +76,10 @@ class _NotificationWriteState extends State<NotificationWrite> {
                   icon: Icon(
                     Icons.note_add,
                     color: Colors.white,
-                  ))
+                  )),
+              SizedBox(
+                height: 200,
+              )
             ],
           ),
         ),

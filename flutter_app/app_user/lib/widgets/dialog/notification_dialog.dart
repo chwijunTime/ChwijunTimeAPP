@@ -85,7 +85,7 @@ class _NotificationDialog extends State<NotificationDialog> {
       decoration: new BoxDecoration(
           color: Colors.white,
           shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(Consts.padding - 10),
+          borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,

@@ -21,13 +21,11 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/retrofit/retrofit_helper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/retrofit/retrofit_helper.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/retrofit/retrofit_helper.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/retrofit/retrofit_helper.g.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/req_tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/req_tag_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/std_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/std_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/notification_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/notification_dialog.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

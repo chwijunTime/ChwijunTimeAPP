@@ -10,6 +10,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
@@ -45,7 +46,7 @@ class _MainPageState extends State<MainPage> {
 
   RetrofitHelper helper;
   final _scrollController = ScrollController();
-  int itemCount = 0;
+  int itemCount = Consts.showItemCount;
 
   List<NotificationVO> noticeList = [];
 
@@ -72,7 +73,6 @@ class _MainPageState extends State<MainPage> {
       options.headers["Authorization"] = token;
       return options;
     }, onResponse: (Response response) async {
-
       return response;
     }, onError: (DioError error) async {
       if (error.response?.statusCode == 403) {
@@ -233,7 +233,6 @@ class _MainPageState extends State<MainPage> {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
     var res = await helper.getNoticeList(token);
-    print("res.msg: ${res.list}");
     if (res.success) {
       return res.list.reversed.toList();
     } else {
@@ -242,8 +241,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildItemNotification(BuildContext context, int index) {
-    DateTime dt = DateTime.parse(noticeList[index].date);
-    String strDate = "${dt.year}.${dt.month}.${dt.day}";
+    var tempDate = DateFormat("yyyy-MM-dd").parse(noticeList[index].date);
+    var strDate = DateFormat("yyyy년 MM월 dd일").format(tempDate);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -254,7 +253,7 @@ class _MainPageState extends State<MainPage> {
               context: context,
               builder: (BuildContext context) => NotificationDialog(
                   index: noticeList[index].index,
-                  size: Size(346, 502),
+                  size: Size(346, 400),
                   role: widget.role));
 
           setState(() {
@@ -265,6 +264,7 @@ class _MainPageState extends State<MainPage> {
           padding: EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Text(
                 "${noticeList[index].title}",
