@@ -105,7 +105,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                     children: [
                       buildTextField("업체명", titleC, deco: false),
                       buildTextField("채용분야", fieldC, deco: false),
-                      buildTextField("주소", addressC, deco: false),
+                      buildTextField("지역", addressC, deco: false),
                       buildTextField("마감일", deadline, deco: false, disable: true)
                     ],
                   );
@@ -191,7 +191,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      buildTextField("기타 설명을 적어주세요. (필수가 아닙니다.)", etcC,
+                      buildTextField("기타 설명을 적어주세요.", etcC,
                           maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),

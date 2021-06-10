@@ -88,7 +88,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                     children: [
                       buildTextField("업체명", titleC, deco: false),
                       buildTextField("채용분야", fieldC, deco: false),
-                      buildTextField("주소", addressC, deco: false),
+                      buildTextField("지역", addressC, deco: false),
                       GestureDetector(
                         onTap: () async {
                           final DateTime picked = await showDatePicker(
@@ -101,9 +101,9 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                               selectedDate = picked;
                               deadLineDateC =
                                   "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
+                              deadLineDateC = DateFormat("yyyy년 MM월 dd일").format(selectedDate);
+                              deadLineDate = DateFormat("yyyy-MM-dd").format(selectedDate);
                             });
-                            final f = DateFormat("yyyy-MM-dd");
-                            deadLineDate = f.format(selectedDate);
                           }
                         },
                         child: Container(
@@ -113,14 +113,14 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                                       color: Colors.grey, width: 1))),
                           width: constraints.maxWidth,
                           child: Padding(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            padding: const EdgeInsets.only(top: 14, bottom: 14),
                             child: Text(
                               deadLineDateC,
                               style: TextStyle(
                                   color: deadLineDateC == "마감일"
                                       ? Colors.grey
                                       : Colors.black,
-                                  fontSize: 16),
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
@@ -154,7 +154,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                         height: 10,
                       ),
                       buildTextField("회사 설명을 적어주세용", infoC,
-                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 20, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -184,7 +184,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                         height: 10,
                       ),
                       buildTextField("우대 조건을 적어주세용", preferentialInfoC,
-                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -209,8 +209,8 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                       SizedBox(
                         height: 10,
                       ),
-                      buildTextField("기타 설명을 적어주세요. (필수가 아닙니다.)", etcC,
-                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
+                      buildTextField("기타 설명을 적어주세요.", etcC,
+                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),

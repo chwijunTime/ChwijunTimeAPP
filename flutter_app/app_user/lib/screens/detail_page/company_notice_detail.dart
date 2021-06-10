@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeDetailPage extends StatefulWidget {
@@ -142,12 +143,12 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                "공고일: ${widget.list.startDate}",
+                                "공고일: ${DateFormat("yyyy년 MM월 dd일").format(DateFormat("yyyy-MM-dd").parse(widget.list.startDate))}",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                "마감일: ${widget.list.deadLine}",
+                                "마감일: ${DateFormat("yyyy년 MM월 dd일").format(DateFormat("yyyy-MM-dd").parse(widget.list.deadLine))}",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
@@ -172,7 +173,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "주소",
+                                "지역",
                                 style: TextStyle(
                                     fontSize: 24, fontWeight: FontWeight.w600),
                               ),

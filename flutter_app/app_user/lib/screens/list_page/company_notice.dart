@@ -16,6 +16,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticePage extends StatefulWidget {
@@ -138,6 +139,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                       onSetState: (value) {
                         setState(() {
                           selectValue = value;
+                          deleteNoti.clear();
                           if (selectValue == valueList[1]) {
                             titleC.text = "";
                             itemCount = 0;
@@ -240,7 +242,10 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     controller: _scrollController,
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
-                      print("index: $index, itemCount: $itemCount, tagList.length: ${searchNoticeList.length}");
+                      print("itemCount: $itemCount, searchNoticeList.length: ${searchNoticeList.length}, index: $index");
+                      for (int i = 0; i < searchNoticeList.length; i++) {
+                        deleteNoti.add(false);
+                      }
                       if (index == itemCount) {
                         if (searchNoticeList.length == 0) {
                           return Card(
@@ -433,6 +438,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 btnName2: "삭제하기",
                 btnCall2: () async {
                   print("삭제할 업체들================================");
+                  print(arr.toString());
                   final pref = await SharedPreferences.getInstance();
                   var token = pref.getString("accessToken");
                   try {
@@ -465,6 +471,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         setState(() {
           _getCompany();
           deleteNoti.clear();
+          searchNoticeList.clear();
         });
       }
     }
@@ -472,6 +479,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
 
   Widget buildItemCompany(
       BuildContext context, int index, List<CompNoticeVO> list) {
+    var tempDate = DateFormat("yyyy-MM-dd").parse(list[index].deadLine);
+    var deadLineDateC = DateFormat("yyyy년 MM월 dd일").format(tempDate);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       elevation: 5,
@@ -543,35 +552,30 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
-                      children: List.generate(
-                          list[index].tag.length < 2 ? 1 : 2, (indextag) {
-                        return buildItemTag(list[index].tag, indextag);
-                      }),
-                    ),
-                    list[index].tag.length < 3
-                        ? SizedBox()
-                        : Container(
-                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                            margin: EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.blue[400],
-                                )),
-                            child: Center(
-                              child: Text(
-                                "외 ${list[index].tag.length - 2}개",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          ),
+                    buildItemTag(list[index].tag, 0),
+                    list[index].tag.length > 1
+                        ? Container(
+                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                      margin: EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.blue[400],
+                          )),
+                      child: Center(
+                        child: Text(
+                          "외 ${list[index].tag.length - 1}개",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    )
+                        : SizedBox(),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "마감일: ${list[index].deadLine}",
+                          "마감일: ${deadLineDateC}",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
