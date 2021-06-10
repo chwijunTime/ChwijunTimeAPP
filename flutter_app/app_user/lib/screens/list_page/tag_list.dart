@@ -146,11 +146,11 @@ class _TagListState extends State<TagList> {
                                 ));
                         if (res != null && res) {
                           setState(() {
-                            if (tagList.length - itemCount <= 1) {
-                              itemCount ++;
-                            }
-                            print("itemcount: $itemCount");
+                            print("itemcount: $itemCount, tagList.length: ${tagList.length}");
                             _getTagList();
+                            if (tagList.length == itemCount) {
+                              itemCount++;
+                            }
                           });
                         }
                       },
@@ -188,7 +188,6 @@ class _TagListState extends State<TagList> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
-                          print("index: $index, itemCount: $itemCount, tagList.length: ${tagList.length}");
                           if (index == itemCount) {
                             if (index == 0) {
                               return Card(

@@ -303,19 +303,25 @@ class _ReqTagListState extends State<ReqTagList> {
                         print("저장함: ${res.msg}");
                         selectTag.clear();
                       } else {
-                        print("errorr: ${res.msg}");
+                        print("error: ${res.msg}");
                         snackBar(res.msg, context);
                         Navigator.pop(context,);
                         return;
                       }
                     }
-                    Navigator.pop(context,);
+                    Navigator.pop(context, true);
                   } catch (e) {
                     print(e);
                   }
                 },
               ),
           barrierDismissible: false);
+      if (res != null && res) {
+        snackBar("태그가 저장되었습니다.", context);
+      }
+      setState(() {
+        _getReqTagList();
+      });
     }
   }
 
