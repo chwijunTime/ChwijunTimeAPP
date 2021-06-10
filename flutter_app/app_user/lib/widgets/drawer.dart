@@ -1,5 +1,4 @@
 import 'package:app_user/model/user.dart';
-import 'package:app_user/model/user/userinfo_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
@@ -85,8 +84,7 @@ Widget buildDrawer(BuildContext context) {
         role == User.user
             ? customListTile(
                 title: "상담 신청",
-                leading: Icon(Icons.headset,
-                    color: Colors.grey, size: 28),
+                leading: Icon(Icons.headset, color: Colors.grey, size: 28),
                 page: "/counseling_apply",
                 context: context)
             : customListTile(
@@ -188,9 +186,12 @@ Widget buildDrawer(BuildContext context) {
                         helper = RetrofitHelper(dio);
 
                         try {
-                          var res = await helper.postLogout();
-                          if(res.success) {
-                            SharedPreferences pref = await SharedPreferences.getInstance();
+                          final pref = await SharedPreferences.getInstance();
+                          var token = pref.getString("accessToken");
+                          var res = await helper.postLogout(token);
+                          if (res.success) {
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
                             await pref.clear();
                             Navigator.pushReplacementNamed(context, "/login");
                           } else {
