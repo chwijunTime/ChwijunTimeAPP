@@ -49,7 +49,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
       List<Location> location = await locationFromAddress(widget.list.address);
       latLng = LatLng(location[0].latitude, location[0].longitude);
       mapController.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: latLng, zoom: 17)));
+          CameraPosition(target: latLng, zoom: 10)));
     } catch (e) {
       print(e);
     }
@@ -202,7 +202,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                                 CameraPosition(
                                               target: LatLng(latLng.latitude,
                                                   latLng.longitude),
-                                              zoom: 17,
+                                              zoom: 10,
                                             ),
                                             onMapCreated: (GoogleMapController
                                                 controller) async {

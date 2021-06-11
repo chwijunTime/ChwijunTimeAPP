@@ -22,7 +22,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   var infoC = TextEditingController();
   var preferentialInfoC = TextEditingController();
   var addressC = TextEditingController();
-  String deadLineDateC = "마감일";
+  String deadLineDateC = "마감일 (클릭해주세요)";
   String deadLineDate = "";
   var etcC = TextEditingController();
   List<String> tagList = [];

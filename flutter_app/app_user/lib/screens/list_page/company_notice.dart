@@ -95,6 +95,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   _onCheckPressed(int index) {
     setState(() {
       deleteNoti[index] = !deleteNoti[index];
+      print("index: $index");
     });
   }
 
@@ -422,6 +423,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         arr.add(noticeList[i].index);
       }
     }
+    print(deleteNoti.toString());
+    print(arr.toString());
 
     if (arr.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
@@ -445,7 +448,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     for (int i = 0; i < arr.length; i++) {
                       final res = await helper.deleteComp(token, arr[i]);
                       if (res.success) {
-                        print("삭제함: ${res.msg}");
                         itemCount --;
                       } else {
                         print("errorr: ${res.msg}");
@@ -472,6 +474,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
           _getCompany();
           deleteNoti.clear();
           searchNoticeList.clear();
+          selectValue = valueList[0];
         });
       }
     }
@@ -533,18 +536,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6, bottom: 6),
-                child: Container(
-                  height: 60,
-                  child: AutoSizeText(
-                    "${list[index].info}, ",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
-                    minFontSize: 14,
-                  ),
+                child: Text(
+                  "${list[index].info}",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               SizedBox(
