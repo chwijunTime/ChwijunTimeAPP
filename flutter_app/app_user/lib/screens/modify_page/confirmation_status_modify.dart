@@ -126,7 +126,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
                         height: 10,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
-                          maxLine: 10, maxLength: 500)
+                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),

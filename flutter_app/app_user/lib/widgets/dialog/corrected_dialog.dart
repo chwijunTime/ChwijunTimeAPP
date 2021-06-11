@@ -1,16 +1,9 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/correction/corrected_vo.dart';
-import 'package:app_user/model/notice/response_notice.dart';
-import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:app_user/screens/modify_page/notification_modify.dart';
-import 'package:app_user/screens/search_page.dart';
-import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CorrectedDialog extends StatefulWidget {
   CorrectedVO list;

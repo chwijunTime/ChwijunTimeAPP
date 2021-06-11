@@ -2,7 +2,6 @@ import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/dialog/reject_dialog.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -52,69 +51,71 @@ class _AcceptDialog extends State<AcceptDialog> {
   }
 
   dialogContent(BuildContext context) {
-    return Container(
-      width: 385,
-      height: 380,
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.only(top: 60),
-      decoration: new BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              spreadRadius: 1,
-              offset: const Offset(0.0, 0.0),
-            )
-          ]),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n 진행하기",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            buildTextField("첨삭 내용을 입력해주세요!", contentsC,
-                maxLine: 9, maxLength: 400),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  makeBtn(
-                      msg: "아니요",
-                      onPressed: () {
-                        Navigator.pop(context,);
-                      },
-                      mode: 2,
-                      icon: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      )),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  makeGradientBtn(
-                      msg: "확인",
-                      onPressed: _postAccept,
-                      mode: 5,
-                      icon: Icon(
-                        Icons.remove_circle_outline,
-                        color: Colors.white,
-                      )),
-                ],
+    return SingleChildScrollView(
+      child: Container(
+        width: 385,
+        height: 600,
+        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.only(top: 60),
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                spreadRadius: 1,
+                offset: const Offset(0.0, 0.0),
+              )
+            ]),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n 진행하기",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black),
               ),
-            )
-          ],
+              SizedBox(
+                height: 10,
+              ),
+              buildTextField("첨삭 내용을 입력해주세요!", contentsC,
+                  maxLine: 20, maxLength: 100),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    makeBtn(
+                        msg: "아니요",
+                        onPressed: () {
+                          Navigator.pop(context,);
+                        },
+                        mode: 2,
+                        icon: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        )),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    makeGradientBtn(
+                        msg: "확인",
+                        onPressed: _postAccept,
+                        mode: 5,
+                        icon: Icon(
+                          Icons.remove_circle_outline,
+                          color: Colors.white,
+                        )),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

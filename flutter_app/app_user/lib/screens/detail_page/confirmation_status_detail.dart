@@ -102,7 +102,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      "${widget.list.jockey}기 ${widget.list.name}",
+                                      "${widget.list.jockey} ${widget.list.name}",
                                       style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.w600),

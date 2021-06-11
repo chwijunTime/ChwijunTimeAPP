@@ -50,76 +50,78 @@ class _RejectDialog extends State<RejectDialog> {
   }
 
   dialogContent(BuildContext context) {
-    return Container(
-      width: 385,
-      height: 350,
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.only(top: 60),
-      decoration: new BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              spreadRadius: 1,
-              offset: const Offset(0.0, 0.0),
-            )
-          ]),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n거절 하시겠습니까?",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              "거절 사유를 입력해주세요.",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            buildTextField("거절 사유를 간단하게 입력해주세요!", reasonC,
-                maxLine: 6, maxLength: 300),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  makeBtn(
-                      msg: "아니요",
-                      onPressed: () {
-                        Navigator.pop(context, "no");
-                      },
-                      mode: 2,
-                      icon: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      )),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  makeGradientBtn(
-                      msg: "확인",
-                      onPressed: _postReject,
-                      mode: 5,
-                      icon: Icon(
-                        Icons.remove_circle_outline,
-                        color: Colors.white,
-                      )),
-                ],
+    return SingleChildScrollView(
+      child: Container(
+        width: 385,
+        height: 600,
+        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.only(top: 60),
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                spreadRadius: 1,
+                offset: const Offset(0.0, 0.0),
+              )
+            ]),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n거절 하시겠습니까?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black),
               ),
-            )
-          ],
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "거절 사유를 입력해주세요.",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              buildTextField("거절 사유를 입력해주세요!", reasonC,
+                  maxLine: 20, maxLength: 1000),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    makeBtn(
+                        msg: "아니요",
+                        onPressed: () {
+                          Navigator.pop(context, "no");
+                        },
+                        mode: 2,
+                        icon: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        )),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    makeGradientBtn(
+                        msg: "확인",
+                        onPressed: _postReject,
+                        mode: 5,
+                        icon: Icon(
+                          Icons.remove_circle_outline,
+                          color: Colors.white,
+                        )),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

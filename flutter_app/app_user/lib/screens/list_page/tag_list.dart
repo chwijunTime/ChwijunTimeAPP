@@ -39,7 +39,6 @@ class _TagListState extends State<TagList> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -365,7 +364,9 @@ class _TagListState extends State<TagList> {
                     }
                     Navigator.pop(context, true);
                   } catch (e) {
-                    print(e);
+                    print("err: ${e}");
+                    Navigator.pop(context, false);
+                    snackBar("이미 삭제된 공지입니다.", context);
                   }
                 },
               ),

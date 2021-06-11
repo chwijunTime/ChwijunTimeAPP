@@ -20,7 +20,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
 
   var titleC = TextEditingController();
   DateTime selectedDate = DateTime.now();
-  String strDate = "지원날짜";
+  String strDate = "지원날짜 (클릭해주세요)";
   String date = "";
   var addressC = TextEditingController();
   var priceC = TextEditingController();

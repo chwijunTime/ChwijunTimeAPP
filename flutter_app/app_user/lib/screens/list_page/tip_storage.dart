@@ -60,11 +60,21 @@ class _TipStoragePageState extends State<TipStoragePage> {
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
-        if (itemCount != tipList.length) {
-          if ((tipList.length - itemCount) ~/ Consts.showItemCount <= 0) {
-            itemCount += tipList.length % Consts.showItemCount;
-          } else {
-            itemCount += Consts.showItemCount;
+        if (selectValue == valueList[0]) {
+          if (itemCount != tipList.length) {
+            if ((tipList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+              itemCount = tipList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
+          }
+        } else {
+          if (itemCount != searchTipList.length) {
+            if ((searchTipList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+              itemCount = searchTipList.length;
+            } else {
+              itemCount += Consts.showItemCount;
+            }
           }
         }
       });

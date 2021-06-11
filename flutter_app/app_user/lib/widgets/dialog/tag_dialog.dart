@@ -173,15 +173,8 @@ class _TagDialogState extends State<TagDialog> {
               alertType: RichAlertType.ERROR,
               actions: [
                 FlatButton(
-                  onPressed: () async {
-                    final pref = await SharedPreferences.getInstance();
-                    var token = pref.getString("accessToken");
-                    print("token: ${token}");
-                    var res = await helper.postTag(
-                        token, TagVO(name: titleC.text).toJson());
-                    if (res.success) {
+                  onPressed: () {
                       Navigator.pop(context, true);
-                    }
                   },
                   child: Text(
                     "확인",

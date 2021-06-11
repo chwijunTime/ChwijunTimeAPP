@@ -120,7 +120,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                         height: 10,
                       ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                          maxLine: 8, maxLength: 300, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                          maxLine: 20, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline),
                     ],
                   ),
                 ),

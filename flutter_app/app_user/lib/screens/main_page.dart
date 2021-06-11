@@ -55,6 +55,23 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     init();
     widget.role = User.role;
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        if (itemCount != noticeList.length) {
+          if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            itemCount = noticeList.length;
+          } else {
+            itemCount += Consts.showItemCount;
+          }
+        }
+      });
+    }
   }
 
   init() async {

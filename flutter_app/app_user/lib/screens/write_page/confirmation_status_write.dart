@@ -110,7 +110,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                         height: 10,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
-                          maxLine: 10, maxLength: 500, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -185,7 +185,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
           area: areaC.text,
           siteUrl: siteUrl.text,
           etc: etcC.text,
-          jockey: generationC.text,
+          jockey: "${generationC.text}기",
           address: addressC.text,
           name: stdNameC.text,
           postTag: tagList);

@@ -205,7 +205,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                               Consts.showItemCount) {
                             itemCount = searchContractingList.length;
                             print(searchContractingList.length);
-                            msg = "검색된 리뷰가 없습니다.";
+                            msg = "검색된 협약업체가 없습니다.";
                           } else {
                             itemCount = Consts.showItemCount;
                           }
@@ -441,6 +441,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 child: Text(
                   "${list[index].info}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               SizedBox(
@@ -470,7 +472,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "평균: ${list[index].salary}",
+                          "평균 연봉: ${list[index].salary}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -519,7 +521,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       if (res.success) {
                         setState(() {
                           print("삭제함: ${res.msg}");
-                          deleteList.clear();
                           itemCount --;
                         });
                       } else {
@@ -531,6 +532,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                   } catch (e) {
                     print(e);
                   }
+                  deleteList.clear();
                 },
               ),
           barrierDismissible: false);

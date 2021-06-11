@@ -437,14 +437,13 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       final res = await helper.deleteConf(token, arr[i]);
                       if (res.success) {
                         Navigator.pop(context, true);
-                        print(res.toJson());
+                        itemCount --;
                       } else {
                         print("error: ${res.msg}");
                       }
                     }
                   } catch (e) {
                     print("err: ${e}");
-                    Navigator.pop(context, false);
                     snackBar("이미 삭제된 취업현황입니다.", context);
                   }
                 },
@@ -480,7 +479,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           children: [
             Expanded(
               child: Text(
-                "${vo[index].jockey}기 ${vo[index].name} - ${vo[index].title}",
+                "${vo[index].jockey} ${vo[index].name} - ${vo[index].title}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),

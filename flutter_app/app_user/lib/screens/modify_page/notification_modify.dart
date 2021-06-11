@@ -71,7 +71,7 @@ class _NotificationModifyState extends State<NotificationModify> {
                   height: 24,
                 ),
                 buildTextField("공지사항 내용을 입력해주세요.", contentsC,
-                    maxLine: 16, maxLength: 1000, type: TextInputType.multiline, multiLine: true),
+                    maxLine: 10, maxLength: 255, type: TextInputType.multiline, multiLine: true),
                 SizedBox(
                   height: 24,
                 ),
