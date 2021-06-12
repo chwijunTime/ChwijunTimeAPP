@@ -33,6 +33,8 @@ class _CounselingManageState extends State<CounselingManage> {
   int itemCount = Consts.showItemCount;
   List<String> valueList = ['상담 정보', '상담 신청내역'];
   String selectValue = "상담 정보";
+  List<String> statusList = ["전체", "진행중", "마감"];
+  String statusSelect = "전체";
 
   Future<List<ConsultingAdminVO>> getCounselingAdminList() async {
     final pref = await SharedPreferences.getInstance();
@@ -42,6 +44,27 @@ class _CounselingManageState extends State<CounselingManage> {
       var res = await helper.getConsultingAdminList(token);
       print("res.success: ${res.success}");
       if (res.success) {
+        switch (statusSelect) {
+          case "전체": return res.list;
+          case "진행중": {
+            List<ConsultingAdminVO> list;
+            for (int i=0; i<res.list.length; i++) {
+              if (res.list[i].status == "No_Application") {
+                list.add(res.list[i]);
+              }
+            }
+            return list;
+          }
+          case "마감": {
+            List<ConsultingAdminVO> list;
+            for (int i=0; i<res.list.length; i++) {
+              if (res.list[i].status != "No_Application") {
+                list.add(res.list[i]);
+              }
+            }
+            return list;
+          }
+        }
         return res.list;
       } else {
         return null;
@@ -165,10 +188,8 @@ class _CounselingManageState extends State<CounselingManage> {
                         setState(() {
                           getCounselingAdminList();
                           _scrollController.animateTo(
-                              _scrollController
-                                  .position.minScrollExtent,
-                              duration:
-                              Duration(milliseconds: 200),
+                              _scrollController.position.minScrollExtent,
+                              duration: Duration(milliseconds: 200),
                               curve: Curves.elasticOut);
                         });
                       },
@@ -186,15 +207,32 @@ class _CounselingManageState extends State<CounselingManage> {
                 onSetState: (value) {
                   selectValue = value;
                   setState(() {
-                    if (selectValue == valueList[1]){
+                    if (selectValue == valueList[1]) {
                       itemCount = 0;
                       counUserList.clear();
-                    }else {
+                    } else {
                       itemCount = Consts.showItemCount;
                     }
                   });
                 },
                 hint: "보기"),
+            selectValue == valueList[0]
+                ? makeDropDownBtn(
+                    valueList: statusList,
+                    selectedValue: statusSelect,
+                    onSetState: (value) {
+                      statusSelect = value;
+                      setState(() {
+                        if (selectValue == valueList[1]) {
+                          itemCount = 0;
+                          counUserList.clear();
+                        } else {
+                          itemCount = Consts.showItemCount;
+                        }
+                      });
+                    },
+                    hint: "보기")
+                : SizedBox(),
             SizedBox(
               height: 10,
             ),
@@ -375,7 +413,7 @@ class _CounselingManageState extends State<CounselingManage> {
         if (res != null && res == "delete") {
           print("하이");
           setState(() {
-            itemCount --;
+            itemCount--;
           });
         }
       },
