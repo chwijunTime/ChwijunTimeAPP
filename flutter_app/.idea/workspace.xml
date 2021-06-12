@@ -21,22 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/confirmation_status_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/confirmation_status_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/contracting_company.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tip_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/confirmation_status_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/confirmation_status_modify.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/notification_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/notification_modify.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/notification_write.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/corrected_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/corrected_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/tag_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/tag_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -25,7 +25,7 @@ Widget makeDropDownBtn(
               value: value,
               child: Text(
                 value,
-                style: TextStyle(fontWeight: FontWeight.w500),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             );
           },

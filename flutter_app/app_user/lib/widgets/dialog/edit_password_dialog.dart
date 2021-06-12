@@ -81,10 +81,7 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              height: 5,
+              height: 10,
             ),
             buildTextField("password", passwordC,
                 autoFocus: false, password: true),
