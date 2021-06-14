@@ -34,7 +34,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'retrofit_helper.g.dart';
 
-@RestApi(baseUrl: "http://10.53.68.170:8082/")
+@RestApi(baseUrl: "http://10.120.72.245:8082/")
 abstract class RetrofitHelper {
   factory RetrofitHelper(Dio dio, {String baseUrl}) = _RetrofitHelper;
 
