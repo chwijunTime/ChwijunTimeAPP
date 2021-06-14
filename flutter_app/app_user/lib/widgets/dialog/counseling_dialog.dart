@@ -53,7 +53,7 @@ class _CounselingDialogState extends State<CounselingDialog> {
             if (snapshot.hasData) {
               widget.list = snapshot.data;
               var tempDate =
-                  DateFormat("yyyy-MM-dd HH:mm").parse(widget.list.applyDate);
+              DateFormat("yyyy-MM-ddTHH:mm:ss").parse(widget.list.applyDate);
               strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
               return buildDialog(context);
             } else {

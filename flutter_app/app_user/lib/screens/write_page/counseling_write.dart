@@ -166,7 +166,7 @@ class _CounselingWriteState extends State<CounselingWrite> {
     } else {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
-      var res = await helper.postConsultingAdmin(token, {"applicationDate": "$date $time"});
+      var res = await helper.postConsultingAdmin(token, {"applicationDate": "${date}T${time}"});
       if (res.success) {
         Navigator.pop(context);
         print(res.msg);

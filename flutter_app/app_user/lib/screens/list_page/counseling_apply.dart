@@ -5,6 +5,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/counseling_apply_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -102,10 +103,12 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   counAdminList = snapshot.data;
-                  if (counAdminList.length <= Consts.showItemCount) {
+                  print("itemCounttt: $itemCount");
+                  if (counAdminList.length < Consts.showItemCount) {
                     itemCount = counAdminList.length;
                   }
-                  print(counAdminList.length);
+                  print(
+                      "counAdminList.length: ${counAdminList.length}, itemCount: ${itemCount}");
                   return ListView.builder(
                     controller: _scrollController,
                     itemCount: itemCount + 1,
@@ -189,7 +192,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
       var res = await helper.getConsultingAdminList(token);
       print("res.success: ${res.success}");
       if (res.success) {
-        return res.list;
+            return res.list;
       } else {
         return null;
       }
@@ -200,8 +203,8 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
 
   Widget buildCounseling(BuildContext context, int index) {
     var tempDate =
-        DateFormat("yyyy-MM-dd hh:mm").parse(counAdminList[index].applyDate);
-    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+        DateFormat("yyyy-MM-ddTHH:mm").parse(counAdminList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
     return Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18))),
@@ -224,18 +227,21 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 ),
               ),
               counAdminList[index].status == "No_Application"
-                  ? IconButton(
-                      icon: Icon(
+                  ? InkWell(
+                      child: Icon(
                         Icons.outgoing_mail,
                         color: Color(0xff4687ff),
-                        size: 30,
                       ),
-                      onPressed: () {
-                        showDialog(
+                      onTap: () async {
+                        await showDialog(
                             context: context,
                             builder: (BuildContext context) =>
                                 CounselingApplyDialog(counAdminList[index]));
-                      })
+                        setState(() {
+                          getCounselingAdminList();
+                        });
+                      },
+                    )
                   : Container(
                       width: 48,
                       decoration: BoxDecoration(
@@ -243,7 +249,7 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                           borderRadius: BorderRadius.all(Radius.circular(40)),
                           border: Border.all(color: Color(0xffFF7777))),
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
+                        padding: const EdgeInsets.only(bottom: 2, top: 2),
                         child: Text(
                           "마감",
                           style: TextStyle(
@@ -257,34 +263,5 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
             ],
           ),
         ));
-  }
-  Widget makeTag(String str) {
-    String msg;
-    Color color;
-
-    if (str == "No_Application") {
-      msg = "마감";
-      color = Color(0xffFF7777);
-    } else {
-      msg = "진행중";
-      color = Color(0xff5BC7F5);
-    }
-
-    return Container(
-      width: 48,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(40)),
-          border: Border.all(color: color)),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 2, top: 2),
-        child: Text(
-          msg,
-          style: TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w500, color: color),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 }
