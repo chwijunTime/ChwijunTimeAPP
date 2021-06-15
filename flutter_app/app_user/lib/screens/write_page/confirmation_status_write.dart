@@ -107,7 +107,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
                           maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)

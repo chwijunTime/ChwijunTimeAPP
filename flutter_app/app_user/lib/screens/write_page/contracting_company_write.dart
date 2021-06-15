@@ -97,8 +97,20 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                 elevation: 5,
                 child: Padding(
                   padding: EdgeInsets.all(15),
-                  child: buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                      maxLine: 20, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                  child: Column(
+                    children: [
+                      Text(
+                        "협약 업체 설명",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      buildTextField("협약을 맺은 업체를 설명해 주세요!", infoC,
+                          maxLine: 20, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(

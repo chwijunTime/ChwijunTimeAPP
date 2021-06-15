@@ -151,7 +151,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       buildTextField("회사 설명을 적어주세용", infoC,
                           maxLine: 20, maxLength: 500, multiLine: true, type: TextInputType.multiline)
@@ -181,7 +181,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       buildTextField("우대 조건을 적어주세용", preferentialInfoC,
                           maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
@@ -207,7 +207,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       buildTextField("기타 설명을 적어주세요.", etcC,
                           maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)

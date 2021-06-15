@@ -22,7 +22,6 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
   var tipC = TextEditingController();
   List<String> tagList = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -80,8 +79,15 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w600),
                       ),
+                      SizedBox(
+                        height: 5,
+                      ),
                       buildTextField("이곳에 작성하면 됩니당", tipC,
-                          maxLine: 10, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 10,
+                          maxLength: 500,
+                          autoFocus: false,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -106,13 +112,18 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                       print("tagList: $tagList");
                     },
                     mode: 4,
-                    icon: Icon(Icons.tag, color: Colors.white,)),
+                    icon: Icon(
+                      Icons.tag,
+                      color: Colors.white,
+                    )),
               ),
               Align(
                   alignment: Alignment.center,
                   child: makeTagWidget(
                       tag: tagList, size: Size(360, 27), mode: 1)),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -147,13 +158,19 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
   }
 
   _postTip() async {
-    if (titleC.text.isEmpty || addressC.text.isEmpty || tipC.text.isEmpty || tagList.isEmpty) {
+    if (titleC.text.isEmpty ||
+        addressC.text.isEmpty ||
+        tipC.text.isEmpty ||
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요.", context);
     } else {
-      final pref =
-      await SharedPreferences.getInstance();
+      final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
-      TipVO vo = TipVO(tag: tagList, tipInfo: tipC.text, address: addressC.text, title: titleC.text);
+      TipVO vo = TipVO(
+          tag: tagList,
+          tipInfo: tipC.text,
+          address: addressC.text,
+          title: titleC.text);
       try {
         var res = await helper.postTip(token, vo.toJson());
         if (res.success) {
@@ -167,6 +184,5 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
         print("error: $e");
       }
     }
-
   }
 }
