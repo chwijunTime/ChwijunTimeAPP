@@ -143,7 +143,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                               child: Padding(
                                   padding: EdgeInsets.all(Consts.padding),
                                   child: Text(
-                                    "등록된 이력서가 없습니다.",
+                                    "등록된 포트폴리오가 없습니다.",
                                     style:
                                     TextStyle(fontWeight: FontWeight.w700),
                                   )),

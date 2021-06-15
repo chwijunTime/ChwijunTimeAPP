@@ -662,8 +662,8 @@ class _MyListPageState extends State<MyListPage> {
 
   Widget buildCounselingUser(BuildContext context, int index) {
     var tempDate =
-        DateFormat("yyyy-MM-dd hh:mm").parse(consultingList[index].applyDate);
-    var strDate = DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(tempDate);
+        DateFormat("yyyy-MM-dTHH:mm:ss").parse(consultingList[index].applyDate);
+    var strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
     return Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18))),
@@ -671,18 +671,9 @@ class _MyListPageState extends State<MyListPage> {
         margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
         child: Padding(
           padding: EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                strDate,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text("상담")
-            ],
+          child: Text(
+            strDate,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ));
   }

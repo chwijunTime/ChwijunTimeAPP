@@ -89,7 +89,7 @@ class _MyProfileCreateState extends State<MyProfileCreate> {
                       SizedBox(
                         height: 20,
                       ),
-                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 4),
+                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 4, maxLength: 255),
                       SizedBox(
                         height: 30,
                       ),

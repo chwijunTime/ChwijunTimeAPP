@@ -94,7 +94,7 @@ class _MyProfileModifyState extends State<MyProfileModify> {
                       SizedBox(
                         height: 20,
                       ),
-                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 3, maxLength: 50),
+                      buildTextField("소개", etcC, type: TextInputType.text, maxLine: 4, maxLength: 255),
                       SizedBox(
                         height: 30,
                       ),
