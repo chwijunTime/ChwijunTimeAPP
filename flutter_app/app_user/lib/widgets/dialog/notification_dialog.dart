@@ -150,7 +150,7 @@ class _NotificationDialog extends State<NotificationDialog> {
                   SizedBox(
                     height: 20,
                   ),
-                  Align(
+                  User.role == User.admin ? Align(
                     alignment: Alignment.bottomRight,
                     child: makeGradientBtn(
                         msg: "공지 사항 수정하기",
@@ -162,7 +162,7 @@ class _NotificationDialog extends State<NotificationDialog> {
                           Icons.arrow_forward,
                           color: Colors.white,
                         )),
-                  )
+                  ): SizedBox(),
                 ],
               );
             } else {
