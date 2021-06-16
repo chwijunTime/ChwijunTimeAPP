@@ -7,6 +7,7 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kopo/kopo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractingCompanyWrite extends StatefulWidget {
@@ -80,8 +81,13 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                           deco: false, autoFocus: false),
                       buildTextField("지역", areaC,
                           deco: false, autoFocus: false),
-                      buildTextField("주소", addressC,
-                          deco: false, autoFocus: false),
+                      GestureDetector(
+                        onTap: () {
+                          _onKopo(addressC);
+                        },
+                        child: buildTextField("주소", addressC,
+                            deco: false, autoFocus: false),
+                      ),
                       buildTextField("평균 연봉", priceC,
                           deco: false, autoFocus: false),
                     ],
@@ -163,6 +169,17 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
         ),
       ),
     );
+  }
+
+  _onKopo(TextEditingController controller) async {
+    KopoModel model = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Kopo()));
+
+    if (model != null) {
+      setState(() {
+        controller.text = model.address;
+      });
+    }
   }
 
   onContractingPost() async {

@@ -8,6 +8,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kopo/kopo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewWrite extends StatefulWidget {
@@ -69,7 +70,11 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("주소", addressC, type: TextInputType.text),
+              child: GestureDetector(
+                onTap: () {
+                  _onKopo(addressC);
+                },
+                  child: buildTextField("주소", addressC, type: TextInputType.text)),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
@@ -213,6 +218,17 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
         ),
       ),
     );
+  }
+
+  _onKopo(TextEditingController controller) async {
+    KopoModel model = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Kopo()));
+
+    if (model != null) {
+      setState(() {
+        controller.text = model.address;
+      });
+    }
   }
 
   onReviewPost() async {

@@ -20,17 +20,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/contracting_company_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/contracting_company_write.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/interview_review_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/tip_storage_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/tip_storage_write.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/notification_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/notification_dialog.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

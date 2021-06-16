@@ -7,6 +7,7 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kopo/kopo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStorageWrite extends StatefulWidget {
@@ -61,7 +62,11 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
               SizedBox(
                 height: 10,
               ),
-              buildTextField("회사주소", addressC, autoFocus: false),
+              GestureDetector(
+                  onTap: () {
+                    _onKopo(addressC);
+                  },
+                  child: buildTextField("회사주소", addressC, autoFocus: false)),
               SizedBox(
                 height: 24,
               ),
@@ -155,6 +160,17 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
         ),
       ),
     );
+  }
+
+  _onKopo(TextEditingController controller) async {
+    KopoModel model = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Kopo()));
+
+    if (model != null) {
+      setState(() {
+        controller.text = model.address;
+      });
+    }
   }
 
   _postTip() async {
