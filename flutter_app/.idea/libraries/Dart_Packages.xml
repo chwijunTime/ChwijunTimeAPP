@@ -401,13 +401,6 @@
             </list>
           </value>
         </entry>
-        <entry key="kopo">
-          <value>
-            <list>
-              <option value="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/kopo-0.1.3/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="logging">
           <value>
             <list>
@@ -898,7 +891,6 @@
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/json_annotation-3.1.1/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/json_rpc_2-2.2.2/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/json_serializable-3.5.1/lib" />
-      <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/kopo-0.1.3/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/logging-0.11.4/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.10/lib" />
       <root url="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.3.0/lib" />

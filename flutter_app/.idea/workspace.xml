@@ -20,9 +20,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drop_down_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/ios/Runner/AppDelegate.m" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/ios/Runner/AppDelegate.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/ios/Runner/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_manage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/confirmation_status_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/write_page/counseling_write.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/accept_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/reject_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +60,7 @@
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../StudyingFlutter/Pra11/flutter_app" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="flutter.settings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
@@ -120,30 +129,30 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="636" y="100" width="808" height="630" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1621218086108" />
-    <state x="821" y="170" key="FileChooserDialogImpl" timestamp="1623027990029">
+    <state x="821" y="170" key="FileChooserDialogImpl" timestamp="1623809649885">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="821" y="170" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1623027990029" />
-    <state width="860" height="177" key="GridCell.Tab.0.bottom" timestamp="1623394968090">
+    <state x="821" y="170" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1623809649885" />
+    <state width="856" height="176" key="GridCell.Tab.0.bottom" timestamp="1623843624300">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1491" height="160" key="GridCell.Tab.0.bottom/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1622526171274" />
-    <state width="860" height="177" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1623394968090" />
-    <state width="860" height="177" key="GridCell.Tab.0.center" timestamp="1623394968090">
+    <state width="856" height="176" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1623843624300" />
+    <state width="856" height="176" key="GridCell.Tab.0.center" timestamp="1623843624300">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1491" height="160" key="GridCell.Tab.0.center/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1622526171273" />
-    <state width="860" height="177" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1623394968090" />
-    <state width="860" height="177" key="GridCell.Tab.0.left" timestamp="1623394968090">
+    <state width="856" height="176" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1623843624300" />
+    <state width="856" height="176" key="GridCell.Tab.0.left" timestamp="1623843624300">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1491" height="160" key="GridCell.Tab.0.left/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1622526171273" />
-    <state width="860" height="177" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1623394968090" />
-    <state width="860" height="177" key="GridCell.Tab.0.right" timestamp="1623394968090">
+    <state width="856" height="176" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1623843624300" />
+    <state width="856" height="176" key="GridCell.Tab.0.right" timestamp="1623843624300">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1491" height="160" key="GridCell.Tab.0.right/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1622526171274" />
-    <state width="860" height="177" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1623394968090" />
+    <state width="856" height="176" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1623843624300" />
     <state x="549" y="60" key="SettingsEditor" timestamp="1619571553209">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -170,10 +179,10 @@
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1620199529408" />
     <state x="426" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1622168029102" />
-    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup" timestamp="1623120296246">
+    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup" timestamp="1623834975919">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="65" width="672" height="676" key="search.everywhere.popup/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1621342737376" />
-    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1623120296246" />
+    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1623834975919" />
   </component>
 </project>
