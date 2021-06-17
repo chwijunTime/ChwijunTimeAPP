@@ -74,11 +74,9 @@ class _CounselingWriteState extends State<CounselingWrite> {
                             if (picked != null) {
                               setState(() {
                                 selectedDate = picked;
-                                strDate = "${selectedDate.year}년 ${selectedDate
-                                    .month}월 ${selectedDate.day}일";
+                                strDate = DateFormat("yyyy년 MM월 dd일").format(selectedDate);
                               });
-                              final f = DateFormat("yyyy-MM-dd");
-                              date = f.format(selectedDate);
+                              date = DateFormat("yyyy-MM-dd").format(selectedDate);
                             }
                           },
                           child: Container(
@@ -111,15 +109,9 @@ class _CounselingWriteState extends State<CounselingWrite> {
                             if (pickTime != null) {
                               setState(() {
                                 selectedTime = pickTime;
-                                if (pickTime.hour <12) {
-                                  strTime = "오전 ${pickTime.hour == 0 ? 12 : pickTime.hour}시 ${pickTime.minute}분";
-                                } else {
-                                  strTime = "오후 ${pickTime.hour == 12 ? 12 : pickTime.hour -12 }시 ${pickTime.minute}분";
-                                }
+                                strTime = DateFormat("HH시 mm분").format(selectedDate);
                               });
-                              final f = DateFormat("HH:mm");
-                              final now = DateTime.now();
-                              time = f.format(DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute));
+                              time = DateFormat("HH:mm").format(DateTime.now());
                               print(time);
                             }
                           },

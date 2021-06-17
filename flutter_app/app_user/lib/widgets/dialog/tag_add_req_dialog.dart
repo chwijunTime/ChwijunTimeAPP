@@ -1,10 +1,10 @@
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweet_alert_dialogs/sweet_alert_dialogs.dart';
 
 class TagAddReqDialog extends StatefulWidget {
   @override
@@ -122,76 +122,20 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
 
   postAddTagReq() async {
     if (titleC.text.isEmpty) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return RichAlertDialog(
-              alertTitle: richTitle("입력 오류"),
-              alertSubtitle: richSubtitle("태그명을 입력해주세요!"),
-              alertType: RichAlertType.ERROR,
-              actions: [
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "확인",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.orange[800],
-                )
-              ],
-            );
-          });
+      snackBar("태그명을 입력해주세요!", context);
     } else {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
-      var res = await helper.postReqTag(token, {"tagName": titleC.text});
-      Navigator.pop(context);
-      if (res.success) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return RichAlertDialog(
-                alertTitle: richTitle("요청 완료!"),
-                alertSubtitle: richSubtitle("성공적으로 태그가 요청되었습니다."),
-                alertType: RichAlertType.SUCCESS,
-                actions: [
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "확인",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Colors.green[400],
-                  )
-                ],
-              );
-            });
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return RichAlertDialog(
-                alertTitle: richTitle("ERROR"),
-                alertSubtitle: richSubtitle("잠시후 다시 요청해주세요."),
-                alertType: RichAlertType.ERROR,
-                actions: [
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "확인",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Colors.orange[800],
-                  )
-                ],
-              );
-            });
+      try {
+        var res = await helper.postReqTag(token, {"tagName": titleC.text});
+        Navigator.pop(context);
+        if (res.success) {
+          snackBar("성공적으로 태그가 요청되었습니다.", context);
+        } else {
+          snackBar(res.msg, context);
+        }
+      } catch (e) {
+        print("error: $e");
       }
     }
   }

@@ -126,78 +126,75 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                     ],
                   ),
                   makeDropDownBtn(
-                          valueList: valueList,
-                          selectedValue: selectValue,
-                          onSetState: (value) {
-                            setState(() {
-                              selectValue = value;
-                              if (selectValue == valueList[1]) {
-                                titleC.text = "";
-                                itemCount = 0;
-                                searchContractingList.clear();
-                                msg = "회사명, 지역명으로 검색하기";
-                              } else {
-                                itemCount = Consts.showItemCount;
-                              }
-                            });
-                          },
-                          hint: "보기"),
+                      valueList: valueList,
+                      selectedValue: selectValue,
+                      onSetState: (value) {
+                        setState(() {
+                          selectValue = value;
+                          if (selectValue == valueList[1]) {
+                            titleC.text = "";
+                            itemCount = 0;
+                            searchContractingList.clear();
+                            msg = "회사명, 지역명으로 검색하기";
+                          } else {
+                            itemCount = Consts.showItemCount;
+                          }
+                        });
+                      },
+                      hint: "보기"),
                 ],
               ),
             ),
             User.role == User.admin
                 ? Padding(
-                  padding: const EdgeInsets.only(
-                      right: 26, left: 26, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      makeGradientBtn(
-                          msg: "협약 업체 등록",
-                          onPressed: () async {
-                            var res = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ContractingCompanyWrite()));
-                            if (res != null && res) {
-                              setState(() {
-                                _getContractingList();
-                              });
-                            }
-                          },
-                          mode: 1,
-                          icon: Icon(
-                            Icons.note_add,
-                            color: Colors.white,
-                          )),
-                      makeGradientBtn(
-                          msg: "선택된 업체 삭제",
-                          onPressed: () {
-                            _onDeleteCompany();
-                          },
-                          mode: 1,
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ))
-                    ],
-                  ),
-                )
+                    padding:
+                        const EdgeInsets.only(right: 26, left: 26, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        makeGradientBtn(
+                            msg: "협약 업체 등록",
+                            onPressed: () async {
+                              var res = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ContractingCompanyWrite()));
+                              if (res != null && res) {
+                                setState(() {
+                                  _getContractingList();
+                                });
+                              }
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.note_add,
+                              color: Colors.white,
+                            )),
+                        makeGradientBtn(
+                            msg: "선택된 업체 삭제",
+                            onPressed: () {
+                              _onDeleteCompany();
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ))
+                      ],
+                    ),
+                  )
                 : SizedBox(),
             selectValue == valueList[1]
                 ? Padding(
-                padding: EdgeInsets.only(
-                    right: 33, left: 33, bottom: 15, top: 15),
-                child: buildTextField("협약 업체명, 지역", titleC,
-                    autoFocus: false,
-                    prefixIcon: Icon(Icons.search),
-                    textInput: (String key) async {
-                      final pref =
-                      await SharedPreferences.getInstance();
+                    padding: EdgeInsets.only(
+                        right: 33, left: 33, bottom: 15, top: 15),
+                    child: buildTextField("협약 업체명, 지역", titleC,
+                        autoFocus: false, prefixIcon: Icon(Icons.search),
+                        textInput: (String key) async {
+                      final pref = await SharedPreferences.getInstance();
                       var token = pref.getString("accessToken");
-                      var res =
-                      await helper.getContListKeyword(token, key);
+                      var res = await helper.getContListKeyword(token, key);
                       if (res.success)
                         setState(() {
                           searchContractingList = res.list;
@@ -218,7 +215,8 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
-                          print("index: $index, counList.length: ${contractingList.length}, itemCount: $itemCount");
+                          print(
+                              "index: $index, counList.length: ${contractingList.length}, itemCount: $itemCount");
                           if (index == itemCount) {
                             if (searchContractingList.length == 0) {
                               return Card(
@@ -377,7 +375,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     print("token: ${token}");
     try {
       var res = await helper.getContList(token);
-      print("res.success: ${res.success}");
       if (res.success) {
         return res.list.reversed.toList();
       } else {
@@ -449,7 +446,9 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 height: 22,
                 child: Row(
                   children: [
-                    buildItemTag(list[index].tag, 0),
+                    list[index].tag.length == 0
+                        ? SizedBox()
+                        : buildItemTag(list[index].tag, 0),
                     list[index].tag.length > 1
                         ? Container(
                             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
@@ -521,7 +520,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       if (res.success) {
                         setState(() {
                           print("삭제함: ${res.msg}");
-                          itemCount --;
+                          itemCount--;
                         });
                       } else {
                         snackBar(res.msg, context);

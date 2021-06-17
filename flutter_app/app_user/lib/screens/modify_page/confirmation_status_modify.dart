@@ -118,15 +118,15 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "기타",
+                        "비고",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
-                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 15, maxLength: 500, multiLine: true, type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -186,11 +186,9 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
 
   onStatusModify() async {
     if (titleC.text.isEmpty ||
-        siteUrl.text.isEmpty ||
         addressC.text.isEmpty ||
         areaC.text.isEmpty ||
         stdNameC.text.isEmpty ||
-        etcC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {

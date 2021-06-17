@@ -88,8 +88,8 @@ class _TipStorageWriteState extends State<TipStorageWrite> {
                         height: 5,
                       ),
                       buildTextField("이곳에 작성하면 됩니당", tipC,
-                          maxLine: 10,
-                          maxLength: 500,
+                          maxLine: 15,
+                          maxLength: 20000,
                           autoFocus: false,
                           multiLine: true,
                           type: TextInputType.multiline)

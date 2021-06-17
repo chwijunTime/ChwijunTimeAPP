@@ -7,6 +7,7 @@ import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kopo/kopo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusWrite extends StatefulWidget {
@@ -81,8 +82,16 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     buildTextField("학생 이름", stdNameC, deco: false),
                     buildTextField("회사 사이트 주소", siteUrl, deco: false),
                     buildTextField("지역명", areaC, deco: false),
-                    buildTextField("상세 주소", addressC, deco: false),
-                    buildTextField("기수", generationC, suffixText: "기", type: TextInputType.number, deco: false),
+                    GestureDetector(
+                        onTap: (){
+                          _onKopo(addressC);
+                        },
+                        child: buildTextField("상세 주소", addressC,
+                            deco: false, disable: true)),
+                    buildTextField("기수", generationC,
+                        suffixText: "기",
+                        type: TextInputType.number,
+                        deco: false),
                   ],
                 ),
               ),
@@ -102,15 +111,18 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "기타",
+                        "비고",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 10, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       buildTextField("비고를 적어주세요", etcC,
-                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 15,
+                          maxLength: 500,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -124,10 +136,8 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
               child: makeBtn(
                   msg: "태그 선택하러 가기",
                   onPressed: () async {
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchPage()));
+                    final result = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchPage()));
                     setState(() {
                       if (result != null) {
                         tagList = result;
@@ -136,7 +146,10 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                     print("tagList: $tagList");
                   },
                   mode: 4,
-                  icon: Icon(Icons.tag, color: Colors.white,)),
+                  icon: Icon(
+                    Icons.tag,
+                    color: Colors.white,
+                  )),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15, left: 15),
@@ -145,7 +158,9 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                   child: makeTagWidget(
                       tag: tagList, size: Size(360, 27), mode: 1)),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Padding(
               padding:
                   EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
@@ -169,15 +184,24 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
     );
   }
 
+  _onKopo(TextEditingController controller) async {
+    KopoModel model = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Kopo()));
+
+    if (model != null) {
+      setState(() {
+        controller.text = model.address;
+      });
+    }
+  }
+
   onConfirmationPost() async {
     if (titleC.text.isEmpty ||
-        siteUrl.text.isEmpty ||
         addressC.text.isEmpty ||
         areaC.text.isEmpty ||
         stdNameC.text.isEmpty ||
         generationC.text.isEmpty ||
-        tagList.isEmpty ||
-    etcC.text.isEmpty ) {
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       var vo = ConfirmationVO(
@@ -198,7 +222,6 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
         } else {
           snackBar(res.msg, context);
           print("error: ${res.msg}");
-          print("res: ${res.toJson()}");
         }
       } catch (e) {
         print(e);

@@ -114,13 +114,13 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                       Text(
                         "회사 설명",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                          maxLine: 20, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                          maxLine: 15, maxLength: 5000, autoFocus: false, multiLine: true, type: TextInputType.multiline),
                     ],
                   ),
                 ),
@@ -178,7 +178,6 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
 
   onContractingModify() async {
     if (priceC.text.isEmpty ||
-        infoC.text.isEmpty ||
         tagList.isEmpty ||
         titleC.text.isEmpty ||
         addressC.text.isEmpty ||

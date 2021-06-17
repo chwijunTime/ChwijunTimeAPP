@@ -143,13 +143,13 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                       Text(
                         "후기 내용",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 25, maxLength: 1000)
+                          maxLine: 15, maxLength: 25000)
                     ],
                   ),
                 ),
@@ -169,13 +169,13 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                       Text(
                         "자주 나온 질문",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       buildTextField("자주 나온 질문을 작성해주세요.", questionC,
-                          maxLine: 10, maxLength: 255)
+                          maxLine: 15, maxLength: 25000)
                     ],
                   ),
                 ),
@@ -221,12 +221,10 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
 
   _onModify() async {
     if (addressC.text.isEmpty ||
-        priceC.text.isEmpty ||
         reviewC.text.isEmpty ||
         questionC.text.isEmpty ||
         titleC.text.isEmpty ||
-        tagList.isEmpty ||
-        strDate.isEmpty) {
+        tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요.", context);
     } else {
       ReviewVO vo = ReviewVO(
@@ -241,7 +239,6 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
       try {
-        print("${vo.toJson()}, ${widget.list.index}");
         var res = await helper.putReview(token, widget.list.index, vo.toJson());
         if (res.success) {
           Navigator.pop(context);

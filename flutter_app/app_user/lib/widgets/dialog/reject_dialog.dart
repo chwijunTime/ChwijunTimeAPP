@@ -91,7 +91,7 @@ class _RejectDialog extends State<RejectDialog> {
                 height: 10,
               ),
               buildTextField("거절 사유를 입력해주세요!", reasonC,
-                  maxLine: 20, maxLength: 1000),
+                  maxLine: 20, maxLength: 32500, multiLine: true, type: TextInputType.multiline),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

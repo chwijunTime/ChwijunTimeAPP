@@ -251,7 +251,7 @@ class _MainPageState extends State<MainPage> {
     var token = pref.getString("accessToken");
     var res = await helper.getNoticeList(token);
     if (res.success) {
-      return res.list.reversed.toList();
+      return res.list;
     } else {
       return null;
     }

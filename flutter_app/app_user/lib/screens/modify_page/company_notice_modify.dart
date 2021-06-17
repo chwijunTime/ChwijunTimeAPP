@@ -43,8 +43,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
       preferentialInfoC.text = widget.list.preferential;
       addressC.text = widget.list.address;
       etcC.text = widget.list.etc;
-      var tempDate =
-      DateFormat("yyyy-MM-dd").parse(widget.list.deadLine);
+      var tempDate = DateFormat("yyyy-MM-dd").parse(widget.list.deadLine);
       var strDate = DateFormat("yyyy년 MM월 dd일").format(tempDate);
       deadline.text = "$strDate (수정이 불가능합니다.)";
       tagList = widget.list.tag;
@@ -106,7 +105,8 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                       buildTextField("업체명", titleC, deco: false),
                       buildTextField("채용분야", fieldC, deco: false),
                       buildTextField("지역", addressC, deco: false),
-                      buildTextField("마감일", deadline, deco: false, disable: true)
+                      buildTextField("마감일", deadline,
+                          deco: false, disable: true)
                     ],
                   );
                 }),
@@ -130,13 +130,16 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                       Text(
                         "회사 설명",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      buildTextField("회사 설명을 적어주세용", infoC,
-                          maxLine: 20, maxLength: 500, multiLine: true, type: TextInputType.multiline)
+                      buildTextField("회사 설명을 적어주세요", infoC,
+                          maxLine: 15,
+                          maxLength: 15000,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -160,13 +163,16 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                       Text(
                         "우대 조건",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       buildTextField("우대 조건을 적어주세용", preferentialInfoC,
-                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 15,
+                          maxLength: 5000,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -192,7 +198,10 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
                         height: 10,
                       ),
                       buildTextField("기타 설명을 적어주세요.", etcC,
-                          maxLine: 10, maxLength: 255, multiLine: true, type: TextInputType.multiline)
+                          maxLine: 15,
+                          maxLength: 5000,
+                          multiLine: true,
+                          type: TextInputType.multiline)
                     ],
                   ),
                 ),
@@ -245,8 +254,6 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
     if (titleC.text.isEmpty ||
         fieldC.text.isEmpty ||
         addressC.text.isEmpty ||
-        infoC.text.isEmpty ||
-        preferentialInfoC.text.isEmpty ||
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
@@ -254,10 +261,11 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
           title: titleC.text,
           field: fieldC.text,
           address: addressC.text,
-          info: infoC.text,
-          preferential: preferentialInfoC.text,
+          info: infoC.text.isEmpty ? "" : infoC.text,
+          preferential:
+              preferentialInfoC.text.isEmpty ? "" : preferentialInfoC.text,
           etc: etcC.text.isEmpty ? "" : etcC.text,
-      postTag: tagList);
+          postTag: tagList);
 
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");
@@ -268,7 +276,7 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
           Navigator.pop(context, true);
         } else {
           snackBar(res.msg, context);
-          print("eeror: ${res.msg}");
+          print("error: ${res.msg}");
         }
       } catch (e) {
         print(e);

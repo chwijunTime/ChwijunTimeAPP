@@ -60,8 +60,8 @@ class _NotificationWriteState extends State<NotificationWrite> {
                 height: 24,
               ),
               buildTextField("공지사항 내용을 입력해주세요.", contentsC,
-                  maxLine: 10,
-                  maxLength: 255,
+                  maxLine: 15,
+                  maxLength: 20000,
                   multiLine: true,
                   type: TextInputType.multiline),
               SizedBox(

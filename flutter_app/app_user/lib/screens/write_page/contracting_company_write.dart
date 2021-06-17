@@ -89,7 +89,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                             deco: false, autoFocus: false),
                       ),
                       buildTextField("평균 연봉", priceC,
-                          deco: false, autoFocus: false),
+                          deco: false, autoFocus: false, maxLength: 2000, isCounterText: false),
                     ],
                   ),
                 ),
@@ -104,6 +104,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                 child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "협약 업체 설명",
@@ -114,7 +115,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                         height: 5,
                       ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!", infoC,
-                          maxLine: 20, maxLength: 500, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                          maxLine: 15, maxLength: 5000, autoFocus: false, multiLine: true, type: TextInputType.multiline),
                     ],
                   ),
                 ),
@@ -185,7 +186,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   onContractingPost() async {
     if (titleC.text.isEmpty ||
         addressC.text.isEmpty ||
-        priceC.text.isEmpty ||
+        addressC.text.isEmpty ||
         infoC.text.isEmpty ||
         areaC.text.isEmpty ||
         tagList.isEmpty) {

@@ -6,7 +6,6 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweet_alert_dialogs/sweet_alert_dialogs.dart';
 
 class TagDialog extends StatefulWidget {
   String mode;
@@ -164,27 +163,7 @@ class _TagDialogState extends State<TagDialog> {
 
   postTag() async {
     if (titleC.text.isEmpty) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return RichAlertDialog(
-              alertTitle: richTitle("입력 오류"),
-              alertSubtitle: richSubtitle("태그명을 입력해주세요!"),
-              alertType: RichAlertType.ERROR,
-              actions: [
-                FlatButton(
-                  onPressed: () {
-                      Navigator.pop(context, true);
-                  },
-                  child: Text(
-                    "확인",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.orange[800],
-                )
-              ],
-            );
-          });
+      snackBar("태그명을 입력해주세요!", context);
     } else {
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

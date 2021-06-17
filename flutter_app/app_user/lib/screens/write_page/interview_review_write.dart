@@ -132,14 +132,14 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                       Text(
                         "후기 내용",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 25,
-                          maxLength: 1000,
+                          maxLine: 15,
+                          maxLength: 25000,
                           multiLine: true,
                           type: TextInputType.multiline)
                     ],
@@ -161,14 +161,14 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                       Text(
                         "자주 나온 질문",
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       buildTextField("자주 나온 질문을 작성해주세요.", questionC,
-                          maxLine: 10,
-                          maxLength: 255,
+                          maxLine: 15,
+                          maxLength: 25000,
                           multiLine: true,
                           type: TextInputType.multiline)
                     ],
@@ -232,20 +232,8 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
   }
 
   onReviewPost() async {
-    ReviewVO vo = ReviewVO(
-        address: addressC.text,
-        price: int.parse(priceC.text),
-        applyDate: date,
-        question: questionC.text,
-        title: titleC.text,
-        review: reviewC.text,
-        tag: tagList);
-
-    print(vo.toJson());
     if (titleC.text.isEmpty ||
-        date == "" ||
         addressC.text.isEmpty ||
-        priceC.text.isEmpty ||
         reviewC.text.isEmpty ||
         questionC.text.isEmpty ||
         tagList.isEmpty) {

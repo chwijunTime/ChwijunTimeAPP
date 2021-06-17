@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CounselingManage extends StatefulWidget {
   @override
@@ -22,8 +21,6 @@ class CounselingManage extends StatefulWidget {
 class _CounselingManageState extends State<CounselingManage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   RetrofitHelper helper;
-
-  PanelController panelController = PanelController();
   final _scrollController = ScrollController();
   final titleC = TextEditingController();
 
@@ -371,7 +368,6 @@ class _CounselingManageState extends State<CounselingManage> {
             builder: (BuildContext context) =>
                 CounselingDialog(index: counAdminList[index].index));
         if (res != null && res == "delete") {
-          print("하이");
           setState(() {
             itemCount--;
           });

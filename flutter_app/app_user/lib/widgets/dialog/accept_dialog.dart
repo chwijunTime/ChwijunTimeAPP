@@ -85,7 +85,7 @@ class _AcceptDialog extends State<AcceptDialog> {
                 height: 10,
               ),
               buildTextField("첨삭 내용을 입력해주세요!", contentsC,
-                  maxLine: 20, maxLength: 100),
+                  maxLine: 20, maxLength: 32500, multiLine: true, type: TextInputType.multiline),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
