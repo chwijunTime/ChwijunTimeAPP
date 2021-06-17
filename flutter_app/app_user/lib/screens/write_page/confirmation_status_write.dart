@@ -113,7 +113,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
                       Text(
                         "비고",
                         style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w600),
+                            fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
                         height: 5,

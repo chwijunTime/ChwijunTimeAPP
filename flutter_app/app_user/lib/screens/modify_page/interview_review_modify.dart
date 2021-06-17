@@ -75,23 +75,17 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       appBar: buildAppBar("취준타임", context),
       body: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 24),
-              child: buildTextField("업체명", titleC),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("주소", addressC, type: TextInputType.text),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: buildTextField("비용", priceC, type: TextInputType.number),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 33, left: 33, top: 10),
-              child: GestureDetector(
+        child: Padding(
+          padding: EdgeInsets.only(right: 33, left: 33, top: 24, bottom: 24),
+          child: ListView(
+            children: [
+              buildTextField("업체명", titleC),
+              SizedBox(height: 10,),
+              buildTextField("주소", addressC, type: TextInputType.text),
+              SizedBox(height: 10,),
+              buildTextField("비용", priceC, type: TextInputType.number),
+              SizedBox(height: 10,),
+              GestureDetector(
                 onTap: () async {
                   final DateTime picked = await showDatePicker(
                       context: context,
@@ -124,96 +118,93 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
                   ),
                 ),
               ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 25,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "후기 내용",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      buildTextField("후기 내용을 작성해주세요.", reviewC,
-                          maxLine: 15, maxLength: 25000)
-                    ],
+              SizedBox(height: 25,),
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "후기 내용",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        buildTextField("후기 내용을 작성해주세요.", reviewC,
+                            maxLine: 15, maxLength: 25000)
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18)),
-              margin: EdgeInsets.only(left: 25, right: 25, top: 25, bottom: 20),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "자주 나온 질문",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      buildTextField("자주 나온 질문을 작성해주세요.", questionC,
-                          maxLine: 15, maxLength: 25000)
-                    ],
+              SizedBox(height: 25,),
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "자주 나온 질문",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        buildTextField("자주 나온 질문을 작성해주세요.", questionC,
+                            maxLine: 15, maxLength: 25000)
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 100, right: 100),
-              child: makeBtn(
-                  msg: "태그 선택하러 가기",
-                  onPressed: () async {
-                    final result = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SearchPage()));
-                    setState(() {
-                      if (result != null) {
-                        tagList = result;
-                      }
-                    });
-                    print("tagList: $tagList");
-                  },
-                  mode: 2),
-            ),
-            Align(
-                alignment: Alignment.center,
-                child:
-                    makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
-            Padding(
-              padding:
-                  EdgeInsets.only(right: 33, left: 33, top: 10, bottom: 30),
-              child: makeGradientBtn(
-                  msg: "수정하기",
-                  onPressed: _onModify,
-                  mode: 2,
-                  icon: Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                  )),
-            )
-          ],
+              SizedBox(height: 30,),
+              Padding(
+                padding: const EdgeInsets.only(left: 70, right: 70),
+                child: makeBtn(
+                    msg: "태그 선택하러 가기",
+                    onPressed: () async {
+                      final result = await Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SearchPage()));
+                      setState(() {
+                        if (result != null) {
+                          tagList = result;
+                        }
+                      });
+                      print("tagList: $tagList");
+                    },
+                    mode: 2),
+              ),
+              Align(
+                  alignment: Alignment.center,
+                  child:
+                      makeTagWidget(tag: tagList, size: Size(360, 27), mode: 1)),
+              Padding(
+                padding:
+                    EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 30),
+                child: makeGradientBtn(
+                    msg: "수정하기",
+                    onPressed: _onModify,
+                    mode: 2,
+                    icon: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    )),
+              )
+            ],
+          ),
         ),
       ),
     );
