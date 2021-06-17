@@ -1,6 +1,7 @@
 import 'package:app_user/model/consulting/consulting_admin_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/screens/search_page.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,8 @@ class _CounselingDialogState extends State<CounselingDialog> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               widget.list = snapshot.data;
-              var tempDate =
-              DateFormat("yyyy-MM-ddTHH:mm:ss").parse(widget.list.applyDate);
+              var tempDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
+                  .parse(widget.list.applyDate);
               strDate = DateFormat("yyyy년 MM월 dd일 HH시 mm분").format(tempDate);
               return buildDialog(context);
             } else {
@@ -115,21 +116,37 @@ class _CounselingDialogState extends State<CounselingDialog> {
   }
 
   _onDelete() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    try {
-      var res = await helper.deleteConsulting(token, widget.index);
-      if (res.success) {
-        snackBar("성공적으로 삭제되었습니다.", context);
-        Navigator.pop(context, "delete");
-      } else {
-        snackBar(res.msg, context);
-        print("err: ${res.msg}");
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      print("error: $e");
-    }
+    var res = await showDialog(
+      context: context,
+      builder: (context) => StdDialog(
+        msg: "선택된 상담을 삭제하시겠습니까?",
+        size: Size(326, 124),
+        btnName1: "아니요",
+        btnCall1: () {
+          Navigator.pop(context, false);
+        },
+        btnName2: "삭제하기",
+        btnCall2: () async {
+          final pref = await SharedPreferences.getInstance();
+          var token = pref.getString("accessToken");
+          try {
+            var res = await helper.deleteConsulting(token, widget.index);
+            if (res.success) {
+              snackBar("성공적으로 삭제되었습니다.", context);
+              Navigator.pop(context, "delete");
+            } else {
+              snackBar(res.msg, context);
+              print("err: ${res.msg}");
+              Navigator.pop(context);
+            }
+          } catch (e) {
+            print("error: $e");
+          }
+        },
+      ),
+      barrierDismissible: false
+    );
+    Navigator.pop(context, res);
   }
 
   Widget makeTag(String str) {

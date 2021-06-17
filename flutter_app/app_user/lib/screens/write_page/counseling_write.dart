@@ -109,10 +109,11 @@ class _CounselingWriteState extends State<CounselingWrite> {
                             if (pickTime != null) {
                               setState(() {
                                 selectedTime = pickTime;
-                                strTime = DateFormat("HH시 mm분").format(selectedDate);
+                                var now = DateTime.now();
+                                var dateTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+                                strTime = DateFormat("HH시 mm분").format(dateTime);
+                                time = DateFormat("HH:mm").format(dateTime);
                               });
-                              time = DateFormat("HH:mm").format(DateTime.now());
-                              print(time);
                             }
                           },
                           child: Container(
