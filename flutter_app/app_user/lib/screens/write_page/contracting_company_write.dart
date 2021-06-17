@@ -20,7 +20,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   RetrofitHelper helper;
 
   var titleC = TextEditingController();
-  var areaC = TextEditingController();
+  var fieldC = TextEditingController();
   var addressC = TextEditingController();
   var priceC = TextEditingController();
   var infoC = TextEditingController();
@@ -32,11 +32,10 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
     initRetrofit();
   }
 
-
   @override
   void dispose() {
     titleC.dispose();
-    areaC..dispose();
+    fieldC..dispose();
     addressC.dispose();
     priceC.dispose();
     infoC.dispose();
@@ -79,8 +78,8 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                     children: [
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
-                      buildTextField("지역", areaC,
-                          deco: false, autoFocus: false),
+                      buildTextField("사업분야", fieldC,
+                          deco: false, autoFocus: false, type: TextInputType.number),
                       GestureDetector(
                         onTap: () {
                           _onKopo(addressC);
@@ -89,7 +88,10 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                             deco: false, autoFocus: false),
                       ),
                       buildTextField("평균 연봉", priceC,
-                          deco: false, autoFocus: false, maxLength: 2000, isCounterText: false),
+                          deco: false,
+                          autoFocus: false,
+                          maxLength: 2000,
+                          isCounterText: true, suffixText: "만원"),
                     ],
                   ),
                 ),
@@ -115,7 +117,11 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                         height: 5,
                       ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!", infoC,
-                          maxLine: 15, maxLength: 5000, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                          maxLine: 15,
+                          maxLength: 5000,
+                          autoFocus: false,
+                          multiLine: true,
+                          type: TextInputType.multiline),
                     ],
                   ),
                 ),
@@ -140,7 +146,10 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                       print("tagList: $tagList");
                     },
                     mode: 4,
-                    icon: Icon(Icons.tag, color: Colors.white,)),
+                    icon: Icon(
+                      Icons.tag,
+                      color: Colors.white,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
@@ -187,17 +196,16 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
     if (titleC.text.isEmpty ||
         addressC.text.isEmpty ||
         addressC.text.isEmpty ||
-        infoC.text.isEmpty ||
-        areaC.text.isEmpty ||
-        tagList.isEmpty) {
+        fieldC.text.isEmpty ||
+        infoC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       ContractingVO vo = ContractingVO(
           info: infoC.text,
           address: addressC.text,
-          salary: priceC.text,
+          salary: "${priceC.text}만원",
           title: titleC.text,
-          area: areaC.text,
+          area: fieldC.text,
           postTag: tagList);
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

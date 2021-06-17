@@ -120,7 +120,11 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                         height: 10,
                       ),
                       buildTextField("협약을 맺은 업체를 설명해 주세요!.", infoC,
-                          maxLine: 15, maxLength: 5000, autoFocus: false, multiLine: true, type: TextInputType.multiline),
+                          maxLine: 15,
+                          maxLength: 5000,
+                          autoFocus: false,
+                          multiLine: true,
+                          type: TextInputType.multiline),
                     ],
                   ),
                 ),
@@ -177,11 +181,11 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   }
 
   onContractingModify() async {
-    if (priceC.text.isEmpty ||
-        tagList.isEmpty ||
+    if (tagList.isEmpty ||
         titleC.text.isEmpty ||
         addressC.text.isEmpty ||
-        areaC.text.isEmpty) {
+        areaC.text.isEmpty ||
+        infoC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
       final pref = await SharedPreferences.getInstance();
@@ -192,12 +196,12 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
             token,
             widget.list.index,
             ContractingVO(
-                salary: priceC.text,
-                info: infoC.text,
-                postTag: tagList,
-                title: titleC.text,
-                address: addressC.text,
-                area: areaC.text)
+                    salary: priceC.text,
+                    info: infoC.text,
+                    postTag: tagList,
+                    title: titleC.text,
+                    address: addressC.text,
+                    area: areaC.text)
                 .toJson());
         if (res.success) {
           Navigator.pop(context, true);

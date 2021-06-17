@@ -196,6 +196,7 @@ class _ContractingCompanyDetailPageState
                     ),
                   ),
                 ),
+                widget.list.info.isEmpty ? SizedBox() :
                 Card(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
@@ -221,13 +222,12 @@ class _ContractingCompanyDetailPageState
                           SizedBox(
                             height: 10,
                           ),
-                          AutoSizeText(
+                          Text(
                             widget.list.info,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w400,
                             ),
-                            minFontSize: 18,
                           )
                         ],
                       ),

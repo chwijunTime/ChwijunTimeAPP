@@ -5,11 +5,9 @@ import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
-import 'package:app_user/widgets/dialog/apply_dialog.dart';
 import 'package:app_user/widgets/dialog/apply_write_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -217,80 +215,84 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                         ),
                       ),
                     ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18)),
-                      margin: EdgeInsets.only(
-                        left: 25,
-                        right: 25,
-                        top: 25,
-                      ),
-                      child: Container(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "회사 설명",
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.w600),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              AutoSizeText(
-                                widget.list.info,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
+                    widget.list.info.isEmpty
+                        ? SizedBox()
+                        : Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            margin: EdgeInsets.only(
+                              left: 25,
+                              right: 25,
+                              top: 25,
+                            ),
+                            child: Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "회사 설명",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      widget.list.info,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                minFontSize: 18,
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18)),
-                      margin: EdgeInsets.only(
-                        left: 25,
-                        right: 25,
-                        top: 25,
-                      ),
-                      child: Container(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "우대 조건",
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.w600),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              AutoSizeText(
-                                widget.list.preferential,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
+                    widget.list.preferential.isEmpty
+                        ? SizedBox()
+                        : Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            margin: EdgeInsets.only(
+                              left: 25,
+                              right: 25,
+                              top: 25,
+                            ),
+                            child: Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "우대 조건",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      widget.list.preferential,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                minFontSize: 18,
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    widget.list.etc != ""
-                        ? Card(
+                    widget.list.etc.isEmpty
+                        ? SizedBox(height: 25,) : Card(
                             elevation: 5,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18)),
@@ -310,21 +312,17 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    AutoSizeText(
+                                    Text(
                                       widget.list.etc,
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w400,
                                       ),
-                                      minFontSize: 18,
                                     )
                                   ],
                                 ),
                               ),
                             ),
-                          )
-                        : SizedBox(
-                            height: 25,
                           ),
                     Align(
                       alignment: Alignment.center,
