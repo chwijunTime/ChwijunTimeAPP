@@ -92,7 +92,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postRefreshToken(body) async {
+  Future<ResponseRefresh> postRefreshToken(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -106,7 +106,7 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseData.fromJson(_result.data);
+    final value = ResponseRefresh.fromJson(_result.data);
     return value;
   }
 
@@ -845,8 +845,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseNoticeList> getNoticeList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseNoticeList> getNoticeList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -854,7 +853,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);

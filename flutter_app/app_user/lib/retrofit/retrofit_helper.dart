@@ -19,6 +19,7 @@ import 'package:app_user/model/notice/response_notice_list.dart';
 import 'package:app_user/model/response_data.dart';
 import 'package:app_user/model/response_find_pw.dart';
 import 'package:app_user/model/response_login.dart';
+import 'package:app_user/model/response_refresh.dart';
 import 'package:app_user/model/resume_portfolio/response_portfolio.dart';
 import 'package:app_user/model/resume_portfolio/response_portfolio_list.dart';
 import 'package:app_user/model/resume_portfolio/response_resume.dart';
@@ -52,7 +53,7 @@ abstract class RetrofitHelper {
   Future<ResponseData> postLogout(@Header("Authorization") String token);
 
   @POST("/v1/auth/refresh")
-  Future<ResponseData> postRefreshToken(@Body() Map<String, dynamic> body);
+  Future<ResponseRefresh> postRefreshToken(@Body() Map<String, dynamic> body);
 
   @GET("/v1/check/findPw")
   Future<ResponseFindPW> getCheckFindPw(
@@ -236,8 +237,7 @@ abstract class RetrofitHelper {
 
   //region 6. 공지사항
   @GET("/v1/notice")
-  Future<ResponseNoticeList> getNoticeList(
-      @Header("Authorization") String token);
+  Future<ResponseNoticeList> getNoticeList();
 
   @POST("/v1/admin/notice")
   Future<ResponseData> postNotice(@Header("Authorization") String token,
