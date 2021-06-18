@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="app_user"
+        android:label="취준타임"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <uses-library
