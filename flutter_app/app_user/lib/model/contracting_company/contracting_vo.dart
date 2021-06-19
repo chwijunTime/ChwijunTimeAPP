@@ -5,7 +5,7 @@ part 'contracting_vo.g.dart';
 @JsonSerializable()
 class ContractingVO {
   @JsonKey(name: "contractingBusinessAreas")
-  String area;
+  String fieldC;
   @JsonKey(name: "contractingCompanyAboutUs")
   String info;
   @JsonKey(name: "contractingCompanyAddress")
@@ -23,7 +23,7 @@ class ContractingVO {
 
 
   ContractingVO(
-      {this.area,
+      {this.fieldC,
       this.info,
       this.address,
       this.salary,

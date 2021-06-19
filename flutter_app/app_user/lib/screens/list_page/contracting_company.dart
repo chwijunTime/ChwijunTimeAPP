@@ -55,15 +55,27 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   void _scrollListener() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(milliseconds: 500));
       setState(() {
-        if (itemCount != contractingList.length) {
-          if ((contractingList.length - itemCount) ~/ Consts.showItemCount <=
-              0) {
-            itemCount = contractingList.length;
-            print("으잉: ${contractingList.length}");
-          } else {
-            itemCount += Consts.showItemCount;
+        if (selectValue == valueList[0]) {
+          if (itemCount != contractingList.length) {
+            if ((contractingList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
+              itemCount = contractingList.length;
+              print("으잉: ${contractingList.length}");
+            } else {
+              itemCount += Consts.showItemCount;
+            }
+          }
+        } else {
+          if (itemCount != searchContractingList.length) {
+            if ((searchContractingList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
+              itemCount = searchContractingList.length;
+              print("으잉: ${searchContractingList.length}");
+            } else {
+              itemCount += Consts.showItemCount;
+            }
           }
         }
       });
@@ -131,6 +143,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       onSetState: (value) {
                         setState(() {
                           selectValue = value;
+                          deleteList.clear();
                           if (selectValue == valueList[1]) {
                             titleC.text = "";
                             itemCount = 0;
@@ -191,23 +204,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         right: 33, left: 33, bottom: 15, top: 15),
                     child: buildTextField("협약 업체명, 지역", titleC,
                         autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) async {
-                      final pref = await SharedPreferences.getInstance();
-                      var token = pref.getString("accessToken");
-                      var res = await helper.getContListKeyword(token, key);
-                      if (res.success)
-                        setState(() {
-                          searchContractingList = res.list;
-                          if (searchContractingList.length <=
-                              Consts.showItemCount) {
-                            itemCount = searchContractingList.length;
-                            print(searchContractingList.length);
-                            msg = "검색된 협약업체가 없습니다.";
-                          } else {
-                            itemCount = Consts.showItemCount;
-                          }
-                        });
-                    }))
+                        textInput: (String key)  {
+                          _onSearchList(key);
+                        }
+                      ))
                 : SizedBox(),
             selectValue == valueList[1]
                 ? Expanded(
@@ -215,8 +215,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         controller: _scrollController,
                         itemCount: itemCount + 1,
                         itemBuilder: (context, index) {
+                          for (int i = 0; i < contractingList.length; i++) {
+                            deleteList.add(false);
+                          }
                           print(
-                              "index: $index, counList.length: ${contractingList.length}, itemCount: $itemCount");
+                              "index: $index, searchContractingList.length: ${searchContractingList.length}, itemCount: $itemCount");
                           if (index == itemCount) {
                             if (searchContractingList.length == 0) {
                               return Card(
@@ -376,7 +379,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     try {
       var res = await helper.getContList(token);
       if (res.success) {
-        return res.list.reversed.toList();
+        return res.list;
       } else {
         return null;
       }
@@ -400,7 +403,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                         index: list[index].index,
                       )));
           setState(() {
-            _getContractingList();
+            if (selectValue == valueList[0]) {
+              _getContractingList();
+            } else {
+              _onSearchList(titleC.text);
+            }
           });
         },
         child: Padding(
@@ -471,7 +478,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "평균 연봉: ${list[index].salary}",
+                          "평균 연봉: ${list[index].salary.isEmpty ? "미입력" : list[index].salary}",
                           style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -487,6 +494,24 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         ),
       ),
     );
+  }
+
+  _onSearchList(String key) async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    var res = await helper.getContListKeyword(token, key);
+    if (res.success)
+      setState(() {
+        searchContractingList = res.list;
+        if (searchContractingList.length <=
+            Consts.showItemCount) {
+          itemCount = searchContractingList.length;
+          print(searchContractingList.length);
+          msg = "검색된 협약업체가 없습니다.";
+        } else {
+          itemCount = Consts.showItemCount;
+        }
+      });
   }
 
   _onDeleteCompany() {
