@@ -79,19 +79,20 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
                       buildTextField("업체명", titleC,
                           deco: false, autoFocus: false),
                       buildTextField("사업분야", fieldC,
-                          deco: false, autoFocus: false, type: TextInputType.number),
+                          deco: false,
+                          autoFocus: false),
                       GestureDetector(
                         onTap: () {
                           _onKopo(addressC);
                         },
                         child: buildTextField("주소", addressC,
-                            deco: false, autoFocus: false),
+                            deco: false, autoFocus: false, disable: true),
                       ),
                       buildTextField("평균 연봉", priceC,
                           deco: false,
                           autoFocus: false,
-                          maxLength: 2000,
-                          isCounterText: true, suffixText: "만원"),
+                          type: TextInputType.number,
+                          suffixText: "만원"),
                     ],
                   ),
                 ),
@@ -205,7 +206,7 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
           address: addressC.text,
           salary: "${priceC.text}만원",
           title: titleC.text,
-          area: fieldC.text,
+          fieldC: fieldC.text,
           postTag: tagList);
       final pref = await SharedPreferences.getInstance();
       var token = pref.getString("accessToken");

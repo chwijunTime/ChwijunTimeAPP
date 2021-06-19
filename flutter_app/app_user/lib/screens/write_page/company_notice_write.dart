@@ -117,7 +117,7 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
                             child: Text(
                               deadLineDateC,
                               style: TextStyle(
-                                  color: deadLineDateC == "마감일"
+                                  color: deadLineDateC == "마감일 (클릭해주세요)"
                                       ? Colors.grey
                                       : Colors.black,
                                   fontSize: 16, fontWeight: FontWeight.w600),

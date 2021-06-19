@@ -124,12 +124,12 @@ class _ContractingCompanyDetailPageState
                             ],
                           ),
                           Text(
-                            "지역: ${widget.list.area}",
+                            "지역: ${widget.list.fieldC}",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            "평균: ${widget.list.salary}",
+                            "평균: ${widget.list.salary.isEmpty ? "미입력" : widget.list.salary}",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),

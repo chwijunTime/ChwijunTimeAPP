@@ -222,7 +222,7 @@ class _NotificationDialog extends State<NotificationDialog> {
         barrierDismissible: false);
 
     if (result == "yes") {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
   }
 }

@@ -137,16 +137,15 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       onSetState: (value) {
                         setState(() {
                           selectValue = value;
+                          checkList.clear();
                           if (selectValue == valueList[1]) {
                             titleC.text = "";
                             itemCount = 0;
                             searchConfList.clear();
-                            checkList.clear();
                             msg = "회사명, 기수, 지역으로 검색하기";
                           } else {
                             msg = "등록된 취업확정현황이 없습니다.";
                             itemCount = Consts.showItemCount;
-                            checkList.clear();
                           }
                         });
                       },
@@ -199,27 +198,11 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                     padding: EdgeInsets.only(
                         right: 33, left: 33, bottom: 15, top: 15),
                     child: buildTextField("회사명, 기수, 지역", titleC,
-                        autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) async {
-                      final pref = await SharedPreferences.getInstance();
-                      var token = pref.getString("accessToken");
-                      var res = await helper.getConfListKeyword(token, key);
-                      if (res.success) {
-                        setState(() {
-                          searchConfList = res.list;
-                          for (int i = 0; i < searchConfList.length; i++) {
-                            checkList.add(false);
-                          }
-                          if (searchConfList.length <= Consts.showItemCount) {
-                            itemCount = searchConfList.length;
-                            print(searchConfList.length);
-                            msg = "검색된 취업확정현황이 없습니다.";
-                          } else {
-                            itemCount = Consts.showItemCount;
-                          }
-                        });
-                      }
-                    }))
+                        autoFocus: false,
+                        prefixIcon: Icon(Icons.search),
+                        textInput: (String key) {
+                          _onSearchList(key);
+                        }))
                 : SizedBox(),
             Expanded(
               child: selectValue == valueList[1]
@@ -227,6 +210,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       controller: _scrollController,
                       itemCount: itemCount + 1,
                       itemBuilder: (context, index) {
+                        print("checkList: ${checkList.length}");
                         if (index == itemCount) {
                           if (searchConfList.length == 0) {
                             return Card(
@@ -408,6 +392,33 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
     }
   }
 
+  _onSearchList(String key) async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    try {
+      var res = await helper.getConfListKeyword(token, key);
+      if (res.success) {
+        setState(() {
+          searchConfList = res.list;
+          for (int i = 0; i < searchConfList.length; i++) {
+            checkList.add(false);
+          }
+          if (searchConfList.length <= Consts.showItemCount) {
+            itemCount = searchConfList.length;
+            print(searchConfList.length);
+            msg = "검색된 취업확정현황이 없습니다.";
+          } else {
+            itemCount = Consts.showItemCount;
+          }
+        });
+      } else {
+        snackBar(res.msg, context);
+      }
+    } catch (e) {
+      print("error: $e");
+    }
+  }
+
   _onDeleteConfirmation() async {
     List<int> arr = [];
     for (int i = 0; i < confList.length; i++) {
@@ -437,7 +448,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                       final res = await helper.deleteConf(token, arr[i]);
                       if (res.success) {
                         Navigator.pop(context, true);
-                        itemCount --;
+                        itemCount--;
                       } else {
                         print("error: ${res.msg}");
                       }

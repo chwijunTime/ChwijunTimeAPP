@@ -29,6 +29,7 @@ class _NotificationPageState extends State<NotificationPage> {
   List<bool> deleteNoti = [];
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
+  int page = 1;
 
   RetrofitHelper helper;
 
@@ -49,13 +50,13 @@ class _NotificationPageState extends State<NotificationPage> {
   void _scrollListener() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(milliseconds: 500));
       setState(() {
         if (itemCount != noticeList.length) {
           if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
             itemCount = noticeList.length;
           } else {
-            itemCount += Consts.showItemCount;
+            itemCount = ++ page * Consts.showItemCount;
           }
         }
       });
@@ -253,7 +254,7 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<List<NotificationVO>> _getNotice() async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
-    var res = await helper.getNoticeList(token);
+    var res = await helper.getNoticeList();
     if (res.success) {
       return res.list.toList();
     } else {
@@ -271,7 +272,7 @@ class _NotificationPageState extends State<NotificationPage> {
       margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
       child: InkWell(
         onTap: () async {
-          await showDialog(
+          var res = await showDialog(
               context: context,
               builder: (BuildContext context) => NotificationDialog(
                     index: noticeList[index].index,
@@ -281,6 +282,9 @@ class _NotificationPageState extends State<NotificationPage> {
 
           setState(() {
             _getNotice();
+            if (res != null && res && noticeList.length == itemCount) {
+              itemCount --;
+            }
           });
         },
         child: Padding(
@@ -368,7 +372,9 @@ class _NotificationPageState extends State<NotificationPage> {
                       final res = await helper.deleteNotice(
                           token: token, index: arr[i]);
                       if (res.success) {
-                        itemCount --;
+                        if (noticeList.length == itemCount) {
+                          itemCount --;
+                        }
                         deleteNoti.clear();
                       } else {
                         print("error: ${res.msg}");

@@ -13,7 +13,6 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +34,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   final _scrollController = ScrollController();
   List<bool> deleteNoti = [];
   int itemCount = Consts.showItemCount;
+  int page = 1;
   List<String> valueList = ['전체보기', '검색하기'];
   String selectValue = "전체보기";
   String msg = "등록된 취업공고가 없습니다.";
@@ -65,7 +65,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
               itemCount = noticeList.length;
             } else {
-              itemCount += Consts.showItemCount;
+              itemCount = ++ page * Consts.showItemCount;
             }
           }
         } else {
@@ -73,7 +73,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             if ((searchNoticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
               itemCount = searchNoticeList.length;
             } else {
-              itemCount += Consts.showItemCount;
+              itemCount = ++ page * Consts.showItemCount;
             }
           }
         }
@@ -143,6 +143,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                           deleteNoti.clear();
                           if (selectValue == valueList[1]) {
                             titleC.text = "";
+                            page = 1;
                             itemCount = 0;
                             searchNoticeList.clear();
                             msg = "이름, 지역, 직군으로 검색하기";
@@ -219,23 +220,9 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                         right: 33, left: 33, bottom: 15, top: 15),
                     child: buildTextField("이름, 지역, 직군", titleC,
                         autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) async {
-                      final pref = await SharedPreferences.getInstance();
-                      var token = pref.getString("accessToken");
-                      var res = await helper.getCompListKeyword(token, key);
-                      if (res.success){
-                        setState(() {
-                          searchNoticeList = res.list;
-                          if (searchNoticeList.length <= Consts.showItemCount) {
-                            itemCount = searchNoticeList.length;
-                            print(searchNoticeList.length);
-                            msg = "검색된 취업공고가 없습니다.";
-                          } else {
-                            itemCount = Consts.showItemCount;
-                          }
-                        });
-                      }
-                    }))
+                        textInput: (String key) {
+                      _onSearchList(key);
+                        }))
                 : SizedBox(),
             selectValue == valueList[1]
                 ? Expanded(
@@ -244,9 +231,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
                       print("itemCount: $itemCount, searchNoticeList.length: ${searchNoticeList.length}, index: $index");
-                      for (int i = 0; i < searchNoticeList.length; i++) {
-                        deleteNoti.add(false);
-                      }
                       if (index == itemCount) {
                         if (searchNoticeList.length == 0) {
                           return Card(
@@ -407,7 +391,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       var res = await helper.getCompList(token);
       print("res.success: ${res.success}");
       if (res.success) {
-        return res.list.toList();
+        return res.list;
       } else {
         return null;
       }
@@ -423,8 +407,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         arr.add(noticeList[i].index);
       }
     }
-    print(deleteNoti.toString());
-    print(arr.toString());
 
     if (arr.isEmpty) {
       snackBar("삭제할 업체를 선택해주세요.", context);
@@ -440,8 +422,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  print("삭제할 업체들================================");
-                  print(arr.toString());
                   final pref = await SharedPreferences.getInstance();
                   var token = pref.getString("accessToken");
                   try {
@@ -588,5 +568,26 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
         ),
       ),
     );
+  }
+
+  _onSearchList(String key) async {
+    final pref = await SharedPreferences.getInstance();
+    var token = pref.getString("accessToken");
+    var res = await helper.getCompListKeyword(token, key);
+    if (res.success){
+      setState(() {
+        searchNoticeList = res.list;
+        for (int i = 0; i < searchNoticeList.length; i++) {
+          deleteNoti.add(false);
+        }
+        if (searchNoticeList.length <= Consts.showItemCount) {
+          itemCount = searchNoticeList.length;
+          print(searchNoticeList.length);
+          msg = "검색된 취업공고가 없습니다.";
+        } else {
+          itemCount = Consts.showItemCount;
+        }
+      });
+    }
   }
 }
