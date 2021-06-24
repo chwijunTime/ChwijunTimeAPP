@@ -2,20 +2,17 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
-  String role;
-
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -53,8 +50,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    init();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -72,38 +67,6 @@ class _MainPageState extends State<MainPage> {
         }
       });
     }
-  }
-
-  init() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    Dio dio = Dio(BaseOptions(
-      connectTimeout: 5 * 1000,
-      receiveTimeout: 5 * 1000,
-      followRedirects: false,
-      validateStatus: (status) {
-        return status < 500;
-      },
-    ));
-    dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      options.headers["Authorization"] = token;
-      return options;
-    }, onResponse: (Response response) async {
-      return response;
-    }, onError: (DioError error) async {
-      if (error.response?.statusCode == 403) {
-        dio.interceptors.requestLock.lock();
-        dio.interceptors.responseLock.lock();
-        final pref = await SharedPreferences.getInstance();
-        var token = pref.getString("refreshToken");
-        var res = await helper.postRefreshToken({"body": "body"});
-        if (res.success) {
-          // TODO??
-        }
-      }
-    }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -247,13 +210,18 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<List<NotificationVO>> _getNotice() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    var res = await helper.getNoticeList(token);
-    if (res.success) {
-      return res.list;
-    } else {
-      return null;
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    try {
+      var res = await helper.getNoticeList();
+      if (res.success) {
+        return res.list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
     }
   }
 
@@ -271,7 +239,7 @@ class _MainPageState extends State<MainPage> {
               builder: (BuildContext context) => NotificationDialog(
                   index: noticeList[index].index,
                   size: Size(346, 400),
-                  role: widget.role));
+                  role: User.role));
 
           setState(() {
             _getNotice();
