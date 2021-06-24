@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   postLogin() async {
+    print("login");
     try{
       var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
       if (res.success) {
@@ -57,8 +58,6 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print("e: ${e}");
     }
-
-
   }
 
   @override
@@ -118,14 +117,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34.0, left: 34),
-                    child: buildTextField("email", emailController, type: TextInputType.emailAddress),
+                    child: buildTextField("email", emailController, type: TextInputType.emailAddress, autoFocus: false),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34, left: 34),
-                    child: buildTextField("password", passWordController, password: true),
+                    child: buildTextField("password", passWordController, password: true, autoFocus: false),
                   ),
                   SizedBox(
                     height: 20,
