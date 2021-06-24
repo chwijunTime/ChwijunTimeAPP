@@ -1,13 +1,13 @@
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/notice/s_notice_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationModify extends StatefulWidget {
   NotificationVO list;
@@ -27,7 +27,6 @@ class _NotificationModifyState extends State<NotificationModify> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     setState(() {
       titleC.text = widget.list.title;
       contentsC.text = widget.list.content;
@@ -39,18 +38,6 @@ class _NotificationModifyState extends State<NotificationModify> {
     titleC.dispose();
     contentsC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -97,11 +84,11 @@ class _NotificationModifyState extends State<NotificationModify> {
     if (contentsC.text.isEmpty || titleC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
       print(widget.list.index);
       final res = await helper.putNotice(
-          token: token,
           index: widget.list.index,
           noticeSaveDto:
               SNoticeVO(title: titleC.text, content: contentsC.text).toJson());

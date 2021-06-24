@@ -240,22 +240,18 @@ abstract class RetrofitHelper {
   Future<ResponseNoticeList> getNoticeList();
 
   @POST("/v1/admin/notice")
-  Future<ResponseData> postNotice(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> noticeSaveDto);
+  Future<ResponseData> postNotice(@Body() Map<String, dynamic> noticeSaveDto);
 
   @GET("/v1/notice/{noticeidx}")
-  Future<ResponseNotice> getNotice(
-      @Header("Authorization") String token, @Path("noticeidx") int index);
+  Future<ResponseNotice> getNotice(@Path("noticeidx") int index);
 
   @PUT("/v1/admin/notice/{noticeidx}")
   Future<ResponseData> putNotice(
-      {@Header("Authorization") String token,
-      @Path("noticeidx") int index,
+      {@Path("noticeidx") int index,
       @Body() Map<String, dynamic> noticeSaveDto});
 
   @DELETE("/v1/admin/notice/{noticeidx}")
-  Future<ResponseData> deleteNotice(
-      {@Header("Authorization") String token, @Path("noticeidx") int index});
+  Future<ResponseData> deleteNotice(@Path("noticeidx") int index);
 
   // endregion
 

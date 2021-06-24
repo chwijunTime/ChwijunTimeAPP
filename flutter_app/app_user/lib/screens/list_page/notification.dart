@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -36,7 +37,6 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
@@ -56,7 +56,7 @@ class _NotificationPageState extends State<NotificationPage> {
           if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
             itemCount = noticeList.length;
           } else {
-            itemCount = ++ page * Consts.showItemCount;
+            itemCount = ++page * Consts.showItemCount;
           }
         }
       });
@@ -67,17 +67,6 @@ class _NotificationPageState extends State<NotificationPage> {
     setState(() {
       deleteNoti[index] = !deleteNoti[index];
     });
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -136,8 +125,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                     _scrollController.animateTo(
                                         _scrollController
                                             .position.minScrollExtent,
-                                        duration:
-                                        Duration(milliseconds: 200),
+                                        duration: Duration(milliseconds: 200),
                                         curve: Curves.elasticOut);
                                   });
                                 }
@@ -233,8 +221,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                   );
                                 }
                               } else {
-                                return buildItemNotification(
-                                    context, index);
+                                return buildItemNotification(context, index);
                               }
                             });
                       } else {
@@ -252,8 +239,9 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Future<List<NotificationVO>> _getNotice() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     var res = await helper.getNoticeList();
     if (res.success) {
       return res.list.toList();
@@ -262,8 +250,7 @@ class _NotificationPageState extends State<NotificationPage> {
     }
   }
 
-  Widget buildItemNotification(
-      BuildContext context, int index) {
+  Widget buildItemNotification(BuildContext context, int index) {
     var tempDate = DateFormat("yyyy-MM-dd").parse(noticeList[index].date);
     var strDate = DateFormat("yyyy년 MM월 dd일").format(tempDate);
     return Card(
@@ -283,7 +270,7 @@ class _NotificationPageState extends State<NotificationPage> {
           setState(() {
             _getNotice();
             if (res != null && res && noticeList.length == itemCount) {
-              itemCount --;
+              itemCount--;
             }
           });
         },
@@ -365,15 +352,18 @@ class _NotificationPageState extends State<NotificationPage> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
+                  helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    setState(() {});
+                  }));
                   try {
+                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                      setState(() {});
+                    }));
                     for (int i = 0; i < arr.length; i++) {
-                      final res = await helper.deleteNotice(
-                          token: token, index: arr[i]);
+                      final res = await helper.deleteNotice(arr[i]);
                       if (res.success) {
                         if (noticeList.length == itemCount) {
-                          itemCount --;
+                          itemCount--;
                         }
                         deleteNoti.clear();
                       } else {

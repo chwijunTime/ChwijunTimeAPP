@@ -3,6 +3,7 @@ import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/notice/response_notice.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/notification_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
@@ -10,7 +11,6 @@ import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationDialog extends StatefulWidget {
   final Size size;
@@ -27,23 +27,6 @@ class NotificationDialog extends StatefulWidget {
 class _NotificationDialog extends State<NotificationDialog> {
   RetrofitHelper helper;
 
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -54,20 +37,6 @@ class _NotificationDialog extends State<NotificationDialog> {
       backgroundColor: Colors.transparent,
       child: dialogContent(context),
     );
-  }
-
-  Future<ResponseNotice> _getNotice() async {
-    final pref = await SharedPreferences.getInstance();
-    String token = pref.getString("accessToken");
-    final res = await helper.getNotice(token, widget.index);
-    print(res.toJson());
-    if (res.success) {
-      return res;
-    } else {
-      Navigator.pop(context);
-      snackBar("서버 에러", context);
-      print("error: ${res.msg}");
-    }
   }
 
   dialogContent(BuildContext context) {
@@ -187,6 +156,20 @@ class _NotificationDialog extends State<NotificationDialog> {
     }
   }
 
+  Future<ResponseNotice> _getNotice() async {
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    final res = await helper.getNotice(widget.index);
+    if (res.success) {
+      return res;
+    } else {
+      Navigator.pop(context);
+      snackBar("서버 에러", context);
+      print("error: ${res.msg}");
+    }
+  }
+
   _onDeleteNoti() async {
     final result = await showDialog(
         context: context,
@@ -200,11 +183,11 @@ class _NotificationDialog extends State<NotificationDialog> {
               btnName2: "삭제하기",
               btnCall2: () async {
                 print("삭제할 Comp: ${widget.list}");
-                final pref = await SharedPreferences.getInstance();
-                var token = pref.getString("accessToken");
+                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                  setState(() {});
+                }));
                 try {
-                  final res = await helper.deleteNotice(
-                      token: token, index: widget.index);
+                  final res = await helper.deleteNotice(widget.list.index);
                   if (res.success) {
                     Navigator.pop(context, "yes");
                   } else {
