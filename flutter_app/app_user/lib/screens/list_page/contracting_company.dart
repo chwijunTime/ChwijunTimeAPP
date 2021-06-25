@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/contracting_company/contracting_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/detail_page/contracting_company_detail.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/contracting_company_write.dart';
@@ -12,10 +13,8 @@ import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractingCompPage extends StatefulWidget {
   String role;
@@ -41,7 +40,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -80,17 +78,6 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   _onCheckPressed(int index) {
@@ -373,11 +360,11 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   }
 
   Future<List<ContractingVO>> _getContractingList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getContList(token);
+      var res = await helper.getContList();
       if (res.success) {
         return res.list;
       } else {
@@ -497,9 +484,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
   }
 
   _onSearchList(String key) async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    var res = await helper.getContListKeyword(token, key);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    var res = await helper.getContListKeyword(key);
     if (res.success)
       setState(() {
         searchContractingList = res.list;
@@ -536,12 +524,12 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
-                  print("token: ${token}");
+                  helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    setState(() {});
+                  }));
                   try {
                     for (int i = 0; i < deleteComp.length; i++) {
-                      var res = await helper.deleteCont(token, deleteComp[i]);
+                      var res = await helper.deleteCont(deleteComp[i]);
                       if (res.success) {
                         setState(() {
                           print("삭제함: ${res.msg}");

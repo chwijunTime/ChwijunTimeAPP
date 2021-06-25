@@ -2,6 +2,7 @@ import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/comp_notice/post_apply_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -25,23 +26,6 @@ class _ApplyWriteDialog extends State<ApplyWriteDialog> {
   var portfolioC = TextEditingController();
   var resumeC = TextEditingController();
   var githubC = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,11 +93,12 @@ class _ApplyWriteDialog extends State<ApplyWriteDialog> {
     if (portfolioC.text.isEmpty || resumeC.text.isEmpty || githubC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      String token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var vo = PostApplyVO(portfolioURL: portfolioC.text, resumeURL: resumeC.text, gitHubURL: githubC.text);
-        var res = await helper.postCompApply(token, widget.vo.index, vo.toJson());
+        var res = await helper.postCompApply(widget.vo.index, vo.toJson());
         if (res.success) {
           snackBar("성공적으로 지원 신청했습니다.", context);
           Navigator.pop(context);

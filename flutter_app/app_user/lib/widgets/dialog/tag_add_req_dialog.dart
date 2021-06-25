@@ -1,4 +1,5 @@
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
@@ -17,26 +18,9 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
   RetrofitHelper helper;
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     titleC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -124,10 +108,11 @@ class _TagAddReqDialogState extends State<TagAddReqDialog> {
     if (titleC.text.isEmpty) {
       snackBar("태그명을 입력해주세요!", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        var res = await helper.postReqTag(token, {"tagName": titleC.text});
+        var res = await helper.postReqTag({"tagName": titleC.text});
         Navigator.pop(context);
         if (res.success) {
           snackBar("성공적으로 태그가 요청되었습니다.", context);

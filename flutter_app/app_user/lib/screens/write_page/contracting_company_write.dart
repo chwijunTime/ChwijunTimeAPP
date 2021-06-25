@@ -1,14 +1,13 @@
 import 'package:app_user/model/contracting_company/contracting_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kopo/kopo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractingCompanyWrite extends StatefulWidget {
   @override
@@ -27,12 +26,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
   List<String> tagList = [];
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     titleC.dispose();
     fieldC..dispose();
@@ -40,17 +33,6 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
     priceC.dispose();
     infoC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -208,11 +190,11 @@ class _ContractingCompanyWriteState extends State<ContractingCompanyWrite> {
           title: titleC.text,
           fieldC: fieldC.text,
           postTag: tagList);
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
-      print("token: ${token}");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        var res = await helper.postCont(token, vo.toJson());
+        var res = await helper.postCont(vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {

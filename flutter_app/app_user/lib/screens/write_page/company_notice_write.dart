@@ -1,5 +1,6 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -31,12 +32,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
   RetrofitHelper helper;
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     titleC.dispose();
     fieldC.dispose();
@@ -45,17 +40,6 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
     addressC.dispose();
     etcC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -280,11 +264,12 @@ class _CompanyNoticeWritePageState extends State<CompanyNoticeWritePage> {
           postTag: tagList,
           etc: etcC.text.isEmpty ? "" : etcC.text);
 
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       print(vo.toJson());
       try {
-        var res = await helper.postComp(token, vo.toJson());
+        var res = await helper.postComp(vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {

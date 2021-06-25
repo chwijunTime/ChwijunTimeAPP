@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/detail_page/company_notice_detail.dart';
 import 'package:app_user/screens/list_page/company_notice_apply.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -45,7 +46,6 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    initRetrofit();
   }
 
   @override
@@ -65,31 +65,21 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             if ((noticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
               itemCount = noticeList.length;
             } else {
-              itemCount = ++ page * Consts.showItemCount;
+              itemCount = ++page * Consts.showItemCount;
             }
           }
         } else {
           if (itemCount != searchNoticeList.length) {
-            if ((searchNoticeList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            if ((searchNoticeList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
               itemCount = searchNoticeList.length;
             } else {
-              itemCount = ++ page * Consts.showItemCount;
+              itemCount = ++page * Consts.showItemCount;
             }
           }
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   _onCheckPressed(int index) {
@@ -181,8 +171,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                       _scrollController.animateTo(
                                           _scrollController
                                               .position.minScrollExtent,
-                                          duration:
-                                          Duration(milliseconds: 200),
+                                          duration: Duration(milliseconds: 200),
                                           curve: Curves.elasticOut);
                                     });
                                   }
@@ -208,9 +197,19 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                           height: 10,
                         ),
                         makeGradientBtn(
-                            msg: "취업 공고 신청 목록 보기", onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => CompanyNoticeApply()));
-                        }, mode: 6, icon: Icon(Icons.search, color: Colors.white,))
+                            msg: "취업 공고 신청 목록 보기",
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CompanyNoticeApply()));
+                            },
+                            mode: 6,
+                            icon: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                            ))
                       ],
                     ),
                   ),
@@ -222,7 +221,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                         autoFocus: false, prefixIcon: Icon(Icons.search),
                         textInput: (String key) {
                       _onSearchList(key);
-                        }))
+                    }))
                 : SizedBox(),
             selectValue == valueList[1]
                 ? Expanded(
@@ -230,7 +229,8 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     controller: _scrollController,
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
-                      print("itemCount: $itemCount, searchNoticeList.length: ${searchNoticeList.length}, index: $index");
+                      print(
+                          "itemCount: $itemCount, searchNoticeList.length: ${searchNoticeList.length}, index: $index");
                       if (index == itemCount) {
                         if (searchNoticeList.length == 0) {
                           return Card(
@@ -384,11 +384,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   }
 
   Future<List<CompNoticeVO>> _getCompany() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getCompList(token);
+      var res = await helper.getCompList();
       print("res.success: ${res.success}");
       if (res.success) {
         return res.list;
@@ -425,10 +425,13 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                   final pref = await SharedPreferences.getInstance();
                   var token = pref.getString("accessToken");
                   try {
+                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                      setState(() {});
+                    }));
                     for (int i = 0; i < arr.length; i++) {
-                      final res = await helper.deleteComp(token, arr[i]);
+                      final res = await helper.deleteComp(arr[i]);
                       if (res.success) {
-                        itemCount --;
+                        itemCount--;
                       } else {
                         print("errorr: ${res.msg}");
                         if (res.msg == "작성자의 권한이 필요합니다.") {
@@ -480,7 +483,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
             _getCompany();
             selectValue = valueList[0];
             if (res != null && res == "delete") {
-              itemCount --;
+              itemCount--;
             }
           });
         },
@@ -531,21 +534,21 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                     buildItemTag(list[index].tag, 0),
                     list[index].tag.length > 1
                         ? Container(
-                      padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.blue[400],
-                          )),
-                      child: Center(
-                        child: Text(
-                          "외 ${list[index].tag.length - 1}개",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    )
+                            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.blue[400],
+                                )),
+                            child: Center(
+                              child: Text(
+                                "외 ${list[index].tag.length - 1}개",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          )
                         : SizedBox(),
                     Expanded(
                       child: Align(
@@ -571,10 +574,11 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
   }
 
   _onSearchList(String key) async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    var res = await helper.getCompListKeyword(token, key);
-    if (res.success){
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    var res = await helper.getCompListKeyword(key);
+    if (res.success) {
       setState(() {
         searchNoticeList = res.list;
         for (int i = 0; i < searchNoticeList.length; i++) {

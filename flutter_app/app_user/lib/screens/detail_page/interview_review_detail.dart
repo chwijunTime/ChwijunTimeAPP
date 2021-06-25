@@ -1,5 +1,6 @@
 import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/interview_review_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -7,11 +8,9 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InterviewReviewDetail extends StatefulWidget {
   ReviewVO list;
@@ -34,23 +33,6 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
     latLng = LatLng(location[0].latitude, location[0].longitude);
     print(latLng);
     return latLng;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -305,11 +287,11 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   }
 
   Future<ReviewVO> _getReview() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getReview(token, widget.index);
+      var res = await helper.getReview(widget.index);
       if (res.success) {
         return res.data;
       } else {
@@ -332,11 +314,11 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
               },
               btnName2: "삭제하기",
               btnCall2: () async {
-                final pref = await SharedPreferences.getInstance();
-                var token = pref.getString("accessToken");
-                print("token: ${token}");
+                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                  setState(() {});
+                }));
                 try {
-                  var res = await helper.deleteReview(token, widget.list.index);
+                  var res = await helper.deleteReview(widget.list.index);
                   if (res.success) {
                     Navigator.pop(context);
                   } else {

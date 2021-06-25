@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -29,7 +30,6 @@ class _ReqTagListState extends State<ReqTagList> {
   void initState() {
     super.initState();
     widget.role = User.role;
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -53,17 +53,6 @@ class _ReqTagListState extends State<ReqTagList> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   _onCheckPressed(int index) {
@@ -219,11 +208,11 @@ class _ReqTagListState extends State<ReqTagList> {
   }
 
   Future<List<TagVO>> _getReqTagList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getReqTagList(token);
+      var res = await helper.getReqTagList();
       if (res.success) {
         return res.list.reversed.toList();
       } else {
@@ -296,9 +285,12 @@ class _ReqTagListState extends State<ReqTagList> {
                   var token = pref.getString("accessToken");
                   print("token: ${token}");
                   try {
+                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                      setState(() {});
+                    }));
                     for (int i = 0; i < postList.length; i++) {
                       var res =
-                          await helper.postTag(token, postList[i].toJson());
+                          await helper.postTag(postList[i].toJson());
                       if (res.success) {
                         print("저장함: ${res.msg}");
                         selectTag.clear();
@@ -351,8 +343,11 @@ class _ReqTagListState extends State<ReqTagList> {
                   var token = pref.getString("accessToken");
                   print("token: ${token}");
                   try {
+                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                      setState(() {});
+                    }));
                     for (int i = 0; i < deleteList.length; i++) {
-                      var res = await helper.deleteReqTag(token, deleteList[i]);
+                      var res = await helper.deleteReqTag(deleteList[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
                         selectTag.clear();

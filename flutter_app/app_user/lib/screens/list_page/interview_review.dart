@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/company_review/review_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/write_page/interview_review_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -40,7 +41,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    initRetrofit();
   }
 
   @override
@@ -64,17 +64,6 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -187,10 +176,11 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                         child: buildTextField("회사 이름", titleC,
                             autoFocus: false, prefixIcon: Icon(Icons.search),
                             textInput: (String key) async {
-                          final pref = await SharedPreferences.getInstance();
-                          var token = pref.getString("accessToken");
+                              helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                                setState(() {});
+                              }));
                           var res =
-                              await helper.getReviewListKeyword(token, key);
+                              await helper.getReviewListKeyword(key);
                           if (res.success) {
                             setState(() {});
                             setState(() {
@@ -440,11 +430,11 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
   }
 
   Future<List<ReviewVO>> _getReview() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getReviewList(token);
+      var res = await helper.getReviewList();
       if (res.success) {
         return res.list.reversed.toList();
       } else {

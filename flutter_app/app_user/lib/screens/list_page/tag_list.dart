@@ -2,6 +2,7 @@ import 'package:app_user/consts.dart';
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/list_page/req_tag_list.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -32,7 +33,6 @@ class _TagListState extends State<TagList> {
   void initState() {
     super.initState();
     widget.role = User.role;
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -58,17 +58,6 @@ class _TagListState extends State<TagList> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   _onCheckPressed(int index) {
@@ -260,11 +249,11 @@ class _TagListState extends State<TagList> {
   }
 
   Future<List<TagVO>> _getTagList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getTagList(token);
+      var res = await helper.getTagList();
       if (res.success) {
         return res.list.reversed.toList();
       } else {
@@ -349,11 +338,12 @@ class _TagListState extends State<TagList> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
+                  helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    setState(() {});
+                  }));
                   try {
                     for (int i = 0; i < deleteList.length; i++) {
-                      var res = await helper.deleteTag(token, deleteList[i]);
+                      var res = await helper.deleteTag(deleteList[i]);
                       if (res.success) {
                         print("삭제함: ${res.msg}");
                         itemCount --;

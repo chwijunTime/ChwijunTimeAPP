@@ -1,5 +1,6 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -48,7 +49,6 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
       deadline.text = "$strDate (수정이 불가능합니다.)";
       tagList = widget.list.tag;
     });
-    initRetrofit();
   }
 
   @override
@@ -61,17 +61,6 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
     etcC.dispose();
     deadline.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -267,11 +256,11 @@ class _CompanyNoticeModifyPageState extends State<CompanyNoticeModifyPage> {
           etc: etcC.text.isEmpty ? "" : etcC.text,
           postTag: tagList);
 
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
-      print(vo);
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        var res = await helper.putComp(token, widget.list.index, vo.toJson());
+        var res = await helper.putComp(widget.list.index, vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {

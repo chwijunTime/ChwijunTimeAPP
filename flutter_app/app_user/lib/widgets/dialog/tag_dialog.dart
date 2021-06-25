@@ -1,11 +1,11 @@
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TagDialog extends StatefulWidget {
   String mode;
@@ -24,26 +24,9 @@ class _TagDialogState extends State<TagDialog> {
   var titleC = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     titleC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -132,7 +115,7 @@ class _TagDialogState extends State<TagDialog> {
                 ),
                 makeGradientBtn(
                     msg: widget.mode == "post" ? "등록하기" : "수정하기",
-                    onPressed: ()  {
+                    onPressed: () {
                       widget.mode == "post" ? postTag() : modifyTag();
                     },
                     mode: 1,
@@ -145,11 +128,11 @@ class _TagDialogState extends State<TagDialog> {
   }
 
   Future<TagVO> _getTag() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getTag(token, widget.index);
+      var res = await helper.getTag(widget.index);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
@@ -165,11 +148,11 @@ class _TagDialogState extends State<TagDialog> {
     if (titleC.text.isEmpty) {
       snackBar("태그명을 입력해주세요!", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
-      print("token: ${token}");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        var res = await helper.postTag(token, TagVO(name: titleC.text).toJson());
+        var res = await helper.postTag(TagVO(name: titleC.text).toJson());
         if (res.success) {
           Navigator.pop(context, true);
           snackBar("성공적으로 태그가 추가되었습니다.", context);
@@ -188,12 +171,12 @@ class _TagDialogState extends State<TagDialog> {
     if (titleC.text.isEmpty) {
       snackBar("태그명을 입력해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
-      print("token: ${token}");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var res = await helper.putTag(
-            token, widget.index, TagVO(name: titleC.text).toJson());
+            widget.index, TagVO(name: titleC.text).toJson());
         if (res.success) {
           Navigator.pop(context, true);
           snackBar("성공적으로 태그가 수정되었습니다.", context);

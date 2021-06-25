@@ -1,6 +1,7 @@
 import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/model/comp_notice/comp_status_detail_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/button.dart';
@@ -21,23 +22,6 @@ class ApplyDialog extends StatefulWidget {
 
 class _ApplyDialog extends State<ApplyDialog> {
   RetrofitHelper helper;
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,11 +183,11 @@ class _ApplyDialog extends State<ApplyDialog> {
   }
 
   Future<CompStatusDetailVO> _getApply() async {
-    print("index ${widget.index}");
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getCompApplyStatus(token, widget.index);
+      var res = await helper.getCompApplyStatus(widget.index);
       if (res.success) {
         return res.data;
       } else {
@@ -215,10 +199,11 @@ class _ApplyDialog extends State<ApplyDialog> {
   }
 
   _postAccept() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.postCompNoticeAcc(token, widget.index);
+      var res = await helper.postCompNoticeAcc(widget.index);
       if (res.success) {
         snackBar("수락되었습니다.", context);
       } else {
@@ -232,10 +217,11 @@ class _ApplyDialog extends State<ApplyDialog> {
   }
 
   _postReject() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.postCompNoticeRej(token, widget.index);
+      var res = await helper.postCompNoticeRej(widget.index);
       if (res.success) {
         snackBar("거절되었습니다.", context);
       } else {

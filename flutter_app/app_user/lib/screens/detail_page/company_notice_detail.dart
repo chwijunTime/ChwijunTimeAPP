@@ -1,6 +1,7 @@
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/company_notice_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -48,34 +49,16 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
       latLng = LatLng(location[0].latitude, location[0].longitude);
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target: latLng, zoom: 9)));
-    } catch (e) {
+    } catch(e) {
       print(e);
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
-
   Future<CompNoticeVO> _getNotice() async {
-    final pref = await SharedPreferences.getInstance();
-    String token = pref.getString("accessToken");
-    print("index: ${widget.index}");
-    print("token: ${token}");
-    final res = await helper.getComp(token, widget.index);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    final res = await helper.getComp(widget.index);
     print(res.toJson());
     if (res.success) {
       return res.data;
@@ -391,10 +374,11 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
             btnName2: "삭제하기",
             btnCall2: () async {
               print("삭제할 Comp: ${widget.list}");
-              final pref = await SharedPreferences.getInstance();
-              var token = pref.getString("accessToken");
+              helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                setState(() {});
+              }));
               try {
-                final res = await helper.deleteComp(token, widget.index);
+                final res = await helper.deleteComp(widget.index);
                 if (res.success) {
                   Navigator.pop(context, "yes");
                 } else {

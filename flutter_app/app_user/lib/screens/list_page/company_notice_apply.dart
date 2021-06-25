@@ -1,6 +1,7 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
@@ -28,7 +29,6 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -53,17 +53,6 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -198,8 +187,6 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   }
 
   Future<List<CompApplyStatusVO>> _getList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
     try {
       var status = "";
       switch (selectValue) {
@@ -227,7 +214,10 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
         default:
           status = "All";
       }
-      var res = await helper.getCompApplyStatusList(token, status);
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
+      var res = await helper.getCompApplyStatusList(status);
       if (res.success) {
         return res.list;
       } else {
@@ -240,7 +230,6 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
   }
 
   Widget buildItemApply(BuildContext context, int index) {
-    var status = applyList[index].status;
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),

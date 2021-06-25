@@ -1,13 +1,13 @@
 import 'package:app_user/model/contracting_company/contracting_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kopo/kopo.dart';
 
 class ContractingCompanyModify extends StatefulWidget {
   final ContractingVO list;
@@ -32,7 +32,6 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     infoC.text = widget.list.info;
     priceC.text = widget.list.salary;
     titleC.text = widget.list.title;
@@ -49,18 +48,6 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     priceC.dispose();
     infoC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -91,8 +78,13 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
                           deco: false, autoFocus: false),
                       buildTextField("사업 분야", fieldC,
                           deco: false, autoFocus: false),
-                      buildTextField("주소", addressC,
-                          deco: false, autoFocus: false),
+                      GestureDetector(
+                        onTap: () {
+                          _onKopo(addressC);
+                        },
+                        child: buildTextField("주소", addressC,
+                            deco: false, autoFocus: false, disable: true),
+                      ),
                       buildTextField("평균 연봉", priceC,
                           deco: false,
                           autoFocus: false,
@@ -183,6 +175,17 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
     );
   }
 
+  _onKopo(TextEditingController controller) async {
+    KopoModel model = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Kopo()));
+
+    if (model != null) {
+      setState(() {
+        controller.text = model.address;
+      });
+    }
+  }
+
   onContractingModify() async {
     if (tagList.isEmpty ||
         titleC.text.isEmpty ||
@@ -191,12 +194,12 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
         infoC.text.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       print(widget.list.index);
       try {
         final res = await helper.putCont(
-            token,
             widget.list.index,
             ContractingVO(
                     salary: priceC.text,
