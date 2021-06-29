@@ -6,26 +6,21 @@ import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/write_page/notification_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
-  String role;
-
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  final scafforldkey = GlobalKey<ScaffoldState>();
-
   List<NotificationVO> noticeList = [];
   List<bool> deleteNoti = [];
   final _scrollController = ScrollController();
@@ -37,7 +32,6 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -71,168 +65,170 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scafforldkey,
-      drawer: buildDrawer(context),
-      appBar: buildAppBar("취준타임", context),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
-                  ),
-                  Text(
-                    "공지사항",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
-                  )
-                ],
-              ),
-            ),
-            widget.role == User.user
-                ? SizedBox()
-                : Padding(
-                    padding:
-                        const EdgeInsets.only(right: 26, left: 26, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        makeGradientBtn(
-                            msg: "공지사항 등록",
-                            onPressed: () async {
-                              final res = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          NotificationWrite()));
-                              if (res != null) {
-                                if (res) {
-                                  setState(() {
-                                    _getNotice();
-                                    _scrollController.animateTo(
-                                        _scrollController
-                                            .position.minScrollExtent,
-                                        duration: Duration(milliseconds: 200),
-                                        curve: Curves.elasticOut);
-                                  });
-                                }
-                              }
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.note_add,
-                              color: Colors.white,
-                            )),
-                        makeGradientBtn(
-                            msg: "선택된 공지 삭제",
-                            onPressed: () {
-                              _onDeleteNoti();
-                            },
-                            mode: 1,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ))
-                      ],
+    return BackButtonWidget.backButtonWidget(
+      context: context,
+      child: Scaffold(
+        drawer: buildDrawer(context),
+        appBar: buildAppBar("취준타임", context),
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "취준타임",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0x832B8AC0)),
                     ),
-                  ),
-            Expanded(
-              child: Align(
-                child: FutureBuilder(
-                    future: _getNotice(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        var result = snapshot.data as List<NotificationVO>;
-                        noticeList = result;
-                        for (int i = 0; i < noticeList.length; i++) {
-                          deleteNoti.add(false);
-                        }
-                        if (noticeList.length < 10) {
-                          itemCount = noticeList.length;
-                        }
-                        return ListView.builder(
-                            controller: _scrollController,
-                            itemCount: itemCount + 1,
-                            itemBuilder: (context, index) {
-                              if (index == itemCount) {
-                                if (index == 0) {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                          padding:
-                                              EdgeInsets.all(Consts.padding),
-                                          child: Text(
-                                            "등록된 공지사항이 없습니다.",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700),
-                                          )),
-                                    ),
-                                  );
-                                } else if (index == noticeList.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: makeGradientBtn(
-                                        msg: "맨 처음으로",
-                                        onPressed: () {
-                                          _scrollController.animateTo(
-                                              _scrollController
-                                                  .position.minScrollExtent,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.elasticOut);
-                                        },
-                                        mode: 1,
-                                        icon: Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                        )),
-                                  );
-                                } else {
-                                  return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18)),
-                                    elevation: 5,
-                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return buildItemNotification(context, index);
-                              }
-                            });
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    }),
+                    Text(
+                      "공지사항",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
               ),
-            )
-          ],
+              User.role == User.user
+                  ? SizedBox()
+                  : Padding(
+                      padding:
+                          const EdgeInsets.only(right: 26, left: 26, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          makeGradientBtn(
+                              msg: "공지사항 등록",
+                              onPressed: () async {
+                                final res = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            NotificationWrite()));
+                                if (res != null) {
+                                  if (res) {
+                                    setState(() {
+                                      _getNotice();
+                                      _scrollController.animateTo(
+                                          _scrollController
+                                              .position.minScrollExtent,
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.elasticOut);
+                                    });
+                                  }
+                                }
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.note_add,
+                                color: Colors.white,
+                              )),
+                          makeGradientBtn(
+                              msg: "선택된 공지 삭제",
+                              onPressed: () {
+                                _onDeleteNoti();
+                              },
+                              mode: 1,
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
+                    ),
+              Expanded(
+                child: Align(
+                  child: FutureBuilder(
+                      future: _getNotice(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          var result = snapshot.data as List<NotificationVO>;
+                          noticeList = result;
+                          for (int i = 0; i < noticeList.length; i++) {
+                            deleteNoti.add(false);
+                          }
+                          if (noticeList.length < 10) {
+                            itemCount = noticeList.length;
+                          }
+                          return ListView.builder(
+                              controller: _scrollController,
+                              itemCount: itemCount + 1,
+                              itemBuilder: (context, index) {
+                                if (index == itemCount) {
+                                  if (index == 0) {
+                                    return Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18)),
+                                      elevation: 5,
+                                      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      child: Center(
+                                        child: Padding(
+                                            padding:
+                                                EdgeInsets.all(Consts.padding),
+                                            child: Text(
+                                              "등록된 공지사항이 없습니다.",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
+                                            )),
+                                      ),
+                                    );
+                                  } else if (index == noticeList.length) {
+                                    return Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: makeGradientBtn(
+                                          msg: "맨 처음으로",
+                                          onPressed: () {
+                                            _scrollController.animateTo(
+                                                _scrollController
+                                                    .position.minScrollExtent,
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                curve: Curves.elasticOut);
+                                          },
+                                          mode: 1,
+                                          icon: Icon(
+                                            Icons.arrow_upward,
+                                            color: Colors.white,
+                                          )),
+                                    );
+                                  } else {
+                                    return Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18)),
+                                      elevation: 5,
+                                      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(Consts.padding),
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  return buildItemNotification(context, index);
+                                }
+                              });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -264,7 +260,7 @@ class _NotificationPageState extends State<NotificationPage> {
               builder: (BuildContext context) => NotificationDialog(
                     index: noticeList[index].index,
                     size: Size(346, 400),
-                    role: widget.role,
+                    role: User.role,
                   ));
 
           setState(() {
@@ -288,7 +284,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  widget.role == User.user
+                  User.role == User.user
                       ? SizedBox()
                       : IconButton(
                           icon: deleteNoti[index]

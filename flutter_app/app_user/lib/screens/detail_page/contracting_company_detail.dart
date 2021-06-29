@@ -16,7 +16,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ContractingCompanyDetailPage extends StatefulWidget {
   ContractingVO list;
   Positioned position;
-  String role;
   int index;
 
   ContractingCompanyDetailPage({this.index});
@@ -37,12 +36,6 @@ class _ContractingCompanyDetailPageState
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     return latLng;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.role = User.role;
   }
 
   moveCamera() async {
@@ -96,7 +89,7 @@ class _ContractingCompanyDetailPageState
                                       fontWeight: FontWeight.w600),
                                 ),
                               ),
-                              widget.role == User.user
+                              User.role == User.user
                                   ? SizedBox()
                                   : IconButton(
                                       icon: Icon(

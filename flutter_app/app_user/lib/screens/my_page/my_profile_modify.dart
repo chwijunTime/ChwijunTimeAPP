@@ -1,13 +1,12 @@
 import 'package:app_user/model/user/profile_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProfileModify extends StatefulWidget {
   ProfileVO vo;
@@ -28,7 +27,6 @@ class _MyProfileModifyState extends State<MyProfileModify> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     phoneC.text = widget.vo.member.phone;
     etcC.text = widget.vo.member.etc;
     tagList = widget.vo.tag;
@@ -39,17 +37,6 @@ class _MyProfileModifyState extends State<MyProfileModify> {
     phoneC.dispose();
     etcC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -153,10 +140,11 @@ class _MyProfileModifyState extends State<MyProfileModify> {
     if (phoneC.text.isEmpty || etcC.text.isEmpty || tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        var res = await helper.putProfile(token, {
+        var res = await helper.putProfile({
           "memberETC": etcC.text,
           "memberPhoneNumber": phoneC.text,
           "tagName": tagList

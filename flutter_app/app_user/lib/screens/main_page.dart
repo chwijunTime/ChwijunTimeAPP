@@ -3,9 +3,12 @@ import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
+import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
+import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -69,141 +72,161 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  backPressed() async {
+    return showDialog(
+        context: context,
+        builder: (context) => StdDialog(
+          msg: "앱을 종료하시겠습니까?",
+          size: Size(320, 120),
+          btnName1: "아니요",
+          btnCall1: () {
+            Navigator.pop(context, false);
+          },
+          btnName2: "네",
+          btnCall2: () {
+            Navigator.pop(context, true);
+          },
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar("취준타임", context),
-      drawer: buildDrawer(context),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 18, right: 26, left: 26),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "취준타임",
-                        style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xff4F9ECB)),
-                      ),
-                      Text(
-                        "과 함께",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    "취업 준비 해요",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  )
-                ],
+    return BackButtonWidget.backButtonWidget(
+      context: context,
+      child: Scaffold(
+        appBar: buildAppBar("취준타임", context),
+        drawer: buildDrawer(context),
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 18, right: 26, left: 26),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "취준타임",
+                          style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xff4F9ECB)),
+                        ),
+                        Text(
+                          "과 함께",
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    Text(
+                      "취업 준비 해요",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
               ),
-            ),
-            makeSlider(sliderList),
-            Container(
-              height: 12,
-              color: Color(0xffEFEFEF),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(25, 25, 25, 16),
-              child: Text(
-                "공지사항",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+              makeSlider(sliderList),
+              Container(
+                height: 12,
+                color: Color(0xffEFEFEF),
               ),
-            ),
-            Expanded(
-              child: FutureBuilder(
-                  future: _getNotice(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      var result = snapshot.data as List<NotificationVO>;
-                      noticeList = result;
-                      if (noticeList.length <= 10) {
-                        itemCount = noticeList.length;
-                      }
-                      return ListView.builder(
-                          controller: _scrollController,
-                          itemCount: itemCount + 1,
-                          itemBuilder: (context, index) {
-                            if (index == itemCount) {
-                              if (index == 0) {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18)),
-                                  elevation: 5,
-                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                  child: Center(
-                                    child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: Text(
-                                          "등록된 공지사항이 없습니다.",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w700),
-                                        )),
-                                  ),
-                                );
-                              } else if (index == noticeList.length) {
-                                return Padding(
-                                  padding: EdgeInsets.all(Consts.padding),
-                                  child: makeGradientBtn(
-                                      msg: "맨 처음으로",
-                                      onPressed: () {
-                                        _scrollController.animateTo(
-                                            _scrollController
-                                                .position.minScrollExtent,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            curve: Curves.elasticOut);
-                                      },
-                                      mode: 1,
-                                      icon: Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.white,
-                                      )),
-                                );
-                              } else {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18)),
-                                  elevation: 5,
-                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: CircularProgressIndicator(),
+              Padding(
+                padding: EdgeInsets.fromLTRB(25, 25, 25, 16),
+                child: Text(
+                  "공지사항",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                    future: _getNotice(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        var result = snapshot.data as List<NotificationVO>;
+                        noticeList = result;
+                        if (noticeList.length <= 10) {
+                          itemCount = noticeList.length;
+                        }
+                        return ListView.builder(
+                            controller: _scrollController,
+                            itemCount: itemCount + 1,
+                            itemBuilder: (context, index) {
+                              if (index == itemCount) {
+                                if (index == 0) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.all(Consts.padding),
+                                          child: Text(
+                                            "등록된 공지사항이 없습니다.",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else if (index == noticeList.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: makeGradientBtn(
+                                        msg: "맨 처음으로",
+                                        onPressed: () {
+                                          _scrollController.animateTo(
+                                              _scrollController
+                                                  .position.minScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.elasticOut);
+                                        },
+                                        mode: 1,
+                                        icon: Icon(
+                                          Icons.arrow_upward,
+                                          color: Colors.white,
+                                        )),
+                                  );
+                                } else {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18)),
+                                    elevation: 5,
+                                    margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                return buildItemNotification(context, index);
                               }
-                            } else {
-                              return buildItemNotification(context, index);
-                            }
-                          });
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            )
-          ],
+                            });
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
+              )
+            ],
+          ),
         ),
       ),
     );

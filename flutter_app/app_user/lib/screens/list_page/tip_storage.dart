@@ -1,16 +1,16 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/tip/tip_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/write_page/tip_storage_write.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStoragePage extends StatefulWidget {
   @override
@@ -18,7 +18,6 @@ class TipStoragePage extends StatefulWidget {
 }
 
 class _TipStoragePageState extends State<TipStoragePage> {
-  final scafforldkey = GlobalKey<ScaffoldState>();
   RetrofitHelper helper;
   final _scrollController = ScrollController();
 
@@ -33,7 +32,6 @@ class _TipStoragePageState extends State<TipStoragePage> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -42,17 +40,6 @@ class _TipStoragePageState extends State<TipStoragePage> {
     _scrollController.dispose();
     titleC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   void _scrollListener() async {
@@ -82,11 +69,11 @@ class _TipStoragePageState extends State<TipStoragePage> {
   }
 
   Future<List<TipVO>> _getTipList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print(token);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getTipList(token);
+      var res = await helper.getTipList();
       if (res.success) {
         return res.list;
       } else {
@@ -99,275 +86,276 @@ class _TipStoragePageState extends State<TipStoragePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scafforldkey,
-      drawer: buildDrawer(context),
-      appBar: buildAppBar("취준타임", context),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "취준타임",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0x832B8AC0)),
-                      ),
-                      Text(
-                        "꿀팁저장소",
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black),
-                      )
-                    ],
-                  ),
-                ),
-                makeDropDownBtn(
-                    valueList: valueList,
-                    selectedValue: selectValue,
-                    onSetState: (value) {
-                      setState(() {
-                        selectValue = value;
-                        itemCount = 0;
-                        if (selectValue == valueList[1]) {
-                          searchTipList.clear();
-                          msg = "회사명으로 검색하기";
-                        } else {
-                          titleC.text = "";
-                        }
-                      });
-                    },
-                    hint: "보기"),
-                Padding(
-                  padding: EdgeInsets.only(right: 25),
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TipStorageWrite()));
-                      setState(() {
-                        _getTipList();
-                      });
-                    },
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff4FB8F3),
-                                Color(0xff9342FA),
-                                Color(0xff2400FF)
-                              ]),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey[500],
-                                offset: Offset(2, 4),
-                                blurRadius: 5,
-                                spreadRadius: 0.5)
-                          ]),
-                      child: Icon(
-                        Icons.note_add,
-                        color: Colors.white,
-                        size: 30,
-                      ),
+    return BackButtonWidget.backButtonWidget(
+      context: context,
+      child: Scaffold(
+        drawer: buildDrawer(context),
+        appBar: buildAppBar("취준타임", context),
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "취준타임",
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0x832B8AC0)),
+                        ),
+                        Text(
+                          "꿀팁저장소",
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black),
+                        )
+                      ],
                     ),
                   ),
-                )
-              ],
-            ),
-            selectValue == valueList[1]
-                ? Padding(
-                    padding: EdgeInsets.only(
-                        right: 33, left: 33, bottom: 15, top: 15),
-                    child: buildTextField("업체명", titleC,
-                        autoFocus: false, prefixIcon: Icon(Icons.search),
-                        textInput: (String key) async {
-                      final pref = await SharedPreferences.getInstance();
-                      var token = pref.getString("accessToken");
-                      print("key: $key");
-                      print(token);
-                      try {
-                        var res = await helper.getTipListKeyword(token, key);
-                        print(res.toJson());
-                        if (res.success)
-                          setState(() {
-                            searchTipList = res.list;
-                            if (searchTipList.length <= Consts.showItemCount) {
-                              itemCount = searchTipList.length;
-                              print(searchTipList.length);
-                              msg = "검색된 리뷰가 없습니다.";
-                            }
-                          });
-                      } catch (e) {
-                        print("error: $e");
-                      }
-                    }))
-                : SizedBox(),
-            selectValue == valueList[1]
-                ? Expanded(
-                    child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: itemCount + 1,
-                        itemBuilder: (context, index) {
-                          if (index == itemCount) {
-                            if (searchTipList.length == 0) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: Text(
-                                        msg,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700),
-                                      )),
-                                ),
-                              );
-                            } else if (index == searchTipList.length) {
-                              return Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: makeGradientBtn(
-                                    msg: "맨 처음으로",
-                                    onPressed: () {
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                    },
-                                    mode: 1,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Colors.white,
-                                    )),
-                              );
-                            } else {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Consts.padding),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              );
-                            }
+                  makeDropDownBtn(
+                      valueList: valueList,
+                      selectedValue: selectValue,
+                      onSetState: (value) {
+                        setState(() {
+                          selectValue = value;
+                          itemCount = 0;
+                          if (selectValue == valueList[1]) {
+                            searchTipList.clear();
+                            msg = "회사명으로 검색하기";
                           } else {
-                            return buildItemTip(context, index, searchTipList);
+                            titleC.text = "";
                           }
-                        }),
+                        });
+                      },
+                      hint: "보기"),
+                  Padding(
+                    padding: EdgeInsets.only(right: 25),
+                    child: FloatingActionButton(
+                      onPressed: () async {
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TipStorageWrite()));
+                        setState(() {
+                          _getTipList();
+                        });
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xff4FB8F3),
+                                  Color(0xff9342FA),
+                                  Color(0xff2400FF)
+                                ]),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey[500],
+                                  offset: Offset(2, 4),
+                                  blurRadius: 5,
+                                  spreadRadius: 0.5)
+                            ]),
+                        child: Icon(
+                          Icons.note_add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
                   )
-                : Expanded(
-                    child: FutureBuilder(
-                        future: _getTipList(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            tipList = snapshot.data;
-                            if (tipList.length <= Consts.showItemCount) {
-                              itemCount = tipList.length;
+                ],
+              ),
+              selectValue == valueList[1]
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          right: 33, left: 33, bottom: 15, top: 15),
+                      child: buildTextField("업체명", titleC,
+                          autoFocus: false, prefixIcon: Icon(Icons.search),
+                          textInput: (String key) async {
+                            helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                              setState(() {});
+                            }));
+                        try {
+                          var res = await helper.getTipListKeyword(key);
+                          print(res.toJson());
+                          if (res.success)
+                            setState(() {
+                              searchTipList = res.list;
+                              if (searchTipList.length <= Consts.showItemCount) {
+                                itemCount = searchTipList.length;
+                                print(searchTipList.length);
+                                msg = "검색된 리뷰가 없습니다.";
+                              }
+                            });
+                        } catch (e) {
+                          print("error: $e");
+                        }
+                      }))
+                  : SizedBox(),
+              selectValue == valueList[1]
+                  ? Expanded(
+                      child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: itemCount + 1,
+                          itemBuilder: (context, index) {
+                            if (index == itemCount) {
+                              if (searchTipList.length == 0) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: Text(
+                                          msg,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700),
+                                        )),
+                                  ),
+                                );
+                              } else if (index == searchTipList.length) {
+                                return Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: makeGradientBtn(
+                                      msg: "맨 처음으로",
+                                      onPressed: () {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.minScrollExtent,
+                                            duration: Duration(milliseconds: 200),
+                                            curve: Curves.elasticOut);
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.white,
+                                      )),
+                                );
+                              } else {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(Consts.padding),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              return buildItemTip(context, index, searchTipList);
                             }
-                            return Align(
-                              child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: itemCount + 1,
-                                  itemBuilder: (context, index) {
-                                    if (index == itemCount) {
-                                      if (tipList.length == 0) {
-                                        return Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18)),
-                                          elevation: 5,
-                                          margin: EdgeInsets.fromLTRB(
-                                              25, 13, 25, 13),
-                                          child: Center(
-                                            child: Padding(
+                          }),
+                    )
+                  : Expanded(
+                      child: FutureBuilder(
+                          future: _getTipList(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              tipList = snapshot.data;
+                              if (tipList.length <= Consts.showItemCount) {
+                                itemCount = tipList.length;
+                              }
+                              return Align(
+                                child: ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: itemCount + 1,
+                                    itemBuilder: (context, index) {
+                                      if (index == itemCount) {
+                                        if (tipList.length == 0) {
+                                          return Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18)),
+                                            elevation: 5,
+                                            margin: EdgeInsets.fromLTRB(
+                                                25, 13, 25, 13),
+                                            child: Center(
+                                              child: Padding(
+                                                  padding: EdgeInsets.all(
+                                                      Consts.padding),
+                                                  child: Text(
+                                                    msg,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  )),
+                                            ),
+                                          );
+                                        } else if (index == tipList.length) {
+                                          return Padding(
+                                            padding:
+                                                EdgeInsets.all(Consts.padding),
+                                            child: makeGradientBtn(
+                                                msg: "맨 처음으로",
+                                                onPressed: () {
+                                                  _scrollController.animateTo(
+                                                      _scrollController.position
+                                                          .minScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 200),
+                                                      curve: Curves.elasticOut);
+                                                },
+                                                mode: 1,
+                                                icon: Icon(
+                                                  Icons.arrow_upward,
+                                                  color: Colors.white,
+                                                )),
+                                          );
+                                        } else {
+                                          return Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18)),
+                                            elevation: 5,
+                                            margin: EdgeInsets.fromLTRB(
+                                                25, 13, 25, 13),
+                                            child: Center(
+                                              child: Padding(
                                                 padding: EdgeInsets.all(
                                                     Consts.padding),
-                                                child: Text(
-                                                  msg,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                )),
-                                          ),
-                                        );
-                                      } else if (index == tipList.length) {
-                                        return Padding(
-                                          padding:
-                                              EdgeInsets.all(Consts.padding),
-                                          child: makeGradientBtn(
-                                              msg: "맨 처음으로",
-                                              onPressed: () {
-                                                _scrollController.animateTo(
-                                                    _scrollController.position
-                                                        .minScrollExtent,
-                                                    duration: Duration(
-                                                        milliseconds: 200),
-                                                    curve: Curves.elasticOut);
-                                              },
-                                              mode: 1,
-                                              icon: Icon(
-                                                Icons.arrow_upward,
-                                                color: Colors.white,
-                                              )),
-                                        );
-                                      } else {
-                                        return Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18)),
-                                          elevation: 5,
-                                          margin: EdgeInsets.fromLTRB(
-                                              25, 13, 25, 13),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  Consts.padding),
-                                              child:
-                                                  CircularProgressIndicator(),
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                             ),
-                                          ),
-                                        );
+                                          );
+                                        }
+                                      } else {
+                                        return buildItemTip(
+                                            context, index, tipList);
                                       }
-                                    } else {
-                                      return buildItemTip(
-                                          context, index, tipList);
-                                    }
-                                  }),
-                            );
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        }),
-                  )
-          ],
+                                    }),
+                              );
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          }),
+                    )
+            ],
+          ),
         ),
       ),
     );

@@ -1,11 +1,10 @@
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EditPasswordDialog extends StatefulWidget {
   @override
@@ -19,27 +18,10 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
   var rePasswordC = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     passwordC.dispose();
     rePasswordC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -110,11 +92,12 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
       snackBar("비밀번호를 입력해주세요.", context);
     } else {
       if (passwordC.text == rePasswordC.text) {
-        final pref = await SharedPreferences.getInstance();
-        var token = pref.getString("accessToken");
+        helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+          setState(() {});
+        }));
         try {
           var res = await helper
-              .putChengPassword(token, {"memberPassword": passwordC.text});
+              .putChengPassword({"memberPassword": passwordC.text});
           if (res.success) {
             snackBar("수정하였습니다.", context);
             Navigator.pop(context);

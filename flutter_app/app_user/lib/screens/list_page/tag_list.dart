@@ -6,17 +6,14 @@ import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/list_page/req_tag_list.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/dialog/tag_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TagList extends StatefulWidget {
-  String role;
-
   @override
   _TagListState createState() => _TagListState();
 }
@@ -32,7 +29,6 @@ class _TagListState extends State<TagList> {
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -68,181 +64,184 @@ class _TagListState extends State<TagList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar("취준타임", context),
-      drawer: buildDrawer(context),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "태그(분야)",
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black),
-                      ),
-                      makeGradientBtn(
-                          msg: "요청 태그 보기",
-                          onPressed: () async {
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
+    return BackButtonWidget.backButtonWidget(
+      context: context,
+      child: Scaffold(
+        appBar: buildAppBar("취준타임", context),
+        drawer: buildDrawer(context),
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "취준타임",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0x832B8AC0)),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "태그(분야)",
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black),
+                        ),
+                        makeGradientBtn(
+                            msg: "요청 태그 보기",
+                            onPressed: () async {
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
+                              setState(() {
+                                _getTagList();
+                                if (tagList.length - itemCount == 1) {
+                                  itemCount = tagList.length;
+                                }
+                              });
+                            },
+                            mode: 1,
+                            icon: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    makeGradientBtn(
+                        msg: "태그 등록",
+                        onPressed: () async {
+                          var res = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) => TagDialog(
+                                    mode: "post",
+                                  ));
+                          if (res != null && res) {
                             setState(() {
+                              print("itemcount: $itemCount, tagList.length: ${tagList.length}");
                               _getTagList();
-                              if (tagList.length - itemCount == 1) {
-                                itemCount = tagList.length;
+                              if (tagList.length == itemCount) {
+                                itemCount++;
                               }
                             });
-                          },
-                          mode: 1,
-                          icon: Icon(
-                            Icons.search,
-                            color: Colors.white,
-                          )),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  makeGradientBtn(
-                      msg: "태그 등록",
-                      onPressed: () async {
-                        var res = await showDialog(
-                            context: context,
-                            builder: (BuildContext context) => TagDialog(
-                                  mode: "post",
-                                ));
-                        if (res != null && res) {
-                          setState(() {
-                            print("itemcount: $itemCount, tagList.length: ${tagList.length}");
-                            _getTagList();
-                            if (tagList.length == itemCount) {
-                              itemCount++;
-                            }
-                          });
-                        }
-                      },
-                      mode: 1,
-                      icon: Icon(
-                        Icons.note_add,
-                        color: Colors.white,
-                      )),
-                  makeGradientBtn(
-                      msg: "선택된 태그 삭제",
-                      onPressed: () {
-                        _onDeleteTag();
-                      },
-                      mode: 1,
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ))
-                ],
-              ),
-            ),
-            Expanded(
-              child: FutureBuilder(
-                  future: _getTagList(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      tagList = snapshot.data;
-                      for (int i = 0; i < tagList.length; i++) {
-                        deleteTag.add(false);
-                      }
-                      if (tagList.length <= Consts.showItemCount) {
-                        itemCount = tagList.length;
-                      }
-                      return ListView.separated(
-                        controller: _scrollController,
-                        itemCount: itemCount + 1,
-                        itemBuilder: (context, index) {
-                          if (index == itemCount) {
-                            if (index == 0) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18)),
-                                elevation: 5,
-                                margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                child: Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: Text(
-                                        "등록된 태그가 없습니다.",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700),
-                                      )),
-                                ),
-                              );
-                            } else if (index == tagList.length) {
-                              return Padding(
-                                padding: EdgeInsets.all(20),
-                                child: makeGradientBtn(
-                                    msg: "맨 처음으로",
-                                    onPressed: () {
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                    },
-                                    mode: 1,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Colors.white,
-                                    )),
-                              );
-                            } else {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-                          } else {
-                            return buildTag(context, index);
                           }
                         },
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Container(
-                              height: 1,
-                              color: Colors.grey,
-                            ),
-                          );
+                        mode: 1,
+                        icon: Icon(
+                          Icons.note_add,
+                          color: Colors.white,
+                        )),
+                    makeGradientBtn(
+                        msg: "선택된 태그 삭제",
+                        onPressed: () {
+                          _onDeleteTag();
                         },
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            ),
-          ],
+                        mode: 1,
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ))
+                  ],
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                    future: _getTagList(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        tagList = snapshot.data;
+                        for (int i = 0; i < tagList.length; i++) {
+                          deleteTag.add(false);
+                        }
+                        if (tagList.length <= Consts.showItemCount) {
+                          itemCount = tagList.length;
+                        }
+                        return ListView.separated(
+                          controller: _scrollController,
+                          itemCount: itemCount + 1,
+                          itemBuilder: (context, index) {
+                            if (index == itemCount) {
+                              if (index == 0) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18)),
+                                  elevation: 5,
+                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(Consts.padding),
+                                        child: Text(
+                                          "등록된 태그가 없습니다.",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700),
+                                        )),
+                                  ),
+                                );
+                              } else if (index == tagList.length) {
+                                return Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: makeGradientBtn(
+                                      msg: "맨 처음으로",
+                                      onPressed: () {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.minScrollExtent,
+                                            duration: Duration(milliseconds: 200),
+                                            curve: Curves.elasticOut);
+                                      },
+                                      mode: 1,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.white,
+                                      )),
+                                );
+                              } else {
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                            } else {
+                              return buildTag(context, index);
+                            }
+                          },
+                          separatorBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 20),
+                              child: Container(
+                                height: 1,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -294,7 +293,7 @@ class _TagListState extends State<TagList> {
             SizedBox(
               width: 10,
             ),
-            widget.role == User.user
+            User.role == User.user
                 ? InkWell(
                     onTap: () {},
                     child: Icon(Icons.tag),

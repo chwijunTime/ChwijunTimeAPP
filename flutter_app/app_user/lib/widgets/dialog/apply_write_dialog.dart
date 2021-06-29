@@ -1,4 +1,3 @@
-import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/model/comp_notice/comp_notice_vo.dart';
 import 'package:app_user/model/comp_notice/post_apply_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
@@ -6,9 +5,7 @@ import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApplyWriteDialog extends StatefulWidget {
   CompNoticeVO vo;

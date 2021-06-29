@@ -35,7 +35,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'retrofit_helper.g.dart';
 
-@RestApi(baseUrl: "http://210.217.243.3:8082/")
+@RestApi(baseUrl: "http://10.120.72.245:8082/4")
 abstract class RetrofitHelper {
   factory RetrofitHelper(Dio dio, {String baseUrl}) = _RetrofitHelper;
 
@@ -50,7 +50,7 @@ abstract class RetrofitHelper {
   Future<ResponseData> postEmailCheck(@Body() Map<String, dynamic> body);
 
   @POST("/v1/logout")
-  Future<ResponseData> postLogout(@Header("Authorization") String token);
+  Future<ResponseData> postLogout();
 
   @POST("/v1/auth/refresh")
   Future<ResponseRefresh> postRefreshToken(@Body() Map<String, dynamic> body);
@@ -65,26 +65,19 @@ abstract class RetrofitHelper {
       @Query("userEmail", encoded: true) String email);
 
   @PUT("/v1/password-change")
-  Future<ResponseData> putChengPassword(
-      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+  Future<ResponseData> putChengPassword(@Body() Map<String, dynamic> body);
 
   @POST("/v1/profile")
-  Future<ResponseData> postProfile(
-      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+  Future<ResponseData> postProfile(@Body() Map<String, dynamic> body);
 
   @PUT("/v1/update-profile")
-  Future<ResponseData> putProfile(
-      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+  Future<ResponseData> putProfile(@Body() Map<String, dynamic> body);
 
   @GET("/v1/userinfo")
-  Future<ResponseUserInfo> getUserInfo(
-    @Header("Authorization") String token,
-  );
+  Future<ResponseUserInfo> getUserInfo();
 
   @GET("/v1/view-profile")
-  Future<ResponseProfile> getProfile(
-    @Header("Authorization") String token,
-  );
+  Future<ResponseProfile> getProfile();
 
   //endregion
 
@@ -183,33 +176,28 @@ abstract class RetrofitHelper {
 
   //region 5. 취업 확정 현황
   @GET("/v1/employment-confirmation")
-  Future<ResponseConfirmationList> getConfList(
-      @Header("Authorization") String token);
+  Future<ResponseConfirmationList> getConfList();
 
   @POST("/v1/admin/employment-confirmation")
-  Future<ResponseData> postConf(@Header("Authorization") String token,
+  Future<ResponseData> postConf(
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
   @GET("/v1/employment-confirmation-keyword")
   Future<ResponseConfirmationList> getConfListKeyword(
-      @Header("Authorization") String token,
       @Query("keyword", encoded: true) String keyword);
 
   @GET("/v1/employment-confirmation/{employmentConfirmationIdx}")
   Future<ResponseConfirmation> getConf(
-    @Header("Authorization") String token,
     @Path("employmentConfirmationIdx") int index,
   );
 
   @PUT("/v1/admin/employment-confirmation/{employmentConfirmationIdx}")
   Future<ResponseData> putConf(
-      @Header("Authorization") String token,
       @Path("employmentConfirmationIdx") int index,
       @Body() Map<String, dynamic> employmentConfirmationIdx);
 
   @DELETE("/v1/admin/employment-confirmation/{employmentConfirmationIdx}")
   Future<ResponseData> deleteConf(
-    @Header("Authorization") String token,
     @Path("employmentConfirmationIdx") int index,
   );
 
@@ -270,92 +258,76 @@ abstract class RetrofitHelper {
 
   //region 8. 이력서 및 포트폴리오
   @GET("/v1/my-portfolio")
-  Future<ResponsePortfolioList> getMyPortfolioList(
-      @Header("Authorization") String token);
+  Future<ResponsePortfolioList> getMyPortfolioList();
 
   @GET("/v1/my-resume")
-  Future<ResponseResumeList> getMyResumeList(
-      @Header("Authorization") String token);
+  Future<ResponseResumeList> getMyResumeList();
 
   @GET("/v1/portfolio")
-  Future<ResponsePortfolioList> getPortfolioList(
-      @Header("Authorization") String token);
+  Future<ResponsePortfolioList> getPortfolioList();
 
   @POST("/v1/portfolio")
-  Future<ResponseData> postPortfolio(@Header("Authorization") String token,
-      @Body() Map<String, dynamic> body // TODO "notionPortfolioURL": "string"
+  Future<ResponseData> postPortfolio(
+      @Body() Map<String, dynamic> body
       );
 
   @GET("/v1/portfolio/{portfolioIdx}")
-  Future<ResponsePortfolio> getPortfolio(
-      @Header("Authorization") String token, @Path("portfolioIdx") int index);
+  Future<ResponsePortfolio> getPortfolio( @Path("portfolioIdx") int index);
 
   @PUT("/v1/portfolio/{portfolioIdx}")
-  Future<ResponseData> putPortfolio(@Header("Authorization") String token,
+  Future<ResponseData> putPortfolio(
       @Path("portfolioIdx") int index, @Body() Map<String, dynamic> body);
 
   @DELETE("/v1/portfolio/{portfolioIdx}")
-  Future<ResponseData> deletePortfolio(
-      @Header("Authorization") String token, @Path("portfolioIdx") int index);
+  Future<ResponseData> deletePortfolio(@Path("portfolioIdx") int index);
 
   @GET("/v1/resume")
-  Future<ResponseResumeList> getResumeList(
-      @Header("Authorization") String token);
+  Future<ResponseResumeList> getResumeList();
 
   @POST("/v1/resume")
-  Future<ResponseData> postResume(
-      @Header("Authorization") String token, @Body() Map<String, dynamic> body);
+  Future<ResponseData> postResume( @Body() Map<String, dynamic> body);
 
   @GET("/v1/resume/{resumeIdx}")
-  Future<ResponseResume> getResume(
-      @Header("Authorization") String token, @Path("resumeIdx") int index);
+  Future<ResponseResume> getResume(@Path("resumeIdx") int index);
 
   @PUT("/v1/resume/{resumeIdx}")
   Future<ResponseData> putResume(
-      @Header("Authorization") String token,
       @Path("resumeIdx") int index,
-      @Body() Map<String, dynamic> body // TODO "resumeFileURL": "string"
+      @Body() Map<String, dynamic> body
       );
 
   @DELETE("/v1/resume/{resumeIdx}")
-  Future<ResponseData> deleteResume(
-      @Header("Authorization") String token, @Path("resumeIdx") int index);
+  Future<ResponseData> deleteResume( @Path("resumeIdx") int index);
 
 //endregion
 
   //region 9. 이력서 및 포트폴리오 첨삭
   @GET("/v1/admin/correction")
   Future<ResponseCorrectionList> getCorrectionList(
-    @Header("Authorization") String token,
   );
 
   @POST("/v1/admin/correction-approval")
   Future<ResponseData> postCorrectionApproval(
-      @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
       @Query("idx", encoded: true) int index);
 
   @POST("/v1/admin/correction-rejection")
   Future<ResponseData> postCorrectionReject(
-      @Header("Authorization") String token,
       @Body() Map<String, dynamic> body,
       @Query("idx", encoded: true) int index);
 
   @POST("/v1/correction-request")
   Future<ResponseData> postCorrectionRequest(
-      @Header("Authorization") String token,
       @Query("correctionType", encoded: true) String type,
       @Query("idx", encoded: true) int index);
 
   @GET("/v1/admin/correction/{idx}")
   Future<ResponseCorrection> getCorrection(
-    @Header("Authorization") String token,
     @Path("idx") int index,
   );
 
   @GET("/v1/my-correction")
   Future<ResponseCorrectionList> getMyCorrectionList(
-    @Header("Authorization") String token,
   );
 
   //endregion
@@ -363,31 +335,25 @@ abstract class RetrofitHelper {
   //region 10. 상담
   @GET("/v1/consulting-admin")
   Future<ResponseConsultingAdminList> getConsultingAdminList(
-    @Header("Authorization") String token,
   );
 
   @POST("/v1/admin/consulting-admin")
   Future<ResponseData> postConsultingAdmin(
-    @Header("Authorization") String token,
-    @Body() Map<String, dynamic> body, // TODO  "applicationDate": "string"
+    @Body() Map<String, dynamic> body
   );
 
   @GET("/v1/consulting-admin/{consultingIdx}")
-  Future<ResponseConsultingAdmin> getConsultingAdmin(
-      @Header("Authorization") String token, @Path("consultingIdx") int index);
+  Future<ResponseConsultingAdmin> getConsultingAdmin( @Path("consultingIdx") int index);
 
   @DELETE("/v1/admin/consulting-admin/{consultingIdx}")
-  Future<ResponseData> deleteConsulting(
-      @Header("Authorization") String token, @Path("consultingIdx") int index);
+  Future<ResponseData> deleteConsulting( @Path("consultingIdx") int index);
 
   @GET("/v1/admin/consulting-user")
   Future<ResponseConsultingUserList> getConsultingUserList(
-    @Header("Authorization") String token,
   );
 
   @POST("/v1/consulting-user")
   Future<ResponseData> postConsultingUser(
-      @Header("Authorization") String token,
       @Query("idx", encoded: true) int index,
       @Body() Map<String, dynamic> body);
 
@@ -396,42 +362,34 @@ abstract class RetrofitHelper {
   //region 11. 마이페이지
   @GET("/v1/mypage-application-employment")
   Future<ResponseCompStatusList> getMyApplyCompNotice(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-company-review")
   Future<ResponseReviewList> getMyReview(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-consulting-user")
   Future<ResponseConsultingUserList> getMyConsulting(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-correction")
   Future<ResponseCorrectedList> getMyCorrection(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-correction-apply")
   Future<ResponseCorrectionList> getMyCorrectionApply(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-portfolio")
   Future<ResponsePortfolioList> getMyPortfolio(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-resume")
   Future<ResponseResumeList> getMyResume(
-    @Header("Authorization") String token,
   );
 
   @GET("/v1/mypage-tip-user")
   Future<ResponseTipList> getMyTip(
-    @Header("Authorization") String token,
   );
 
   //endregion
@@ -439,31 +397,26 @@ abstract class RetrofitHelper {
   //region 12. 꿀팁
   @GET("/v1/tips-storage")
   Future<ResponseTipList> getTipList(
-    @Header("Authorization") String token,
   );
 
   @POST("/v1/tips-storage")
   Future<ResponseData> postTip(
-    @Header("Authorization") String token,
     @Body() Map<String, dynamic> body, // TipVO를 이용
   );
 
   @GET("/v1/tips-storage-keyword")
   Future<ResponseTipList> getTipListKeyword(
-      @Header("Authorization") String token,
       @Query("keyword", encoded: true) String keyword);
 
   @GET("/v1/tips-storage/{tipidx}")
-  Future<ResponseTip> getTip(
-      @Header("Authorization") String token, @Path("tipidx") int idx);
+  Future<ResponseTip> getTip(@Path("tipidx") int idx);
 
   @PUT("/v1/tips-storage/{tipidx}")
-  Future<ResponseData> putTip(@Header("Authorization") String token,
+  Future<ResponseData> putTip(
       @Path("tipidx") int idx, @Body() Map<String, dynamic> body);
 
   @DELETE("/v1/tips-storage/{tipidx}")
-  Future<ResponseData> deleteTip(
-      @Header("Authorization") String token, @Path("tipidx") int idx);
+  Future<ResponseData> deleteTip(@Path("tipidx") int idx);
 
 //endregion
 

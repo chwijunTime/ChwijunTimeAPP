@@ -10,27 +10,13 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  RetrofitHelper helper;
-
   var value = 0.0;
   String msg = "";
 
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     _init();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   void _init() async {

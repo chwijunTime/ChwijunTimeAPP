@@ -1,14 +1,13 @@
 import 'package:app_user/model/tip/tip_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/tip_storage_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TipStorageDetail extends StatefulWidget {
   TipVO list;
@@ -22,23 +21,6 @@ class TipStorageDetail extends StatefulWidget {
 
 class _TipStorageDetailState extends State<TipStorageDetail> {
   RetrofitHelper helper;
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,10 +151,11 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
   }
 
   Future<TipVO> _getTip() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getTip(token, widget.index);
+      var res = await helper.getTip(widget.index);
       if (res.success) {
         return res.data;
       } else {
@@ -195,11 +178,11 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
           },
           btnName2: "삭제하기",
           btnCall2: () async {
-            final pref = await SharedPreferences.getInstance();
-            var token = pref.getString("accessToken");
-            print("token: ${token}");
+            helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+              setState(() {});
+            }));
             try {
-              var res = await helper.deleteTip(token, widget.index);
+              var res = await helper.deleteTip(widget.index);
               if (res.success) {
                 Navigator.pop(context, "yes");
               } else {

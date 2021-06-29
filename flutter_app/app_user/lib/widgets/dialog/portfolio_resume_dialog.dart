@@ -1,11 +1,10 @@
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PortfolioResumeDialog extends StatefulWidget {
   String mode;
@@ -23,26 +22,9 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
   var titleC = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     titleC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -134,11 +116,12 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
     if (titleC.text.isEmpty) {
       snackBar("URL 입력해주세요.", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var res =
-        await helper.postPortfolio(token, {"notionPortfolioURL": titleC.text});
+        await helper.postPortfolio({"notionPortfolioURL": titleC.text});
         if (res.success) {
           Navigator.pop(context);
           snackBar("포트폴리오를 등록했습니다.", context);
@@ -157,11 +140,12 @@ class _PortfolioResumeDialogState extends State<PortfolioResumeDialog> {
     if (titleC.text.isEmpty) {
       snackBar("URL 입력해주세요.", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var res =
-        await helper.postResume(token, {"resumeFileURL": titleC.text});
+        await helper.postResume({"resumeFileURL": titleC.text});
         if (res.success) {
           Navigator.pop(context);
           snackBar("포트폴리오를 등록했습니다.", context);

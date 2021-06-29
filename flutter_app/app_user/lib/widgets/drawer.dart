@@ -1,8 +1,8 @@
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/tag_add_req_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -174,21 +174,11 @@ Widget buildDrawer(BuildContext context) {
                       msg: "로그아웃",
                       onPressed: () async {
                         RetrofitHelper helper;
-                        Dio dio = Dio();
-                        dio.options = BaseOptions(
-                            receiveDataWhenStatusError: true,
-                            connectTimeout: 10 * 1000,
-                            receiveTimeout: 10 * 1000,
-                            followRedirects: false,
-                            validateStatus: (status) {
-                              return status < 500;
-                            });
-                        helper = RetrofitHelper(dio);
-
+                        helper = RetrofitHelper(
+                            await TokenInterceptor.getApiClient(
+                                context, () {}));
                         try {
-                          final pref = await SharedPreferences.getInstance();
-                          var token = pref.getString("accessToken");
-                          var res = await helper.postLogout(token);
+                          var res = await helper.postLogout();
                           if (res.success) {
                             SharedPreferences pref =
                                 await SharedPreferences.getInstance();

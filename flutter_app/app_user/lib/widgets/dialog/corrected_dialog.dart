@@ -1,8 +1,6 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/correction/corrected_vo.dart';
-import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class CorrectedDialog extends StatefulWidget {
@@ -15,25 +13,6 @@ class CorrectedDialog extends StatefulWidget {
 }
 
 class _CorrectedDialog extends State<CorrectedDialog> {
-  RetrofitHelper helper;
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(

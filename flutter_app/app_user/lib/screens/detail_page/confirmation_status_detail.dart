@@ -1,6 +1,7 @@
 import 'package:app_user/model/confirmation/confirmation_vo.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/confirmation_status_modify.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
@@ -9,11 +10,9 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusDetail extends StatefulWidget {
   ConfirmationVO list;
@@ -47,23 +46,6 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
     } catch(e) {
       print(e);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -313,10 +295,10 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
   }
 
   Future<ResponseConfirmation> _getComfirmation() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print(token);
-    var res = await helper.getConf(token, widget.index);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
+    var res = await helper.getConf(widget.index);
     print("res.success: ${res.success}");
     if (res.success) {
       return res;
@@ -337,10 +319,11 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
               },
               btnName2: "삭제하기",
               btnCall2: () async {
-                final pref = await SharedPreferences.getInstance();
-                var token = pref.getString("accessToken");
+                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                  setState(() {});
+                }));
                 try {
-                  final res = await helper.deleteConf(token, widget.list.index);
+                  final res = await helper.deleteConf(widget.list.index);
                   if (res.success) {
                     snackBar("삭제되었습니다.", context);
                     Navigator.pop(context);

@@ -8,6 +8,7 @@ class TokenInterceptor {
   static Future<Dio> getApiClient(BuildContext context, VoidCallback setState) async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
+    print("token: ${token}");
     Dio dio =
         Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
     Dio tokenDio = Dio();
@@ -21,7 +22,6 @@ class TokenInterceptor {
       print("2222");
       return response;
     }, onError: (DioError error) async {
-      print("dioError: ${error.response.statusCode}");
       if (error.response?.statusCode == 401) {
         dio.interceptors.requestLock.lock();
         dio.interceptors.responseLock.lock();
@@ -38,6 +38,7 @@ class TokenInterceptor {
             tokenDio.interceptors.responseLock.lock();
           } else {
             Navigator.pushReplacementNamed(context, "/login");
+            pref.clear();
             snackBar("자동로그인 기간이 만료되었습니다.\n다시 로그인 해주세요", context);
           }
         } catch (e) {
@@ -47,6 +48,8 @@ class TokenInterceptor {
         dio.interceptors.responseLock.unlock();
         setState.call();
         return dio.request(options.path, options: options);
+      } else if (error.type == DioErrorType.DEFAULT) {
+        snackBar("인터넷이 연결되지 않습니다. \n교내 와이파이에 연결후 다시 실행해주세요.", context);
       } else {
         return error.response.data;
       }

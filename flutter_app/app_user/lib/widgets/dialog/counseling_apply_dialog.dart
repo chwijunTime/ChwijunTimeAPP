@@ -1,13 +1,12 @@
 import 'package:app_user/model/consulting/consulting_admin_vo.dart';
 import 'package:app_user/model/consulting/post_consulting_user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CounselingApplyDialog extends StatefulWidget {
   ConsultingAdminVO list;
@@ -25,27 +24,10 @@ class _CounselingApplyDialogState extends State<CounselingApplyDialog> {
   RetrofitHelper helper;
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     nameC.dispose();
     classNumber.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -100,7 +82,8 @@ class _CounselingApplyDialogState extends State<CounselingApplyDialog> {
               SizedBox(
                 height: 10,
               ),
-              buildTextField("학번", classNumber, type: TextInputType.number, autoFocus: false),
+              buildTextField("학번", classNumber,
+                  type: TextInputType.number, autoFocus: false),
               SizedBox(
                 height: 20,
               ),
@@ -123,10 +106,10 @@ class _CounselingApplyDialogState extends State<CounselingApplyDialog> {
     if (nameC.text.isEmpty || classNumber.text.isEmpty) {
       snackBar("이름과 학번을 입력해주세요.", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       var res = await helper.postConsultingUser(
-          token,
           widget.list.index,
           PostConsultingUser(classNumber: classNumber.text, name: nameC.text)
               .toJson());

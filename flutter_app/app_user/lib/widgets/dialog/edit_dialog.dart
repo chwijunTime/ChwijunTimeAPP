@@ -1,13 +1,12 @@
 import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/model/resume_portfolio/resume_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EditDialog extends StatefulWidget {
   String mode;
@@ -25,26 +24,9 @@ class _EditDialogState extends State<EditDialog> {
   var urlC = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  @override
   void dispose() {
     urlC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -153,11 +135,11 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<PortfolioVO> _getPortpolio() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getPortfolio(token, widget.index);
+      var res = await helper.getPortfolio(widget.index);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
@@ -170,11 +152,11 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<ResumeVO> _getResume() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token resume: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getResume(token, widget.index);
+      var res = await helper.getResume(widget.index);
       print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
@@ -190,11 +172,12 @@ class _EditDialogState extends State<EditDialog> {
     if (urlC.text.isEmpty) {
       snackBar("URL을 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var res = await helper.putPortfolio(
-            token, widget.index, {"notionPortfolioURL": urlC.text});
+            widget.index, {"notionPortfolioURL": urlC.text});
         if (res.success) {
           snackBar("수정하였습니다.", context);
           Navigator.pop(context);
@@ -212,11 +195,12 @@ class _EditDialogState extends State<EditDialog> {
     if (urlC.text.isEmpty) {
       snackBar("URL을 작성해주세요", context);
     } else {
-      final pref = await SharedPreferences.getInstance();
-      var token = pref.getString("accessToken");
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
         var res = await helper.putResume(
-            token, widget.index, {"resumeFileURL": urlC.text});
+            widget.index, {"resumeFileURL": urlC.text});
         if (res.success) {
           snackBar("수정하였습니다.", context);
           Navigator.pop(context);

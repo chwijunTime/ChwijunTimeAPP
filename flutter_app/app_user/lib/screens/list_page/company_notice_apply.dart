@@ -7,9 +7,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_dialog.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeApply extends StatefulWidget {
   @override

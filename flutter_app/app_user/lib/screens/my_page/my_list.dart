@@ -6,6 +6,7 @@ import 'package:app_user/model/correction/corrected_vo.dart';
 import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/model/tip/tip_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/detail_page/interview_review_detail.dart';
 import 'package:app_user/screens/detail_page/tip_storage_detail.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -15,10 +16,8 @@ import 'package:app_user/widgets/dialog/corrected_dialog.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyListPage extends StatefulWidget {
   @override
@@ -56,7 +55,6 @@ class _MyListPageState extends State<MyListPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    initRetrofit();
   }
 
   @override
@@ -158,17 +156,6 @@ class _MyListPageState extends State<MyListPage> {
         }
       });
     }
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -374,10 +361,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<CompApplyStatusVO>> _getCompNoticeList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyApplyCompNotice(token);
+      var res = await helper.getMyApplyCompNotice();
       if (res.success) {
         return res.list;
       } else {
@@ -566,11 +554,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<ReviewVO>> _getReview() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyReview(token);
+      var res = await helper.getMyReview();
       if (res.success) {
         return res.list.reversed.toList();
       } else {
@@ -679,11 +667,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<ConsultingUserVO>> getCounselingUserList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyConsulting(token);
+      var res = await helper.getMyConsulting();
       print("res.success: ${res.success}");
       if (res.success) {
         return res.list;
@@ -785,10 +773,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<CorrectedVO>> _getCorrection() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyCorrection(token);
+      var res = await helper.getMyCorrection();
       if (res.success) {
         return res.list;
       }
@@ -916,10 +905,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<CorrectionVO>> _getCorrectionApply() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyCorrectionApply(token);
+      var res = await helper.getMyCorrectionApply();
       if (res.success) {
         return res.list.reversed.toList();
       }
@@ -1077,11 +1067,11 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Future<List<TipVO>> _getTipList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print(token);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyTip(token);
+      var res = await helper.getMyTip();
       if (res.success) {
         return res.list;
       } else {

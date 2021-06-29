@@ -6,7 +6,6 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class NotificationModify extends StatefulWidget {

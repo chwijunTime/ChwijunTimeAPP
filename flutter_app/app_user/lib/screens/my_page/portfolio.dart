@@ -1,6 +1,7 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -8,10 +9,8 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/edit_dialog.dart';
 import 'package:app_user/widgets/dialog/portfolio_resume_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PortfolioPage extends StatefulWidget {
   @override
@@ -28,20 +27,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio();
-    dio.options = BaseOptions(
-        receiveDataWhenStatusError: true,
-        connectTimeout: 10 * 1000,
-        receiveTimeout: 10 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        });
-    helper = RetrofitHelper(dio);
   }
 
   void _scrollListener() async {
@@ -212,11 +197,11 @@ class _PortfolioPageState extends State<PortfolioPage> {
   }
 
   Future<List<PortfolioVO>> _getPortpolio() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print(token);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getPortfolioList(token);
+      var res = await helper.getPortfolioList();
       if (res.success) {
         return res.list;
       } else {
@@ -298,12 +283,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
                             },
                             btnName2: "삭제하기",
                             btnCall2: () async {
-                              final pref =
-                                  await SharedPreferences.getInstance();
-                              var token = pref.getString("accessToken");
+                              helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                                setState(() {});
+                              }));
                               try {
                                 var res = await helper.deletePortfolio(
-                                    token, portList[index].index);
+                                portList[index].index);
                                 if (res.success) {
                                   snackBar("포트폴리오가 삭제되었습니다", context);
                                   Navigator.pop(context, true);
@@ -333,12 +318,11 @@ class _PortfolioPageState extends State<PortfolioPage> {
   }
 
   _postRequest(int index) async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print(token);
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.postCorrectionRequest(
-          token, "Portfolio", portList[index].index);
+      var res = await helper.postCorrectionRequest("Portfolio", portList[index].index);
       if (res.success) {
         snackBar("첨삭 요청을 완료했습니다", context);
       } else {

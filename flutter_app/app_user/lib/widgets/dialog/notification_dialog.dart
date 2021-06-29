@@ -9,7 +9,6 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class NotificationDialog extends StatefulWidget {

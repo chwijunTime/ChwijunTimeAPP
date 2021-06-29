@@ -1,12 +1,11 @@
 import 'package:app_user/model/consulting/consulting_admin_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CounselingDialog extends StatefulWidget {
   ConsultingAdminVO list;
@@ -22,23 +21,6 @@ class _CounselingDialogState extends State<CounselingDialog> {
   RetrofitHelper helper;
 
   String strDate;
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
 
   @override
   build(BuildContext context) {
@@ -127,10 +109,11 @@ class _CounselingDialogState extends State<CounselingDialog> {
         },
         btnName2: "삭제하기",
         btnCall2: () async {
-          final pref = await SharedPreferences.getInstance();
-          var token = pref.getString("accessToken");
+          helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+            setState(() {});
+          }));
           try {
-            var res = await helper.deleteConsulting(token, widget.index);
+            var res = await helper.deleteConsulting(widget.index);
             if (res.success) {
               snackBar("성공적으로 삭제되었습니다.", context);
               Navigator.pop(context, "delete");
@@ -180,10 +163,11 @@ class _CounselingDialogState extends State<CounselingDialog> {
   }
 
   Future<ConsultingAdminVO> _getConsulting() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getConsultingAdmin(token, widget.index);
+      var res = await helper.getConsultingAdmin(widget.index);
       if (res.success) {
         return res.data;
       } else {

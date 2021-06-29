@@ -7,13 +7,9 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ReqTagList extends StatefulWidget {
-  String role;
-
   @override
   _ReqTagListState createState() => _ReqTagListState();
 }
@@ -29,7 +25,6 @@ class _ReqTagListState extends State<ReqTagList> {
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -238,7 +233,7 @@ class _ReqTagListState extends State<ReqTagList> {
           SizedBox(
             width: 10,
           ),
-          widget.role == User.user
+          User.role == User.user
               ? InkWell(
                   onTap: () {},
                   child: Icon(Icons.tag),
@@ -281,9 +276,6 @@ class _ReqTagListState extends State<ReqTagList> {
                 },
                 btnName2: "저장하기",
                 btnCall2: () async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
-                  print("token: ${token}");
                   try {
                     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
                       setState(() {});
@@ -339,9 +331,6 @@ class _ReqTagListState extends State<ReqTagList> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  final pref = await SharedPreferences.getInstance();
-                  var token = pref.getString("accessToken");
-                  print("token: ${token}");
                   try {
                     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
                       setState(() {});

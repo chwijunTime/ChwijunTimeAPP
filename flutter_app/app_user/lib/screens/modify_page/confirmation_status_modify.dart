@@ -1,14 +1,13 @@
 import 'package:app_user/model/confirmation/confirmation_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationStatusModify extends StatefulWidget {
   ConfirmationVO list;
@@ -45,7 +44,6 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
       etcC.text = widget.list.etc;
       tagList = widget.list.tag;
     });
-    initRetrofit();
   }
 
   @override
@@ -58,17 +56,6 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
     siteUrl.dispose();
     etcC.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   @override
@@ -201,13 +188,12 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
           jockey: generationC.text,
           postTag: tagList,
           etc: etcC.text);
-
+      helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+        setState(() {});
+      }));
       try {
-        final pref = await SharedPreferences.getInstance();
-        var token = pref.getString("accessToken");
-        var res = await helper.putConf(token, widget.list.index, vo.toJson());
+        var res = await helper.putConf(widget.list.index, vo.toJson());
         print(widget.list.index);
-        print(token);
         print(vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);

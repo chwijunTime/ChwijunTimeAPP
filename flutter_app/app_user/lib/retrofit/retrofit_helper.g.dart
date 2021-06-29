@@ -9,7 +9,7 @@ part of 'retrofit_helper.dart';
 class _RetrofitHelper implements RetrofitHelper {
   _RetrofitHelper(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://210.217.243.3:8082/';
+    baseUrl ??= 'http://10.120.72.245:8082/';
   }
 
   final Dio _dio;
@@ -74,8 +74,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postLogout(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postLogout() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -83,7 +82,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -152,8 +151,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putChengPassword(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putChengPassword(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -164,7 +162,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -173,8 +171,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postProfile(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postProfile(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -184,7 +181,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -193,8 +190,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putProfile(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putProfile(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -205,7 +201,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -214,8 +210,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseUserInfo> getUserInfo(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseUserInfo> getUserInfo() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -223,7 +218,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -232,8 +227,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseProfile> getProfile(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseProfile> getProfile() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -241,7 +235,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -697,8 +691,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConfirmationList> getConfList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConfirmationList> getConfList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -707,7 +700,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -716,8 +709,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postConf(token, employmentConfirmationIdx) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postConf(employmentConfirmationIdx) async {
     ArgumentError.checkNotNull(
         employmentConfirmationIdx, 'employmentConfirmationIdx');
     const _extra = <String, dynamic>{};
@@ -729,7 +721,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -738,8 +730,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConfirmationList> getConfListKeyword(token, keyword) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConfirmationList> getConfListKeyword(keyword) async {
     ArgumentError.checkNotNull(keyword, 'keyword');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'keyword': keyword};
@@ -749,7 +740,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -758,8 +749,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConfirmation> getConf(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConfirmation> getConf(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -769,7 +759,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -778,8 +768,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putConf(token, index, employmentConfirmationIdx) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putConf(index, employmentConfirmationIdx) async {
     ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(
         employmentConfirmationIdx, 'employmentConfirmationIdx');
@@ -792,7 +781,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -801,8 +790,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> deleteConf(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> deleteConf(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -812,7 +800,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1084,8 +1072,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponsePortfolioList> getMyPortfolioList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponsePortfolioList> getMyPortfolioList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1093,7 +1080,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1102,8 +1089,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseResumeList> getMyResumeList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseResumeList> getMyResumeList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1111,7 +1097,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1120,8 +1106,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponsePortfolioList> getPortfolioList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponsePortfolioList> getPortfolioList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1129,7 +1114,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1138,8 +1123,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postPortfolio(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postPortfolio(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1149,7 +1133,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1158,8 +1142,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponsePortfolio> getPortfolio(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponsePortfolio> getPortfolio(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1169,7 +1152,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1178,8 +1161,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putPortfolio(token, index, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putPortfolio(index, body) async {
     ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
@@ -1191,7 +1173,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1200,8 +1182,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> deletePortfolio(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> deletePortfolio(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1211,7 +1192,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1220,8 +1201,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseResumeList> getResumeList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseResumeList> getResumeList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1229,7 +1209,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1238,8 +1218,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postResume(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postResume(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1249,7 +1228,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1258,8 +1237,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseResume> getResume(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseResume> getResume(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1269,7 +1247,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1278,8 +1256,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putResume(token, index, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putResume(index, body) async {
     ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
@@ -1291,7 +1268,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1300,8 +1277,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> deleteResume(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> deleteResume(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1311,7 +1287,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1320,8 +1296,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrectionList> getCorrectionList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCorrectionList> getCorrectionList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1330,7 +1305,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1339,8 +1314,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postCorrectionApproval(token, body, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postCorrectionApproval(body, index) async {
     ArgumentError.checkNotNull(body, 'body');
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
@@ -1352,7 +1326,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1361,8 +1335,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postCorrectionReject(token, body, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postCorrectionReject(body, index) async {
     ArgumentError.checkNotNull(body, 'body');
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
@@ -1374,7 +1347,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1383,8 +1356,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postCorrectionRequest(token, type, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postCorrectionRequest(type, index) async {
     ArgumentError.checkNotNull(type, 'type');
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
@@ -1398,7 +1370,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1407,8 +1379,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrection> getCorrection(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCorrection> getCorrection(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1418,7 +1389,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1427,8 +1398,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrectionList> getMyCorrectionList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCorrectionList> getMyCorrectionList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1437,7 +1407,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1446,8 +1416,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConsultingAdminList> getConsultingAdminList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConsultingAdminList> getConsultingAdminList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1456,7 +1425,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1465,8 +1434,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postConsultingAdmin(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postConsultingAdmin(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1477,7 +1445,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1486,8 +1454,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConsultingAdmin> getConsultingAdmin(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConsultingAdmin> getConsultingAdmin(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1497,7 +1464,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1506,8 +1473,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> deleteConsulting(token, index) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> deleteConsulting(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1517,7 +1483,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1526,8 +1492,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConsultingUserList> getConsultingUserList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConsultingUserList> getConsultingUserList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1536,7 +1501,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1545,8 +1510,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postConsultingUser(token, index, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postConsultingUser(index, body) async {
     ArgumentError.checkNotNull(index, 'index');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
@@ -1558,7 +1522,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1567,8 +1531,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCompStatusList> getMyApplyCompNotice(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCompStatusList> getMyApplyCompNotice() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1577,7 +1540,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1586,8 +1549,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseReviewList> getMyReview(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseReviewList> getMyReview() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1596,7 +1558,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1605,8 +1567,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseConsultingUserList> getMyConsulting(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseConsultingUserList> getMyConsulting() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1615,7 +1576,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1624,8 +1585,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrectedList> getMyCorrection(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCorrectedList> getMyCorrection() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1634,7 +1594,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1643,8 +1603,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrectionList> getMyCorrectionApply(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseCorrectionList> getMyCorrectionApply() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1653,7 +1612,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1662,8 +1621,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponsePortfolioList> getMyPortfolio(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponsePortfolioList> getMyPortfolio() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1672,7 +1630,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1681,8 +1639,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseResumeList> getMyResume(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseResumeList> getMyResume() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1691,7 +1648,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1700,8 +1657,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTipList> getMyTip(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseTipList> getMyTip() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1710,7 +1666,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1719,8 +1675,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTipList> getTipList(token) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseTipList> getTipList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1728,7 +1683,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1737,8 +1692,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> postTip(token, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> postTip(body) async {
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1748,7 +1702,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1757,8 +1711,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTipList> getTipListKeyword(token, keyword) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseTipList> getTipListKeyword(keyword) async {
     ArgumentError.checkNotNull(keyword, 'keyword');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'keyword': keyword};
@@ -1768,7 +1721,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1777,8 +1730,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseTip> getTip(token, idx) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseTip> getTip(idx) async {
     ArgumentError.checkNotNull(idx, 'idx');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1788,7 +1740,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1797,8 +1749,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> putTip(token, idx, body) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> putTip(idx, body) async {
     ArgumentError.checkNotNull(idx, 'idx');
     ArgumentError.checkNotNull(body, 'body');
     const _extra = <String, dynamic>{};
@@ -1810,7 +1761,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'PUT',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
@@ -1819,8 +1770,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseData> deleteTip(token, idx) async {
-    ArgumentError.checkNotNull(token, 'token');
+  Future<ResponseData> deleteTip(idx) async {
     ArgumentError.checkNotNull(idx, 'idx');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1830,7 +1780,7 @@ class _RetrofitHelper implements RetrofitHelper {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
-            headers: <String, dynamic>{r'Authorization': token},
+            headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);

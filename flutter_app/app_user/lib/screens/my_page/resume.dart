@@ -1,6 +1,7 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/resume_portfolio/resume_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -9,9 +10,7 @@ import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/dialog/edit_dialog.dart';
 import 'package:app_user/widgets/dialog/portfolio_resume_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ResumePage extends StatefulWidget {
   @override
@@ -28,18 +27,6 @@ class _ResumePageState extends State<ResumePage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   void _scrollListener() async {
@@ -206,10 +193,11 @@ class _ResumePageState extends State<ResumePage> {
   }
 
   Future<List<ResumeVO>> _getResume() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getMyResumeList(token);
+      var res = await helper.getMyResumeList();
       if (res.success) {
         return res.list;
       } else {
@@ -272,8 +260,8 @@ class _ResumePageState extends State<ResumePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                ShowWebView(url: resumeList[index].resResumeUrl)));
+                            builder: (context) => ShowWebView(
+                                url: resumeList[index].resResumeUrl)));
                   },
                   icon: Icon(Icons.search)),
               IconButton(
@@ -302,12 +290,14 @@ class _ResumePageState extends State<ResumePage> {
                               },
                               btnName2: "삭제하기",
                               btnCall2: () async {
-                                final pref =
-                                    await SharedPreferences.getInstance();
-                                var token = pref.getString("accessToken");
+                                helper = RetrofitHelper(
+                                    await TokenInterceptor.getApiClient(context,
+                                        () {
+                                  setState(() {});
+                                }));
                                 try {
-                                  var res = await helper.deleteResume(
-                                      token, resumeList[index].index);
+                                  var res = await helper
+                                      .deleteResume(resumeList[index].index);
                                   if (res.success) {
                                     snackBar("이력서가 삭제되었습니다", context);
                                     Navigator.pop(context, true);
@@ -338,11 +328,12 @@ class _ResumePageState extends State<ResumePage> {
   }
 
   _postResume(int index) async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.postCorrectionRequest(
-          token, "Resume", resumeList[index].index);
+      var res =
+          await helper.postCorrectionRequest("Resume", resumeList[index].index);
       if (res.success) {
         snackBar("첨삭 요청을 완료했습니다", context);
       } else {

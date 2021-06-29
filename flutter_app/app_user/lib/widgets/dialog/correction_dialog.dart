@@ -1,12 +1,11 @@
 import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/show_web_view.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/accept_dialog.dart';
 import 'package:app_user/widgets/dialog/reject_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CorrectionDialog extends StatefulWidget {
   int index;
@@ -20,23 +19,6 @@ class CorrectionDialog extends StatefulWidget {
 
 class _CorrectionDialog extends State<CorrectionDialog> {
   RetrofitHelper helper;
-
-  @override
-  void initState() {
-    super.initState();
-    initRetrofit();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +133,11 @@ class _CorrectionDialog extends State<CorrectionDialog> {
   }
 
   Future<CorrectionVO> _getCorrection() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getCorrection(token, widget.index);
+      var res = await helper.getCorrection(widget.index);
       if (res.success) {
         return res.data;
       } else {

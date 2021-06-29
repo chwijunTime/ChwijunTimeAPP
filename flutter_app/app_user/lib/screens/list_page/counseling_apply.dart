@@ -1,15 +1,14 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/consulting/consulting_admin_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
+import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/widgets/app_bar.dart';
+import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/counseling_apply_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
-import 'package:app_user/widgets/drop_down_button.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CounselingApplyPage extends StatefulWidget {
   @override
@@ -25,7 +24,6 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
   @override
   void initState() {
     super.initState();
-    initRetrofit();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -33,17 +31,6 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  initRetrofit() {
-    Dio dio = Dio(BaseOptions(
-        connectTimeout: 5 * 1000,
-        receiveTimeout: 5 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        }));
-    helper = RetrofitHelper(dio);
   }
 
   void _scrollListener() async {
@@ -64,132 +51,135 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar("취준타임", context),
-      drawer: buildDrawer(context),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "취준타임",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0x832B8AC0)),
-                  ),
-                  Text(
-                    "취진부 상담신청",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
-                  )
-                ],
+    return BackButtonWidget.backButtonWidget(
+      context: context,
+      child: Scaffold(
+        appBar: buildAppBar("취준타임", context),
+        drawer: buildDrawer(context),
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "취준타임",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0x832B8AC0)),
+                    ),
+                    Text(
+                      "취진부 상담신청",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
-                child: FutureBuilder(
-              future: getCounselingAdminList(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  counAdminList = snapshot.data;
-                  print("itemCounttt: $itemCount");
-                  if (counAdminList.length < Consts.showItemCount) {
-                    itemCount = counAdminList.length;
-                  }
-                  print(
-                      "counAdminList.length: ${counAdminList.length}, itemCount: ${itemCount}");
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: itemCount + 1,
-                    itemBuilder: (context, index) {
-                      print(
-                          "index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
-                      if (index == itemCount) {
-                        if (counAdminList.length == 0) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18)),
-                            elevation: 5,
-                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                            child: Center(
-                              child: Padding(
-                                  padding: EdgeInsets.all(Consts.padding),
-                                  child: Text(
-                                    "등록된 상담이 없습니다.",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                            ),
-                          );
-                        } else if (index == counAdminList.length) {
-                          return Padding(
-                            padding: EdgeInsets.all(Consts.padding),
-                            child: makeGradientBtn(
-                                msg: "맨 처음으로",
-                                onPressed: () {
-                                  _scrollController.animateTo(
-                                      _scrollController
-                                          .position.minScrollExtent,
-                                      duration: Duration(milliseconds: 200),
-                                      curve: Curves.elasticOut);
-                                },
-                                mode: 1,
-                                icon: Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.white,
-                                )),
-                          );
-                        } else {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18)),
-                            elevation: 5,
-                            margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(Consts.padding),
-                                child: CircularProgressIndicator(),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                  child: FutureBuilder(
+                future: getCounselingAdminList(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    counAdminList = snapshot.data;
+                    print("itemCounttt: $itemCount");
+                    if (counAdminList.length < Consts.showItemCount) {
+                      itemCount = counAdminList.length;
+                    }
+                    print(
+                        "counAdminList.length: ${counAdminList.length}, itemCount: ${itemCount}");
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: itemCount + 1,
+                      itemBuilder: (context, index) {
+                        print(
+                            "index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
+                        if (index == itemCount) {
+                          if (counAdminList.length == 0) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: Text(
+                                      "등록된 상담이 없습니다.",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.w700),
+                                    )),
                               ),
-                            ),
-                          );
+                            );
+                          } else if (index == counAdminList.length) {
+                            return Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: makeGradientBtn(
+                                  msg: "맨 처음으로",
+                                  onPressed: () {
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                  },
+                                  mode: 1,
+                                  icon: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.white,
+                                  )),
+                            );
+                          } else {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          return buildCounseling(context, index);
                         }
-                      } else {
-                        return buildCounseling(context, index);
-                      }
-                    },
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            )),
-          ],
+                      },
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              )),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Future<List<ConsultingAdminVO>> getCounselingAdminList() async {
-    final pref = await SharedPreferences.getInstance();
-    var token = pref.getString("accessToken");
-    print("token: ${token}");
+    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+      setState(() {});
+    }));
     try {
-      var res = await helper.getConsultingAdminList(token);
+      var res = await helper.getConsultingAdminList();
       print("res.success: ${res.success}");
       if (res.success) {
             return res.list;
