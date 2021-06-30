@@ -1,4 +1,3 @@
-import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post_correction.g.dart';

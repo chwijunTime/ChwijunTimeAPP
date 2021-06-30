@@ -1296,7 +1296,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrectionList> getCorrectionList() async {
+  Future<ResponseAdminCorrectionList> getCorrectionList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -1309,7 +1309,7 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseCorrectionList.fromJson(_result.data);
+    final value = ResponseAdminCorrectionList.fromJson(_result.data);
     return value;
   }
 
@@ -1379,7 +1379,7 @@ class _RetrofitHelper implements RetrofitHelper {
   }
 
   @override
-  Future<ResponseCorrection> getCorrection(index) async {
+  Future<ResponseAdminCorrection> getCorrection(index) async {
     ArgumentError.checkNotNull(index, 'index');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1393,7 +1393,7 @@ class _RetrofitHelper implements RetrofitHelper {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ResponseCorrection.fromJson(_result.data);
+    final value = ResponseAdminCorrection.fromJson(_result.data);
     return value;
   }
 

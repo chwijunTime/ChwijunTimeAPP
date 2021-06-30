@@ -1,6 +1,3 @@
-import 'package:app_user/model/resume_portfolio/portfolio_vo.dart';
-import 'package:app_user/model/resume_portfolio/resume_vo.dart';
-import 'package:app_user/model/user/userinfo_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'correction_vo.g.dart';
@@ -13,20 +10,29 @@ class CorrectionVO{
   String status;
   @JsonKey(name: "correctionType")
   String type;
-  @JsonKey(name: "member")
-  UserInfoVO member;
-  @JsonKey(name: "memberPortfolio")
-  PortfolioVO portfolio;
-  @JsonKey(name: "memberResume")
-  ResumeVO resume;
+  @JsonKey(name: "memberClassNumber")
+  String classNumber;
+  @JsonKey(name: "memberEmail")
+  String email;
+  @JsonKey(name: "memberPortfolioIdx")
+  int portfolioIdx;
+  @JsonKey(name: "memberResumeIdx")
+  int resumeIdx;
+  @JsonKey(name: "notionPortfolioURL")
+  String portfolioUrl;
+  @JsonKey(name: "resumeFileURL")
+  String resumeUrl;
 
   CorrectionVO(
       {this.index,
       this.status,
       this.type,
-      this.member,
-      this.portfolio,
-      this.resume});
+      this.classNumber,
+      this.email,
+      this.portfolioIdx,
+      this.resumeIdx,
+      this.portfolioUrl,
+      this.resumeUrl});
 
   factory CorrectionVO.fromJson(Map<String, dynamic> json) => _$CorrectionVOFromJson(json);
 

@@ -1,4 +1,4 @@
-import 'package:app_user/model/correction/correction_vo.dart';
+import 'package:app_user/model/correction/admin_correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/show_web_view.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class CorrectionDialog extends StatefulWidget {
   int index;
-  CorrectionVO vo;
+  AdminCorrectionVO vo;
 
   CorrectionDialog({@required this.index});
 
@@ -63,7 +63,7 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "${widget.vo.member.classNumber}_${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"}",
+                    "${widget.vo.member.classNumber}_${widget.vo.type == "Portfolio" ? "포트폴리오 ${widget.vo.portfolio.index}" : "이력서 ${widget.vo.resume.index}"}",
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -80,7 +80,7 @@ class _CorrectionDialog extends State<CorrectionDialog> {
                               builder: (context) => ShowWebView(
                                   url: widget.vo.type == "Portfolio"
                                       ? widget.vo.portfolio.portfolioUrl
-                                      : widget.vo.resume.resResumeUrl)));
+                                      : widget.vo.resume.resumeUrl)));
                     },
                     child: Text(
                       "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"} 바로 보기",
@@ -132,7 +132,7 @@ class _CorrectionDialog extends State<CorrectionDialog> {
     );
   }
 
-  Future<CorrectionVO> _getCorrection() async {
+  Future<AdminCorrectionVO> _getCorrection() async {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));

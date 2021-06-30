@@ -27,63 +27,61 @@ class _CorrectedDialog extends State<CorrectedDialog> {
 
   dialogContent(BuildContext context) {
     return Container(
-      width: 320,
-      height: 360,
-      padding: EdgeInsets.only(
-          top: Consts.padding,
-          bottom: Consts.padding,
-          left: Consts.padding,
-          right: Consts.padding),
-      margin: EdgeInsets.only(top: Consts.avataRadius),
-      decoration: new BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(Consts.padding - 10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
-              spreadRadius: 1,
-              offset: const Offset(0.0, 0.0),
-            )
-          ]),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${widget.list.classNumber}_${widget.list.correctionVO.type == "Portfolio" ? "포트폴리오" : "이력서"}",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              makeTag(widget.list.correctionVO.status)
-            ],
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Expanded(
-            child: ListView(
+        width: 320,
+        height: 360,
+        padding: EdgeInsets.only(
+            top: Consts.padding,
+            bottom: Consts.padding,
+            left: Consts.padding,
+            right: Consts.padding),
+        margin: EdgeInsets.only(top: Consts.avataRadius),
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(Consts.padding - 10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                spreadRadius: 1,
+                offset: const Offset(0.0, 0.0),
+              )
+            ]),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AutoSizeText(
-                  "${widget.list.correctionVO.status == "Correction_Successful"
-                   ? widget.list.content : widget.list.rejectReason}",
-                  minFontSize: 16,
+                Text(
+                  "${widget.list.classNumber}_${widget.list.type == "Portfolio" ? "포트폴리오 ${widget.list.portfolioIdx}" : "이력서 ${widget.list.resumeIdx}"}",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
+                makeTag(widget.list.status)
               ],
             ),
-          ),
-        ],
-      )
-    );
+            SizedBox(
+              height: 16,
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  AutoSizeText(
+                    "${widget.list.status == "Correction_Successful" ? widget.list.content : widget.list.rejectReason}",
+                    minFontSize: 16,
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget makeTag(String str) {
@@ -93,7 +91,7 @@ class _CorrectedDialog extends State<CorrectedDialog> {
     if (str == "Correction_Successful") {
       msg = "완료함";
       color = Color(0xff5BC7F5);
-    }  else {
+    } else {
       msg = "거절함";
       color = Color(0xffFF7777);
     }

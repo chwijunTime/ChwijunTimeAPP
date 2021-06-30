@@ -1,4 +1,4 @@
-import 'package:app_user/model/correction/correction_vo.dart';
+import 'package:app_user/model/correction/admin_correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -7,7 +7,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class AcceptDialog extends StatefulWidget {
-  CorrectionVO vo;
+  AdminCorrectionVO vo;
 
   AcceptDialog({this.vo});
 
@@ -35,7 +35,7 @@ class _AcceptDialog extends State<AcceptDialog> {
     return SingleChildScrollView(
       child: Container(
         width: 385,
-        height: 600,
+        height: 580,
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 60),
         decoration: new BoxDecoration(
@@ -55,7 +55,7 @@ class _AcceptDialog extends State<AcceptDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n 진행하기",
+                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"}\n첨삭 진행하기",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 18,

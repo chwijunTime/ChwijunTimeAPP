@@ -1,5 +1,5 @@
 import 'package:app_user/consts.dart';
-import 'package:app_user/model/correction/correction_vo.dart';
+import 'package:app_user/model/correction/admin_correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -16,7 +16,7 @@ class CorrectionResumePage extends StatefulWidget {
 
 class _CorrectionResumePageState extends State<CorrectionResumePage> {
   RetrofitHelper helper;
-  List<CorrectionVO> correctionList = [];
+  List<AdminCorrectionVO> correctionList = [];
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
 
@@ -170,14 +170,14 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
     );
   }
 
-  Future<List<CorrectionVO>> _getCorrection() async {
+  Future<List<AdminCorrectionVO>> _getCorrection() async {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));
     try {
       var res = await helper.getCorrectionList();
       if (res.success) {
-        List<CorrectionVO> list = [];
+        List<AdminCorrectionVO> list = [];
         for (int i=0; i< res.list.length; i++) {
           if (res.list[i].type == "Resume") {
             list.add(res.list[i]);
@@ -191,7 +191,7 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
   }
 
   Widget buildPortfolioCorrection(BuildContext context, int index) {
-    CorrectionVO vo = correctionList[index];
+    AdminCorrectionVO vo = correctionList[index];
     return Container(
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -211,7 +211,7 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
                 children: [
                   Expanded(
                       child: Text(
-                        "${vo.member.classNumber}_이력서", style: TextStyle(fontWeight: FontWeight.w600),)),
+                        "${vo.member.classNumber}_이력서 ${vo.resume.index}", style: TextStyle(fontWeight: FontWeight.w600),)),
                   makeTag(vo.status)
                 ],
               ),

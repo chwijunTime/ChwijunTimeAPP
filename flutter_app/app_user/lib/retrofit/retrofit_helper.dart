@@ -11,6 +11,8 @@ import 'package:app_user/model/consulting/response_consulting_admin_list.dart';
 import 'package:app_user/model/consulting/response_consulting_user_list.dart';
 import 'package:app_user/model/contracting_company/response_contracting.dart';
 import 'package:app_user/model/contracting_company/response_contracting_list.dart';
+import 'package:app_user/model/correction/response_admin_correction.dart';
+import 'package:app_user/model/correction/response_admin_correction_list.dart';
 import 'package:app_user/model/correction/response_corrected_list.dart';
 import 'package:app_user/model/correction/response_correction.dart';
 import 'package:app_user/model/correction/response_correction_list.dart';
@@ -35,7 +37,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'retrofit_helper.g.dart';
 
-@RestApi(baseUrl: "http://10.120.72.245:8082/4")
+@RestApi(baseUrl: "http://10.120.72.245:8082/")
 abstract class RetrofitHelper {
   factory RetrofitHelper(Dio dio, {String baseUrl}) = _RetrofitHelper;
 
@@ -303,7 +305,7 @@ abstract class RetrofitHelper {
 
   //region 9. 이력서 및 포트폴리오 첨삭
   @GET("/v1/admin/correction")
-  Future<ResponseCorrectionList> getCorrectionList(
+  Future<ResponseAdminCorrectionList> getCorrectionList(
   );
 
   @POST("/v1/admin/correction-approval")
@@ -322,7 +324,7 @@ abstract class RetrofitHelper {
       @Query("idx", encoded: true) int index);
 
   @GET("/v1/admin/correction/{idx}")
-  Future<ResponseCorrection> getCorrection(
+  Future<ResponseAdminCorrection> getCorrection(
     @Path("idx") int index,
   );
 

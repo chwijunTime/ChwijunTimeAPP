@@ -112,6 +112,28 @@ Widget buildDrawer(BuildContext context) {
             leading: Icon(Icons.thumb_up, color: Colors.grey, size: 28),
             page: "/tip_storage",
             context: context),
+        role != User.user
+            ? customListTile(
+            title: "포트폴리오 첨삭",
+            leading: Icon(
+              Icons.event_note_outlined,
+              color: Colors.grey,
+              size: 28,
+            ),
+            page: "/portfolio",
+            context: context)
+            : SizedBox(),
+        role != User.user
+            ? customListTile(
+            title: "이력서 첨삭",
+            leading: Icon(
+              Icons.sticky_note_2_outlined,
+              color: Colors.grey,
+              size: 28,
+            ),
+            page: "/introduction",
+            context: context)
+            : SizedBox(),
         role == User.user
             ? customListTile(
                 title: "태그 추가 요청하기",
@@ -127,28 +149,6 @@ Widget buildDrawer(BuildContext context) {
                 ),
                 page: "/tag_list",
                 context: context),
-        role != User.user
-            ? customListTile(
-                title: "포트폴리오 첨삭",
-                leading: Icon(
-                  Icons.event_note_outlined,
-                  color: Colors.grey,
-                  size: 28,
-                ),
-                page: "/portfolio",
-                context: context)
-            : SizedBox(),
-        role != User.user
-            ? customListTile(
-                title: "이력서 첨삭",
-                leading: Icon(
-                  Icons.sticky_note_2_outlined,
-                  color: Colors.grey,
-                  size: 28,
-                ),
-                page: "/introduction",
-                context: context)
-            : SizedBox(),
         Expanded(
           child: Align(
             alignment: Alignment.bottomRight,

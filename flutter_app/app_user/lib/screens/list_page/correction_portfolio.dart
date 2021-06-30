@@ -1,4 +1,5 @@
 import 'package:app_user/consts.dart';
+import 'package:app_user/model/correction/admin_correction_vo.dart';
 import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
@@ -16,7 +17,7 @@ class CorrectionPortfolioPage extends StatefulWidget {
 
 class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
   RetrofitHelper helper;
-  List<CorrectionVO> correctionList = [];
+  List<AdminCorrectionVO> correctionList = [];
   final _scrollController = ScrollController();
   int itemCount = Consts.showItemCount;
 
@@ -170,17 +171,18 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
     );
   }
 
-  Future<List<CorrectionVO>> _getCorrection() async {
+  Future<List<AdminCorrectionVO>> _getCorrection() async {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));
     try {
       var res = await helper.getCorrectionList();
       if (res.success) {
-        List<CorrectionVO> list = [];
+        List<AdminCorrectionVO> list = [];
         for (int i=0; i< res.list.length; i++) {
           if (res.list[i].type == "Portfolio") {
             list.add(res.list[i]);
+            print(res.list[i].toJson());
           }
         }
         return list;
@@ -191,7 +193,7 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
   }
 
   Widget buildPortfolioCorrection(BuildContext context, int index) {
-    CorrectionVO vo = correctionList[index];
+    AdminCorrectionVO vo = correctionList[index];
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -211,7 +213,7 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.member.classNumber}_포트폴리오", style: TextStyle(fontWeight: FontWeight.w600),)),
+                      "${vo.member.classNumber}_포트폴리오 ${vo.portfolio.index}", style: TextStyle(fontWeight: FontWeight.w600),)),
               makeTag(vo.status)
             ],
           ),

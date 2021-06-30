@@ -1,4 +1,4 @@
-import 'package:app_user/model/correction/correction_vo.dart';
+import 'package:app_user/model/correction/admin_correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
@@ -7,7 +7,7 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class RejectDialog extends StatefulWidget {
-  CorrectionVO vo;
+  AdminCorrectionVO vo;
 
   RejectDialog({@required this.vo});
 
@@ -35,7 +35,7 @@ class _RejectDialog extends State<RejectDialog> {
     return SingleChildScrollView(
       child: Container(
         width: 385,
-        height: 600,
+        height: 580,
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 60),
         decoration: new BoxDecoration(
@@ -55,19 +55,12 @@ class _RejectDialog extends State<RejectDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오 첨삭" : "이력서 첨삭"}을 \n거절 하시겠습니까?",
+                "해당 ${widget.vo.type == "Portfolio" ? "포트폴리오" : "이력서"} 첨삭을 \n거절 하시겠습니까?",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: Colors.black),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                "거절 사유를 입력해주세요.",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               SizedBox(
                 height: 10,

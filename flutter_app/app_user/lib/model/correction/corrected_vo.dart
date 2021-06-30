@@ -1,4 +1,3 @@
-import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'corrected_vo.g.dart';
@@ -7,22 +6,46 @@ part 'corrected_vo.g.dart';
 class CorrectedVO{
   @JsonKey(name: "classNumber")
   String classNumber;
-  @JsonKey(name: "correctionApply")
-  CorrectionVO correctionVO;
+  @JsonKey(name: "correctionApplyIdx")
+  int applyIndex;
   @JsonKey(name: "correctionContent")
   String content;
   @JsonKey(name: "correctionIdx")
   int index;
+  @JsonKey(name: "correctionStatus")
+  String status;
+  @JsonKey(name: "correctionType")
+  String type;
+  @JsonKey(name: "memberClassNumber")
+  String memberClassNumber;
+  @JsonKey(name: "memberEmail")
+  String email;
+  @JsonKey(name: "memberPortfolioIdx")
+  int portfolioIdx;
+  @JsonKey(name: "memberResumeIdx")
+  int resumeIdx;
+  @JsonKey(name: "notionPortfolioURL")
+  String portfolioUrl;
   @JsonKey(name: "reasonForRejection")
   String rejectReason;
+  @JsonKey(name: "resumeFileURL")
+  String resumeUrl;
 
 
   CorrectedVO(
       {this.classNumber,
-      this.correctionVO,
+      this.applyIndex,
       this.content,
       this.index,
-      this.rejectReason});
+      this.status,
+      this.type,
+      this.memberClassNumber,
+      this.email,
+      this.portfolioIdx,
+      this.resumeIdx,
+      this.portfolioUrl,
+      this.rejectReason,
+      this.resumeUrl});
 
   factory CorrectedVO.fromJson(Map<String, dynamic> json) => _$CorrectedVOFromJson(json);
 

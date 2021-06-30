@@ -672,7 +672,6 @@ class _MyListPageState extends State<MyListPage> {
     }));
     try {
       var res = await helper.getMyConsulting();
-      print("res.success: ${res.success}");
       if (res.success) {
         return res.list;
       } else {
@@ -806,8 +805,8 @@ class _MyListPageState extends State<MyListPage> {
             children: [
               Expanded(
                   child: Text(
-                      "${vo.classNumber}_${vo.correctionVO.type == "Portfolio" ? "포트폴리오" : "이력서"}")),
-              makeTag(vo.correctionVO.status)
+                      "${vo.classNumber}_${vo.type == "Portfolio" ? "포트폴리오 ${vo.portfolioIdx}" : "이력서 ${vo.resumeIdx}"}")),
+              makeTag(vo.status)
             ],
           ),
         ),
@@ -923,26 +922,15 @@ class _MyListPageState extends State<MyListPage> {
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: GestureDetector(
-        onTap: () async {
-          await showDialog(
-              context: context,
-              builder: (BuildContext context) =>
-                  CorrectionDialog(index: vo.index));
-          setState(() {
-            _getCorrection();
-          });
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10, left: 10),
-          child: Row(
-            children: [
-              Expanded(
-                  child: Text(
-                      "${vo.member.classNumber}_${vo.type == "Portfolio" ? "포트폴리오" : "이력서"}")),
-              makeTag(vo.status)
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10, left: 10),
+        child: Row(
+          children: [
+            Expanded(
+                child: Text(
+                    "${vo.classNumber}_${vo.type == "Portfolio" ? "포트폴리오 ${vo.portfolioIdx}" : "이력서 ${vo.resumeIdx}"}")),
+            makeTag(vo.status)
+          ],
         ),
       ),
     ));
