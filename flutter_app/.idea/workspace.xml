@@ -23,12 +23,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/company_notice_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/company_notice_detail.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/contracting_company_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/contracting_company_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_profile_create.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_profile_create.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_profile_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/my_page/my_profile_modify.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -157,9 +157,7 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
               ),
               makeGradientBtn(
                   msg: "수정하기",
-                  onPressed: () {
-                    onContractingModify();
-                  },
+                  onPressed: onContractingModify,
                   mode: 4,
                   icon: Icon(
                     Icons.arrow_forward,
@@ -197,18 +195,15 @@ class _ContractingCompanyModifyState extends State<ContractingCompanyModify> {
       helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
         setState(() {});
       }));
-      print(widget.list.index);
+      ContractingVO vo = ContractingVO(
+          salary: priceC.text,
+          info: infoC.text,
+          postTag: tagList,
+          title: titleC.text,
+          address: addressC.text,
+          fieldC: fieldC.text);
       try {
-        final res = await helper.putCont(
-            widget.list.index,
-            ContractingVO(
-                    salary: priceC.text,
-                    info: infoC.text,
-                    postTag: tagList,
-                    title: titleC.text,
-                    address: addressC.text,
-                    fieldC: fieldC.text)
-                .toJson());
+        final res = await helper.putCont(widget.list.index, vo.toJson());
         if (res.success) {
           Navigator.pop(context, true);
         } else {

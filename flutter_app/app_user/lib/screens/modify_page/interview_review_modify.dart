@@ -41,8 +41,9 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       priceC.text = widget.list.price.toString();
       reviewC.text = widget.list.review;
       questionC.text = widget.list.question;
-      var listDate = widget.list.applyDate.split("-");
-      strDate = "${listDate[0]}년 ${listDate[1]}월 ${listDate[2]}일";
+      date = widget.list.applyDate;
+      var f = DateFormat("yyyy-MM-dd").parse(date);
+      strDate = DateFormat("yyyy년 MM월 dd일").format(f);
       tagList = widget.list.tag;
     });
   }
@@ -219,6 +220,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
       helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
         setState(() {});
       }));
+      print("vo: ${vo.toJson()}");
       try {
         var res = await helper.putReview(widget.list.index, vo.toJson());
         if (res.success) {

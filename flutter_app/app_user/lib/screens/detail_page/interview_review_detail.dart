@@ -32,7 +32,6 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   Future<LatLng> getCoordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
-    print("latLng ${latLng}");
     return latLng;
   }
 
