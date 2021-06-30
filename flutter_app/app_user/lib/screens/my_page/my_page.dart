@@ -120,7 +120,7 @@ class _MyPageState extends State<MyPage> {
                                           height: 5,
                                         ),
                                         Text(
-                                          "TEL. ${vo.member.phone}",
+                                          "TEL: ${vo.member.phone}",
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600),
@@ -161,31 +161,32 @@ class _MyPageState extends State<MyPage> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(18))),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "이력서 보러가기",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18),
-                                        ),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            size: 28,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ResumePage()));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "이력서 보러가기",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18),
                                           ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ResumePage()));
-                                          })
-                                    ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 28,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -195,31 +196,32 @@ class _MyPageState extends State<MyPage> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(18))),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "포트폴리오 보러가기",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18),
-                                        ),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            size: 28,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PortfolioPage()));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "포트폴리오 보러가기",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18),
                                           ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PortfolioPage()));
-                                          })
-                                    ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 28,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -229,31 +231,32 @@ class _MyPageState extends State<MyPage> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(18))),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "마이 리스트 보러가기",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18),
-                                        ),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            size: 28,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MyListPage()));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "마이 리스트 보러가기",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18),
                                           ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MyListPage()));
-                                          })
-                                    ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 28,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

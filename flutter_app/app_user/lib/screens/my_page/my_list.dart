@@ -13,7 +13,6 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/corrected_dialog.dart';
-import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:flutter/material.dart';
@@ -378,7 +377,6 @@ class _MyListPageState extends State<MyListPage> {
   }
 
   Widget buildItemApply(BuildContext context, int index) {
-    var status = noticeList[index].status;
     return Container(
         child: Padding(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -391,10 +389,6 @@ class _MyListPageState extends State<MyListPage> {
             ),
           ),
           makeTag(noticeList[index].status),
-          SizedBox(
-            width: 10,
-          ),
-          Icon(Icons.arrow_forward_ios_rounded)
         ],
       ),
     ));
@@ -1080,13 +1074,13 @@ class _MyListPageState extends State<MyListPage> {
       msg = "대기중";
       color = Colors.grey;
     } else if (str == "Correction_Successful") {
-      msg = "완료함";
+      msg = "완료됨";
       color = Color(0xff5BC7F5);
     } else if (str == "Approve") {
-      msg = "수락함";
+      msg = "수락됨";
       color = Color(0xff5BC7F5);
     } else {
-      msg = "거절함";
+      msg = "거절됨";
       color = Color(0xffFF7777);
     }
 
