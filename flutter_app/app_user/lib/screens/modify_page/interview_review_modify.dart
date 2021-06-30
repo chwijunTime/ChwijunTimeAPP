@@ -6,6 +6,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -70,7 +71,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
               SizedBox(height: 10,),
               buildTextField("주소", addressC, type: TextInputType.text),
               SizedBox(height: 10,),
-              buildTextField("비용", priceC, type: TextInputType.number),
+              buildTextField("비용", priceC, type: TextInputType.number, suffixText: "원"),
               SizedBox(height: 10,),
               GestureDetector(
                 onTap: () async {
@@ -205,6 +206,7 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
         tagList.isEmpty) {
       snackBar("빈칸이 없도록 작성해주세요.", context);
     } else {
+      print(widget.list.index);
       ReviewVO vo = ReviewVO(
         title: titleC.text,
         applyDate: date,
@@ -226,6 +228,10 @@ class _InterviewReviewModifyState extends State<InterviewReviewModify> {
           snackBar(res.msg, context);
         }
       } catch (e) {
+        DioError err = e;
+        if (err.error.toString().contains("권한")) {
+          snackBar("작성자의 권한이 필요합니다.", context);
+        }
         print("error: $e");
       }
     }

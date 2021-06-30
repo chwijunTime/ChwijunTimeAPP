@@ -11,6 +11,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 class InterviewReviewDetail extends StatefulWidget {
   ReviewVO list;
@@ -28,10 +29,10 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
   GoogleMapController mapController;
   RetrofitHelper helper;
 
-  Future<LatLng> getCordinate() async {
+  Future<LatLng> getCoordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
-    print(latLng);
+    print("latLng ${latLng}");
     return latLng;
   }
 
@@ -89,12 +90,12 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                 ],
                               ),
                               Text(
-                                "지원 날짜: ${widget.list.applyDate}",
+                                "지원 날짜: ${DateFormat("yyyy년 MM월 dd일").format(DateFormat("yyyy-MM-dd").parse(widget.list.applyDate))}",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                "비용: ${widget.list.price}",
+                                "비용: ${widget.list.price}원",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
                               ),
@@ -129,20 +130,18 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                     fontSize: 18, fontWeight: FontWeight.w400),
                               ),
                               SizedBox(
-                                height: 13,
+                                height: 10,
                               ),
                               SizedBox(
                                   width: 330,
                                   height: 200,
                                   child: FutureBuilder(
-                                      future: getCordinate(),
+                                      future: getCoordinate(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData == false) {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else {
+                                        print(
+                                            "hasData: ${snapshot.hasData}, hasError: ${snapshot.hasError},");
+                                        if (snapshot.hasData) {
                                           return GoogleMap(
                                             initialCameraPosition:
                                                 CameraPosition(
@@ -153,9 +152,22 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
                                             onMapCreated: (GoogleMapController
                                                 controller) async {
                                               mapController = controller;
-                                              print("호잇");
                                             },
                                             markers: _createMarker(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                            color: Colors.grey[200],
+                                            child: Text(
+                                              "주소를 찾을 수 없습니다.",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            alignment: Alignment.center,
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
                                           );
                                         }
                                       }))
@@ -314,7 +326,8 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
               },
               btnName2: "삭제하기",
               btnCall2: () async {
-                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                helper = RetrofitHelper(
+                    await TokenInterceptor.getApiClient(context, () {
                   setState(() {});
                 }));
                 try {
@@ -341,8 +354,7 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                InterviewReviewModify(list: widget.list)));
+            builder: (context) => InterviewReviewModify(list: widget.list)));
     setState(() {
       _getReview();
     });
@@ -355,7 +367,7 @@ class _InterviewReviewDetailState extends State<InterviewReviewDetail> {
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target: latLng, zoom: 17)));
     } catch (e) {
-      print(e);
+      print("err: ${e}");
     }
   }
 

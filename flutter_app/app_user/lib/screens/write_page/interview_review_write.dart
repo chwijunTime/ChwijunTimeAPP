@@ -56,7 +56,7 @@ class _InterviewReviewWriteState extends State<InterviewReviewWrite> {
                 },
                   child: buildTextField("주소", addressC, type: TextInputType.text)),
               SizedBox(height: 10,),
-              buildTextField("비용", priceC, type: TextInputType.number),
+              buildTextField("비용", priceC, type: TextInputType.number, suffixText: "원"),
               SizedBox(height: 10,),
               GestureDetector(
                 onTap: () async {
