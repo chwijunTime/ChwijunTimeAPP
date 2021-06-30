@@ -8,6 +8,8 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TipStorageDetail extends StatefulWidget {
   TipVO list;
@@ -20,6 +22,8 @@ class TipStorageDetail extends StatefulWidget {
 }
 
 class _TipStorageDetailState extends State<TipStorageDetail> {
+  LatLng latLng;
+  GoogleMapController mapController;
   RetrofitHelper helper;
 
   @override
@@ -54,9 +58,44 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w600),
                               ),
+                              SizedBox(height: 5,),
                               Text("주소: ${widget.list.address}",
                                   style: TextStyle(
-                                      fontSize: 18, fontWeight: FontWeight.w600))
+                                      fontSize: 18, fontWeight: FontWeight.w600)),
+                              SizedBox(height: 10),
+                              SizedBox(
+                                  width: 330,
+                                  height: 200,
+                                  child: FutureBuilder(
+                                      future: getCoordinate(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData) {
+                                          return GoogleMap(
+                                            initialCameraPosition:
+                                            CameraPosition(
+                                              target: LatLng(latLng.latitude,
+                                                  latLng.longitude),
+                                              zoom: 17,
+                                            ),
+                                            onMapCreated: (GoogleMapController
+                                            controller) async {
+                                              mapController = controller;
+                                            },
+                                            markers: _createMarker(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                            color: Colors.grey[200],
+                                            child: Text("주소를 찾을 수 없습니다.", style: TextStyle(fontWeight: FontWeight.w600),),
+                                            alignment: Alignment.center,
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      }))
                             ],
                           ),
                         ),
@@ -148,6 +187,23 @@ class _TipStorageDetailState extends State<TipStorageDetail> {
         ),
       ),
     );
+  }
+
+  Future<LatLng> getCoordinate() async {
+    List<Location> location = await locationFromAddress(widget.list.address);
+    latLng = LatLng(location[0].latitude, location[0].longitude);
+    print("latLng ${latLng}");
+    return latLng;
+  }
+
+  Set<Marker> _createMarker() {
+    return [
+      Marker(
+          markerId: MarkerId(widget.list.title),
+          position: latLng,
+          infoWindow: InfoWindow(
+              title: widget.list.title, snippet: widget.list.address))
+    ].toSet();
   }
 
   Future<TipVO> _getTip() async {

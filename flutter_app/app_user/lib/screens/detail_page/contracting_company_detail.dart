@@ -103,12 +103,12 @@ class _ContractingCompanyDetailPageState
                             ],
                           ),
                           Text(
-                            "지역: ${widget.list.fieldC}",
+                            "사업분야: ${widget.list.fieldC}",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            "평균: ${widget.list.salary.isEmpty ? "미입력" : widget.list.salary}",
+                            "평균 연봉: ${widget.list.salary.isEmpty ? "미입력" : widget.list.salary}",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
@@ -259,7 +259,6 @@ class _ContractingCompanyDetailPageState
     }));
     try {
       var res = await helper.getCont(widget.index);
-      print("res.success: ${res.success}");
       if (res.success) {
         return res.data;
       } else {

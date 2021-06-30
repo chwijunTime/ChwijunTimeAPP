@@ -9,13 +9,11 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_write_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/tag.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyNoticeDetailPage extends StatefulWidget {
   int index;
@@ -37,7 +35,7 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
   RetrofitHelper helper;
   GoogleMapController mapController;
 
-  Future<LatLng> getCordinate() async {
+  Future<LatLng> getCoordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     return latLng;
@@ -170,26 +168,32 @@ class _CompanyNoticeDetailPageState extends State<CompanyNoticeDetailPage> {
                                   width: 330,
                                   height: 200,
                                   child: FutureBuilder(
-                                      future: getCordinate(),
+                                      future: getCoordinate(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData == false) {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else {
+                                        if (snapshot.hasData) {
                                           return GoogleMap(
                                             initialCameraPosition:
-                                                CameraPosition(
+                                            CameraPosition(
                                               target: LatLng(latLng.latitude,
                                                   latLng.longitude),
                                               zoom: 9,
                                             ),
                                             onMapCreated: (GoogleMapController
-                                                controller) async {
+                                            controller) async {
                                               mapController = controller;
                                             },
                                             markers: _createMarker(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                            color: Colors.grey[200],
+                                            child: Text("주소를 찾을 수 없습니다.", style: TextStyle(fontWeight: FontWeight.w600),),
+                                            alignment: Alignment.center,
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
                                           );
                                         }
                                       }))

@@ -92,18 +92,13 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
                     counAdminList = snapshot.data;
-                    print("itemCounttt: $itemCount");
                     if (counAdminList.length < Consts.showItemCount) {
                       itemCount = counAdminList.length;
                     }
-                    print(
-                        "counAdminList.length: ${counAdminList.length}, itemCount: ${itemCount}");
                     return ListView.builder(
                       controller: _scrollController,
                       itemCount: itemCount + 1,
                       itemBuilder: (context, index) {
-                        print(
-                            "index: $index, counAdminList.length: ${counAdminList.length}, itemCount: $itemCount");
                         if (index == itemCount) {
                           if (counAdminList.length == 0) {
                             return Card(
@@ -180,7 +175,6 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
     }));
     try {
       var res = await helper.getConsultingAdminList();
-      print("res.success: ${res.success}");
       if (res.success) {
             return res.list;
       } else {
