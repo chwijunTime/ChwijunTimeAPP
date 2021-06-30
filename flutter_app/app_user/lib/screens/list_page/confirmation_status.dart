@@ -16,8 +16,6 @@ import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmationStatusPage extends StatefulWidget {
-  String role;
-
   @override
   _ConfirmationStatusPageState createState() => _ConfirmationStatusPageState();
 }
@@ -46,7 +44,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
   @override
   void initState() {
     super.initState();
-    widget.role = User.role;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -143,7 +140,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                   ],
                 ),
               ),
-              widget.role == User.user
+              User.role == User.user
                   ? SizedBox()
                   : Padding(
                       padding:
@@ -475,7 +472,6 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                         index: vo[index].index,
                       )));
           setState(() {
-            print("이?잉");
             _getComfirmation();
           });
         },
@@ -483,7 +479,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
           children: [
             Expanded(
               child: Text(
-                "${vo[index].jockey} ${vo[index].name} - ${vo[index].title}",
+                "${vo[index].generation} ${vo[index].name} - ${vo[index].title}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),

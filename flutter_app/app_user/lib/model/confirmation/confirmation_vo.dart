@@ -18,8 +18,8 @@ class ConfirmationVO {
   String title;
   @JsonKey(name: "employmentConfirmationSite")
   String siteUrl;
-  @JsonKey(name: "employmentConfirmationJockey")
-  String jockey;
+  @JsonKey(name: "employmentConfirmationGeneration")
+  String generation;
   @JsonKey(name: "studentName")
   String name;
   @JsonKey(name: "employmentConfirmationTags")
@@ -35,7 +35,7 @@ class ConfirmationVO {
       this.index,
       this.title,
       this.siteUrl,
-      this.jockey,
+      this.generation,
       this.tag,
       this.postTag,
       this.name});

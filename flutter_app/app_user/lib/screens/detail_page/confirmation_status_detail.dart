@@ -1,5 +1,6 @@
 import 'package:app_user/model/confirmation/confirmation_vo.dart';
 import 'package:app_user/model/confirmation/response_confirmation.dart';
+import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/modify_page/confirmation_status_modify.dart';
@@ -31,7 +32,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
   RetrofitHelper helper;
   GoogleMapController mapController;
 
-  Future<LatLng> getCordinate() async {
+  Future<LatLng> getCoordinate() async {
     List<Location> location = await locationFromAddress(widget.list.address);
     latLng = LatLng(location[0].latitude, location[0].longitude);
     return latLng;
@@ -43,7 +44,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
       latLng = LatLng(location[0].latitude, location[0].longitude);
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target: latLng, zoom: 17)));
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -84,7 +85,8 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      "${widget.list.jockey} ${widget.list.name}",
+                                      "${widget.list.generation} ${widget.list
+                                          .name}",
                                       style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.w600),
@@ -113,8 +115,9 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => ShowWebView(
-                                                url: widget.list.siteUrl)));
+                                            builder: (context) =>
+                                                ShowWebView(
+                                                    url: widget.list.siteUrl)));
                                   },
                                   child: Text(
                                     "회사 사이트 바로가기",
@@ -162,26 +165,35 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                   width: 330,
                                   height: 200,
                                   child: FutureBuilder(
-                                      future: getCordinate(),
+                                      future: getCoordinate(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData == false) {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else {
+                                        if (snapshot.hasData) {
                                           return GoogleMap(
                                             initialCameraPosition:
-                                                CameraPosition(
+                                            CameraPosition(
                                               target: LatLng(latLng.latitude,
                                                   latLng.longitude),
                                               zoom: 17,
                                             ),
                                             onMapCreated: (GoogleMapController
-                                                controller) async {
+                                            controller) async {
                                               mapController = controller;
                                             },
                                             markers: _createMarker(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                            color: Colors.grey[200],
+                                            child: Text("주소를 찾을 수 없습니다.",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight
+                                                      .w600),),
+                                            alignment: Alignment.center,
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
                                           );
                                         }
                                       })),
@@ -195,7 +207,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                                   style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ],
@@ -203,47 +215,45 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                         ),
                       ),
                     ),
-                    widget.list.etc != null
-                        ? Card(
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            margin: EdgeInsets.only(
-                              left: 25,
-                              right: 25,
-                              top: 25,
-                            ),
-                            child: Container(
-                              width: 361,
-                              child: Padding(
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "비고",
-                                      style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    AutoSizeText(
-                                      widget.list.etc,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      minFontSize: 18,
-                                    )
-                                  ],
-                                ),
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      margin: EdgeInsets.only(
+                        left: 25,
+                        right: 25,
+                        top: 25,
+                      ),
+                      child: Container(
+                        width: 361,
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "비고",
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600),
                               ),
-                            ),
-                          )
-                        : SizedBox(),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              AutoSizeText(
+                                widget.list.etc == "" || widget.list.etc == null ? "작성된 비고가 없습니다." : widget.list.etc,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                minFontSize: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: 25,
                     ),
@@ -256,7 +266,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                     SizedBox(
                       height: 20,
                     ),
-                    Padding(
+                    User.role == User.admin ? Padding(
                       padding: const EdgeInsets.only(right: 25, left: 25),
                       child: makeGradientBtn(
                           msg: "취업 현황 수정하기",
@@ -278,7 +288,7 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
                             Icons.arrow_forward,
                             color: Colors.white,
                           )),
-                    ),
+                    ) : SizedBox(),
                     SizedBox(
                       height: 25,
                     ),
@@ -310,7 +320,8 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
   _onDelete() async {
     final result = await showDialog(
         context: context,
-        builder: (BuildContext context) => StdDialog(
+        builder: (BuildContext context) =>
+            StdDialog(
               msg: "해당 취업현황을 삭제하시겠습니까?",
               size: Size(326, 124),
               btnName1: "아니요",
@@ -319,9 +330,10 @@ class _ConfirmationStatusDetailState extends State<ConfirmationStatusDetail> {
               },
               btnName2: "삭제하기",
               btnCall2: () async {
-                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
-                  setState(() {});
-                }));
+                helper = RetrofitHelper(
+                    await TokenInterceptor.getApiClient(context, () {
+                      setState(() {});
+                    }));
                 try {
                   final res = await helper.deleteConf(widget.list.index);
                   if (res.success) {

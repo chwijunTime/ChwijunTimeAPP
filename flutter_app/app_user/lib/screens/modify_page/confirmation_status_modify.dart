@@ -39,7 +39,7 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
       siteUrl.text = widget.list.siteUrl;
       areaC.text = widget.list.area;
       stdNameC.text = widget.list.name;
-      generationC.text = "${widget.list.jockey}기 (기수는 수정이 불가능합니다.)";
+      generationC.text = "${widget.list.generation}기 (기수는 수정이 불가능합니다.)";
       addressC.text = widget.list.address;
       etcC.text = widget.list.etc;
       tagList = widget.list.tag;
@@ -185,7 +185,6 @@ class _ConfirmationStatusModifyState extends State<ConfirmationStatusModify> {
           siteUrl: siteUrl.text,
           address: addressC.text,
           name: stdNameC.text,
-          jockey: generationC.text,
           postTag: tagList,
           etc: etcC.text);
       helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {

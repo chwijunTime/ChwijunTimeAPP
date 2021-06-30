@@ -191,7 +191,7 @@ class _ConfirmationStatusWriteState extends State<ConfirmationStatusWrite> {
           area: areaC.text,
           siteUrl: siteUrl.text,
           etc: etcC.text,
-          jockey: "${generationC.text}기",
+          generation: "${generationC.text}기",
           address: addressC.text,
           name: stdNameC.text,
           postTag: tagList);
