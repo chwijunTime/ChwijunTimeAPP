@@ -16,12 +16,18 @@ class ApplyEmployment{
   String resumeUrl;
   @JsonKey(name: "applicationEmploymentStatus")
   String status;
-  @JsonKey(name: "employmentAnnouncement")
-  CompNoticeVO compNotice;
+  @JsonKey(name: "employmentAnnouncementAddress")
+  String compAddress;
+  @JsonKey(name: "employmentAnnouncementName")
+  String compTitle;
   @JsonKey(name: "gitHubURL")
   String githubUrl;
-  @JsonKey(name: "member")
-  UserInfoVO member;
+  @JsonKey(name: "memberClassNumber")
+  String classNumber;
+  @JsonKey(name: "memberEmail")
+  String email;
+  @JsonKey(name: "recruitmentField")
+  String field;
 
 
   ApplyEmployment(
@@ -30,9 +36,12 @@ class ApplyEmployment{
       this.portfolioUrl,
       this.resumeUrl,
       this.status,
-      this.compNotice,
+      this.compAddress,
+      this.compTitle,
       this.githubUrl,
-      this.member});
+      this.classNumber,
+      this.email,
+      this.field});
 
   factory ApplyEmployment.fromJson(Map<String, dynamic> json) => _$ApplyEmploymentFromJson(json);
 

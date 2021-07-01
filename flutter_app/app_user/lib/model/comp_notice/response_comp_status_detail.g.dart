@@ -12,7 +12,7 @@ ResponseCompStatusDetail _$ResponseCompStatusDetailFromJson(
     code: json['code'] as int,
     data: json['data'] == null
         ? null
-        : CompStatusDetailVO.fromJson(json['data'] as Map<String, dynamic>),
+        : ApplyEmployment.fromJson(json['data'] as Map<String, dynamic>),
     msg: json['msg'] as String,
     success: json['success'] as bool,
   );

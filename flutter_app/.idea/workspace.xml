@@ -21,13 +21,13 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/company_notice_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/company_notice_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/contracting_company_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/contracting_company_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/interview_review_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/detail_page/tip_storage_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/counseling_apply.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/contracting_company_modify.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/modify_page/interview_review_modify.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/comp_notice/apply_employment.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/comp_notice/apply_employment.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/comp_notice/apply_employment.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/comp_notice/apply_employment.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/comp_notice/response_comp_status_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/comp_notice/response_comp_status_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/model/comp_notice/response_comp_status_detail.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/model/comp_notice/response_comp_status_detail.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/company_notice_apply.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/company_notice_apply.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/apply_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/apply_dialog.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,11 +115,11 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1619571562774" />
-    <state x="875" y="131" key="#com.intellij.ide.util.MemberChooser" timestamp="1625018095826">
+    <state x="875" y="131" key="#com.intellij.ide.util.MemberChooser" timestamp="1625099307593">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="875" y="131" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1624122647069" />
-    <state x="875" y="131" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1625018095826" />
+    <state x="875" y="131" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1625099307593" />
     <state x="804" y="162" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1622113875799">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -132,26 +132,26 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="821" y="170" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1623844192835" />
-    <state width="870" height="188" key="GridCell.Tab.0.bottom" timestamp="1625049332009">
+    <state width="871" height="188" key="GridCell.Tab.0.bottom" timestamp="1625104507089">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="843" height="176" key="GridCell.Tab.0.bottom/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1624123427665" />
-    <state width="870" height="188" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1625049332009" />
-    <state width="870" height="188" key="GridCell.Tab.0.center" timestamp="1625049331979">
+    <state width="871" height="188" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1625104507089" />
+    <state width="871" height="188" key="GridCell.Tab.0.center" timestamp="1625104507088">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="843" height="176" key="GridCell.Tab.0.center/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1624123427664" />
-    <state width="870" height="188" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1625049331979" />
-    <state width="870" height="188" key="GridCell.Tab.0.left" timestamp="1625049331978">
+    <state width="871" height="188" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1625104507088" />
+    <state width="871" height="188" key="GridCell.Tab.0.left" timestamp="1625104507088">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="843" height="176" key="GridCell.Tab.0.left/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1624123427664" />
-    <state width="870" height="188" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1625049331978" />
-    <state width="870" height="188" key="GridCell.Tab.0.right" timestamp="1625049331979">
+    <state width="871" height="188" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1625104507088" />
+    <state width="871" height="188" key="GridCell.Tab.0.right" timestamp="1625104507089">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="843" height="176" key="GridCell.Tab.0.right/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1624123427664" />
-    <state width="870" height="188" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1625049331979" />
+    <state width="871" height="188" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1625104507089" />
     <state x="549" y="60" key="SettingsEditor" timestamp="1623844283112">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -178,10 +178,10 @@
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1620199529408" />
     <state x="426" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1622168029102" />
-    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup" timestamp="1623908995580">
+    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup" timestamp="1625099635371">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="65" width="672" height="676" key="search.everywhere.popup/0.0.1536.824/0.-1080.1920.1040@0.0.1536.824" timestamp="1621342737376" />
-    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1623908995580" />
+    <state x="682" y="69" width="672" height="676" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1625099635371" />
   </component>
 </project>

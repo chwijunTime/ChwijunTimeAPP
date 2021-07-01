@@ -1,3 +1,4 @@
+import 'package:app_user/model/comp_notice/apply_employment.dart';
 import 'package:app_user/model/comp_notice/comp_apply_status_vo.dart';
 import 'package:app_user/model/comp_notice/comp_status_detail_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
@@ -8,11 +9,10 @@ import 'package:app_user/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 class ApplyDialog extends StatefulWidget {
-  CompStatusDetailVO vo;
-  CompApplyStatusVO statusVo;
+  ApplyEmployment vo;
   int index;
 
-  ApplyDialog({@required this.index, @required this.statusVo});
+  ApplyDialog({@required this.index});
 
   @override
   _ApplyDialog createState() => _ApplyDialog();
@@ -64,8 +64,8 @@ class _ApplyDialog extends State<ApplyDialog> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text(
-                      "${widget.vo.data.member.classNumber}_${widget.vo.data.compNotice.title} 신청",
+                child: Text(
+                      "${widget.vo.classNumber}_${widget.vo.compTitle} 신청",
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -83,7 +83,7 @@ class _ApplyDialog extends State<ApplyDialog> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ShowWebView(
-                                      url: widget.vo.data.githubUrl)));
+                                      url: widget.vo.githubUrl)));
                         },
                         child: Text(
                           "해당 github 바로 보기",
@@ -102,7 +102,7 @@ class _ApplyDialog extends State<ApplyDialog> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ShowWebView(
-                                      url: widget.vo.data.resumeUrl)));
+                                      url: widget.vo.resumeUrl)));
                         },
                         child: Text(
                           "해당 이력서 바로 보기",
@@ -121,7 +121,7 @@ class _ApplyDialog extends State<ApplyDialog> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ShowWebView(
-                                      url: widget.vo.data.portfolioUrl)));
+                                      url: widget.vo.portfolioUrl)));
                         },
                         child: Text(
                           "해당 포트폴리오 바로 보기",
@@ -138,7 +138,7 @@ class _ApplyDialog extends State<ApplyDialog> {
                   height: 10,
                 ),
                 Expanded(
-                  child: widget.vo.data.status == "Wait"
+                  child: widget.vo.status == "Wait"
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -164,7 +164,7 @@ class _ApplyDialog extends State<ApplyDialog> {
                           ],
                         )
                       : Text(
-                          '이미 ${widget.vo.data.status == "Approve" ? "승인" : "거절"}된 요청입니다.',
+                          '이미 ${widget.vo.status == "Approve" ? "승인" : "거절"}된 요청입니다.',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                 )
@@ -180,7 +180,7 @@ class _ApplyDialog extends State<ApplyDialog> {
     );
   }
 
-  Future<CompStatusDetailVO> _getApply() async {
+  Future<ApplyEmployment> _getApply() async {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));

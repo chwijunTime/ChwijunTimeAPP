@@ -13,14 +13,12 @@ ApplyEmployment _$ApplyEmploymentFromJson(Map<String, dynamic> json) {
     portfolioUrl: json['applicationEmploymentPortfolioURL'] as String,
     resumeUrl: json['applicationEmploymentResumeURL'] as String,
     status: json['applicationEmploymentStatus'] as String,
-    compNotice: json['employmentAnnouncement'] == null
-        ? null
-        : CompNoticeVO.fromJson(
-            json['employmentAnnouncement'] as Map<String, dynamic>),
+    compAddress: json['employmentAnnouncementAddress'] as String,
+    compTitle: json['employmentAnnouncementName'] as String,
     githubUrl: json['gitHubURL'] as String,
-    member: json['member'] == null
-        ? null
-        : UserInfoVO.fromJson(json['member'] as Map<String, dynamic>),
+    classNumber: json['memberClassNumber'] as String,
+    email: json['memberEmail'] as String,
+    field: json['recruitmentField'] as String,
   );
 }
 
@@ -31,7 +29,10 @@ Map<String, dynamic> _$ApplyEmploymentToJson(ApplyEmployment instance) =>
       'applicationEmploymentPortfolioURL': instance.portfolioUrl,
       'applicationEmploymentResumeURL': instance.resumeUrl,
       'applicationEmploymentStatus': instance.status,
-      'employmentAnnouncement': instance.compNotice,
+      'employmentAnnouncementAddress': instance.compAddress,
+      'employmentAnnouncementName': instance.compTitle,
       'gitHubURL': instance.githubUrl,
-      'member': instance.member,
+      'memberClassNumber': instance.classNumber,
+      'memberEmail': instance.email,
+      'recruitmentField': instance.field,
     };

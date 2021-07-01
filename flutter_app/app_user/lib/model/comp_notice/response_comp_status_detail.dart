@@ -1,3 +1,4 @@
+import 'package:app_user/model/comp_notice/apply_employment.dart';
 import 'package:app_user/model/comp_notice/comp_status_detail_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,7 +9,7 @@ class ResponseCompStatusDetail{
   @JsonKey(name: "code")
   int code;
   @JsonKey(name: 'data')
-  CompStatusDetailVO data;
+  ApplyEmployment data;
   @JsonKey(name: 'msg')
   String msg;
   @JsonKey(name: 'success')

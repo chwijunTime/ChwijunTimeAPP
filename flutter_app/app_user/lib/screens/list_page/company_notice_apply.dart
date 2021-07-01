@@ -233,11 +233,11 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
       padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: InkWell(
         onTap: () async {
+          print("호잇");
           await showDialog(
               context: context,
               builder: (BuildContext context) => ApplyDialog(
                     index: applyList[index].index,
-                    statusVo: applyList[index],
                   ));
           setState(() {
             _getList();
