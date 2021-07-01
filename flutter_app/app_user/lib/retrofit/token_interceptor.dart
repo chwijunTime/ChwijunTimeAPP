@@ -51,7 +51,7 @@ class TokenInterceptor {
       } else if (error.type == DioErrorType.DEFAULT) {
         snackBar("인터넷이 연결되지 않습니다. \n교내 와이파이에 연결후 다시 실행해주세요.", context);
       } else {
-        return error.response.data;
+        return error.response;
       }
     }));
     return dio;
