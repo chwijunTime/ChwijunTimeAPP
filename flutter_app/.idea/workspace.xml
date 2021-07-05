@@ -21,15 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e6801eab-dbf4-4063-b2fa-770bad904bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/retrofit/token_interceptor.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/retrofit/token_interceptor.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/confirmation_status.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/notification.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/list_page/tag_list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/main_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/screens/splash.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/edit_password_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/dialog/tag_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/dialog/tag_dialog.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/app_user/lib/widgets/drawer.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

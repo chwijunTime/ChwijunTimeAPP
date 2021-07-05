@@ -309,7 +309,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 6, bottom: 6),
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
                   "${noticeList[index].content}",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
