@@ -103,7 +103,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       padding:
                           const EdgeInsets.only(right: 26, left: 26, bottom: 10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           makeGradientBtn(
                               msg: "공지사항 등록",
@@ -113,8 +113,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             NotificationWrite()));
-                                if (res != null) {
-                                  if (res) {
+                                if (res != null && res) {
                                     setState(() {
                                       _getNotice();
                                       _scrollController.animateTo(
@@ -122,8 +121,11 @@ class _NotificationPageState extends State<NotificationPage> {
                                               .position.minScrollExtent,
                                           duration: Duration(milliseconds: 200),
                                           curve: Curves.elasticOut);
+                                      print("itemCount: ${itemCount}");
                                     });
-                                  }
+                                    if (noticeList.length == itemCount) {
+                                      itemCount++;
+                                    }
                                 }
                               },
                               mode: 1,
@@ -216,7 +218,13 @@ class _NotificationPageState extends State<NotificationPage> {
                                     );
                                   }
                                 } else {
-                                  return buildItemNotification(context, index);
+                                  try {
+                                    return buildItemNotification(
+                                        context, index);
+                                  } catch (e) {
+                                    print(e);
+                                    return SizedBox();
+                                  }
                                 }
                               });
                         } else {
@@ -355,17 +363,19 @@ class _NotificationPageState extends State<NotificationPage> {
                     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
                       setState(() {});
                     }));
+                    int deleteCnt = 0;
                     for (int i = 0; i < arr.length; i++) {
                       final res = await helper.deleteNotice(arr[i]);
                       if (res.success) {
                         if (noticeList.length == itemCount) {
-                          itemCount--;
+                          deleteCnt ++;
                         }
                         deleteNoti.clear();
                       } else {
                         print("error: ${res.msg}");
                       }
                     }
+                    itemCount -= deleteCnt;
                     Navigator.pop(context, true);
                   } catch (e) {
                     print("err: ${e}");

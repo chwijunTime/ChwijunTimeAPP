@@ -76,7 +76,7 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
               height: 10,
             ),
             makeGradientBtn(
-                msg: "수정하기",
+                msg: "변경하기",
                 onPressed: _putPassword,
                 mode: 1,
                 icon: Icon(
@@ -99,7 +99,7 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
           var res = await helper
               .putChengPassword({"memberPassword": passwordC.text});
           if (res.success) {
-            snackBar("수정하였습니다.", context);
+            snackBar("비밀번호가 변경되었습니다.", context);
             Navigator.pop(context);
           } else {
             snackBar(res.msg, context);

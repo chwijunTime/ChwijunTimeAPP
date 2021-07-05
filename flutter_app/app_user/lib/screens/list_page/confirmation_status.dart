@@ -152,7 +152,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                               msg: "취업 현황 등록",
                               onPressed: () async {
                                 print("등록하자");
-                                var res = await Navigator.push(
+                                await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>

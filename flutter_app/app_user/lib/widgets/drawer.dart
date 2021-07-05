@@ -7,12 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget buildDrawer(BuildContext context) {
-  String role;
   String classNumber;
-
-  role = User.role;
   classNumber = User.classNumber;
-  print("User.role: ${role}");
   return Drawer(
     child: Column(
       mainAxisSize: MainAxisSize.max,
@@ -33,7 +29,7 @@ Widget buildDrawer(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${classNumber} ${role == User.user ? "학생" : "선생"}님!!",
+                "${classNumber} ${User.role == User.user ? "학생" : "선생"}님!!",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -81,7 +77,7 @@ Widget buildDrawer(BuildContext context) {
             leading: Icon(Icons.book, color: Colors.grey, size: 28),
             page: "/interview_review",
             context: context),
-        role == User.user
+        User.role == User.user
             ? customListTile(
                 title: "상담 신청",
                 leading: Icon(Icons.headset, color: Colors.grey, size: 28),
@@ -112,7 +108,7 @@ Widget buildDrawer(BuildContext context) {
             leading: Icon(Icons.thumb_up, color: Colors.grey, size: 28),
             page: "/tip_storage",
             context: context),
-        role != User.user
+        User.role != User.user
             ? customListTile(
             title: "포트폴리오 첨삭",
             leading: Icon(
@@ -123,7 +119,7 @@ Widget buildDrawer(BuildContext context) {
             page: "/portfolio",
             context: context)
             : SizedBox(),
-        role != User.user
+        User.role != User.user
             ? customListTile(
             title: "이력서 첨삭",
             leading: Icon(
@@ -134,7 +130,7 @@ Widget buildDrawer(BuildContext context) {
             page: "/introduction",
             context: context)
             : SizedBox(),
-        role == User.user
+        User.role == User.user
             ? customListTile(
                 title: "태그 추가 요청하기",
                 leading: Icon(Icons.tag, color: Colors.grey, size: 28),

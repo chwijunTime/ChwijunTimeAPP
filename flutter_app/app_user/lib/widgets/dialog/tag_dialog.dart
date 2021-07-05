@@ -1,9 +1,11 @@
+import 'package:app_user/model/response_data.dart';
 import 'package:app_user/model/tag/tag_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/text_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class TagDialog extends StatefulWidget {
@@ -158,10 +160,10 @@ class _TagDialogState extends State<TagDialog> {
         } else {
           Navigator.pop(context, false);
           snackBar(res.msg, context);
-          print("error: ${res.msg}");
+          print("err: ${res.msg}");
         }
       } catch (e) {
-        print(e);
+        print("error: $e");
       }
     }
   }

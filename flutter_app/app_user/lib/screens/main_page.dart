@@ -3,7 +3,6 @@ import 'package:app_user/model/notice/notification_vo.dart';
 import 'package:app_user/model/user.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
-import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';

@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenInterceptor {
-  static Future<Dio> getApiClient(BuildContext context, VoidCallback setState) async {
+  static Future<Dio> getApiClient(BuildContext context,
+      VoidCallback setState) async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
     print("token: ${token}");
     Dio dio =
-        Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
+    Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
     Dio tokenDio = Dio();
     RetrofitHelper tokenHelper = RetrofitHelper(tokenDio);
     dio.interceptors.clear();
@@ -28,10 +29,11 @@ class TokenInterceptor {
         RequestOptions options = error.response.request;
         final pref = await SharedPreferences.getInstance();
         var refreshToken = pref.getString("refreshToken");
-        var res =
-            await tokenHelper.postRefreshToken({"refreshToken": refreshToken});
         try {
-          if (res.success) {
+          var res =
+          await tokenHelper.postRefreshToken({"refreshToken": refreshToken});
+          print("refreshToken: ${refreshToken}");
+          if (res.success && res.data.token != null) {
             options.headers["Authorization"] = "Bearer " + res.data.token;
             pref.setString("accessToken", "Bearer " + res.data.token);
             tokenDio.interceptors.requestLock.lock();

@@ -39,6 +39,8 @@ class _TagListState extends State<TagList> {
   }
 
   void _scrollListener() async {
+    print(_scrollController.position.pixels);
+    print(_scrollController.position.viewportDimension);
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
@@ -120,7 +122,7 @@ class _TagListState extends State<TagList> {
               Padding(
                 padding: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     makeGradientBtn(
                         msg: "태그 등록",
@@ -132,9 +134,14 @@ class _TagListState extends State<TagList> {
                                   ));
                           if (res != null && res) {
                             setState(() {
-                              print("itemcount: $itemCount, tagList.length: ${tagList.length}");
+                              print("itemCount: $itemCount, tagList.length: ${tagList.length}");
                               _getTagList();
                               if (tagList.length == itemCount) {
+                                _scrollController.animateTo(
+                                    _scrollController
+                                        .position.pixels - _scrollController.position.extentBefore,
+                                    duration: Duration(milliseconds: 200),
+                                    curve: Curves.elasticOut);
                                 itemCount++;
                               }
                             });
@@ -340,21 +347,23 @@ class _TagListState extends State<TagList> {
                   helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
                     setState(() {});
                   }));
+                  int deleteCnt = 0;
                   try {
                     for (int i = 0; i < deleteList.length; i++) {
                       var res = await helper.deleteTag(deleteList[i]);
                       if (res.success) {
-                        print("삭제함: ${res.msg}");
-                        itemCount --;
+                        if (tagList.length == itemCount) {
+                          deleteCnt ++;
+                        }
                         deleteTag.clear();
                       } else {
                         snackBar(res.msg, context);
                       }
                     }
+                    itemCount -= deleteCnt;
                     Navigator.pop(context, true);
                   } catch (e) {
                     print("err: ${e}");
-                    Navigator.pop(context, false);
                     snackBar("이미 삭제된 공지입니다.", context);
                   }
                 },

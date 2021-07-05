@@ -1,6 +1,4 @@
 import 'package:app_user/model/user.dart';
-import 'package:app_user/retrofit/retrofit_helper.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +10,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   var value = 0.0;
   String msg = "";
+  bool valid = false;
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class _SplashPageState extends State<SplashPage> {
     User.role = role;
     User.classNumber = classNumber;
     await Future.delayed(Duration(milliseconds: 500));
-    if (token != null && role != null) {
+    if (token != null && role != null && valid) {
       Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
     } else {
       Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
