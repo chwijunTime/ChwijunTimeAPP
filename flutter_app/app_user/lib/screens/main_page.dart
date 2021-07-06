@@ -9,6 +9,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -75,17 +76,17 @@ class _MainPageState extends State<MainPage> {
     return showDialog(
         context: context,
         builder: (context) => StdDialog(
-          msg: "앱을 종료하시겠습니까?",
-          size: Size(320, 120),
-          btnName1: "아니요",
-          btnCall1: () {
-            Navigator.pop(context, false);
-          },
-          btnName2: "네",
-          btnCall2: () {
-            Navigator.pop(context, true);
-          },
-        ));
+              msg: "앱을 종료하시겠습니까?",
+              size: Size(320, 120),
+              btnName1: "아니요",
+              btnCall1: () {
+                Navigator.pop(context, false);
+              },
+              btnName2: "네",
+              btnCall2: () {
+                Navigator.pop(context, true);
+              },
+            ));
   }
 
   @override
@@ -167,12 +168,14 @@ class _MainPageState extends State<MainPage> {
                                 if (index == 0) {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
                                       child: Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: Text(
                                             "등록된 공지사항이 없습니다.",
                                             style: TextStyle(
@@ -202,7 +205,8 @@ class _MainPageState extends State<MainPage> {
                                 } else {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
@@ -217,6 +221,8 @@ class _MainPageState extends State<MainPage> {
                                 return buildItemNotification(context, index);
                               }
                             });
+                      } else if (snapshot.hasError) {
+                        return buildConnectionError();
                       } else {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -244,6 +250,7 @@ class _MainPageState extends State<MainPage> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
