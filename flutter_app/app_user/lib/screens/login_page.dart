@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {  
+class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passWordController = TextEditingController();
 
@@ -27,49 +27,54 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   initRetrofit() {
-    Dio dio = Dio();
-    dio.options = BaseOptions(
-        receiveDataWhenStatusError: true,
-        connectTimeout: 20 * 1000,
-        receiveTimeout: 10 * 1000,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status < 500;
-        });
+    Dio dio =
+        Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
     helper = RetrofitHelper(dio);
   }
 
   postLogin() async {
-    print("login");
-    try{
-      var res = await helper.postLogin(MemberLoginDTO(memberEmail: emailController.text, memberPassword: passWordController.text).toJson());
-      if (res.success) {
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString("accessToken", "Bearer ${res.data.accessToken}");
-        prefs.setString("refreshToken", res.data.refreshToken);
-        prefs.setString("role", res.data.roles);
-        prefs.setString("classNumber", res.data.memberClassNumber);
-        Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-        User.role = res.data.roles;
-        User.classNumber = res.data.memberClassNumber;
-      } else {
-        snackBar(res.msg, context);
+    if (emailController.text.isEmpty || passWordController.text.isEmpty) {
+      snackBar("이메일과 비밀번호를 입력해주세요.", context);
+    } else {
+      try {
+        var res = await helper.postLogin(MemberLoginDTO(
+                memberEmail: emailController.text,
+                memberPassword: passWordController.text)
+            .toJson());
+        if (res.success) {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString("accessToken", "Bearer ${res.data.accessToken}");
+          prefs.setString("refreshToken", res.data.refreshToken);
+          prefs.setString("role", res.data.roles);
+          prefs.setString("classNumber", res.data.memberClassNumber);
+          Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+          User.role = res.data.roles;
+          User.classNumber = res.data.memberClassNumber;
+        } else {
+          snackBar(res.msg, context);
+        }
+      } catch (e) {
+        print(e.message);
+        if (e.type == DioErrorType.DEFAULT &&
+            e.message.contains("SocketException")) {
+          snackBar("인터넷이 연결되지 않습니다. \n교내 와이파이에 연결후 다시 실행해주세요.", context);
+        } else {
+          snackBar("서버 오류, 문의해주세요.", context);
+        }
+        print("e: ${e}");
       }
-    } catch (e) {
-      print("e: ${e}");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
-        child: AppBar(
+          child: AppBar(
             backgroundColor: Colors.white,
-        ),
-          preferredSize: Size.fromHeight(0)
-      ),
+          ),
+          preferredSize: Size.fromHeight(0)),
       body: Container(
         color: Colors.white,
         child: Column(
@@ -84,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                       fit: BoxFit.fill,
                     )),
                 Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 30 ),
+                  padding: const EdgeInsets.only(top: 40, left: 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,25 +122,23 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34.0, left: 34),
-                    child: buildTextField("email", emailController, type: TextInputType.emailAddress, autoFocus: false),
+                    child: buildTextField("email", emailController,
+                        type: TextInputType.emailAddress, autoFocus: false),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 34, left: 34),
-                    child: buildTextField("password", passWordController, password: true, autoFocus: false),
+                    child: buildTextField("password", passWordController,
+                        password: true, autoFocus: false),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Center(
                     child: makeGradientBtn(
-                        msg: "Login",
-                        onPressed: () {
-                          postLogin();
-                        },
-                        mode: 3),
+                        msg: "Login", onPressed: postLogin, mode: 3),
                   ),
                   SizedBox(
                     height: 30,
@@ -147,12 +150,15 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           "아직 계정이 없으신가요?",
-                          style: TextStyle(color: Colors.grey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400),
                         )),
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Center(
                     child: GestureDetector(
                         onTap: () {
@@ -160,7 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           "계정이 기억나지 않으시나요?",
-                          style: TextStyle(color: Colors.grey,
+                          style: TextStyle(
+                              color: Colors.grey,
                               fontSize: 12,
                               fontWeight: FontWeight.w400),
                         )),

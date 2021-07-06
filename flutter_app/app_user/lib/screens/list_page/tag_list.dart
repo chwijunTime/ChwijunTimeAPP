@@ -39,19 +39,15 @@ class _TagListState extends State<TagList> {
   }
 
   void _scrollListener() async {
-    print(_scrollController.position.pixels);
-    print(_scrollController.position.viewportDimension);
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await Future.delayed(Duration(seconds: 1));
       setState(() {
         if (itemCount != tagList.length) {
-          print("hihi: ${itemCount}, tagList.length: ${tagList.length}");
           if ((tagList.length - itemCount) ~/ Consts.showItemCount <= 0) {
             itemCount = tagList.length;
           } else {
             itemCount += Consts.showItemCount;
-            print("여기야");
           }
         }
       });
@@ -134,7 +130,6 @@ class _TagListState extends State<TagList> {
                                   ));
                           if (res != null && res) {
                             setState(() {
-                              print("itemCount: $itemCount, tagList.length: ${tagList.length}");
                               _getTagList();
                               if (tagList.length == itemCount) {
                                 _scrollController.animateTo(
@@ -282,7 +277,6 @@ class _TagListState extends State<TagList> {
                     mode: "modify",
                     index: tagList[index].index,
                   ));
-          print(res);
           if (res != null && res) {
             setState(() {
               _getTagList();

@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenInterceptor {
-  static Future<Dio> getApiClient(BuildContext context,
-      VoidCallback setState) async {
+  static Future<Dio> getApiClient(
+      BuildContext context, VoidCallback setState) async {
     final pref = await SharedPreferences.getInstance();
     var token = pref.getString("accessToken");
     print("token: ${token}");
     Dio dio =
-    Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
+        Dio(BaseOptions(connectTimeout: 1000 * 10, receiveTimeout: 1000 * 10));
     Dio tokenDio = Dio();
     RetrofitHelper tokenHelper = RetrofitHelper(tokenDio);
     dio.interceptors.clear();
@@ -30,8 +30,8 @@ class TokenInterceptor {
         final pref = await SharedPreferences.getInstance();
         var refreshToken = pref.getString("refreshToken");
         try {
-          var res =
-          await tokenHelper.postRefreshToken({"refreshToken": refreshToken});
+          var res = await tokenHelper
+              .postRefreshToken({"refreshToken": refreshToken});
           print("refreshToken: ${refreshToken}");
           if (res.success && res.data.token != null) {
             options.headers["Authorization"] = "Bearer " + res.data.token;
@@ -52,6 +52,7 @@ class TokenInterceptor {
         return dio.request(options.path, options: options);
       } else if (error.type == DioErrorType.DEFAULT) {
         snackBar("인터넷이 연결되지 않습니다. \n교내 와이파이에 연결후 다시 실행해주세요.", context);
+        return error.response;
       } else {
         return error.response;
       }
