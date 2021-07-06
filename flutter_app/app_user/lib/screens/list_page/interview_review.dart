@@ -10,6 +10,7 @@ import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -173,11 +174,12 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                           child: buildTextField("회사 이름", titleC,
                               autoFocus: false, prefixIcon: Icon(Icons.search),
                               textInput: (String key) async {
-                                helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
-                                  setState(() {});
-                                }));
-                            var res =
-                                await helper.getReviewListKeyword(key);
+                            helper = RetrofitHelper(
+                                await TokenInterceptor.getApiClient(context,
+                                    () {
+                              setState(() {});
+                            }));
+                            var res = await helper.getReviewListKeyword(key);
                             if (res.success) {
                               setState(() {});
                               setState(() {
@@ -225,7 +227,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                         _scrollController.animateTo(
                                             _scrollController
                                                 .position.minScrollExtent,
-                                            duration: Duration(milliseconds: 200),
+                                            duration:
+                                                Duration(milliseconds: 200),
                                             curve: Curves.elasticOut);
                                       },
                                       mode: 1,
@@ -275,8 +278,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                               borderRadius:
                                                   BorderRadius.circular(18)),
                                           elevation: 5,
-                                          margin:
-                                              EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
                                           child: Center(
                                             child: Padding(
                                                 padding: EdgeInsets.all(
@@ -291,13 +294,14 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                         );
                                       } else if (index == reviewList.length) {
                                         return Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: makeGradientBtn(
                                               msg: "맨 처음으로",
                                               onPressed: () {
                                                 _scrollController.animateTo(
-                                                    _scrollController
-                                                        .position.minScrollExtent,
+                                                    _scrollController.position
+                                                        .minScrollExtent,
                                                     duration: Duration(
                                                         milliseconds: 200),
                                                     curve: Curves.elasticOut);
@@ -314,13 +318,14 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                               borderRadius:
                                                   BorderRadius.circular(18)),
                                           elevation: 5,
-                                          margin:
-                                              EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                          margin: EdgeInsets.fromLTRB(
+                                              25, 13, 25, 13),
                                           child: Center(
                                             child: Padding(
-                                              padding:
-                                                  EdgeInsets.all(Consts.padding),
-                                              child: CircularProgressIndicator(),
+                                              padding: EdgeInsets.all(
+                                                  Consts.padding),
+                                              child:
+                                                  CircularProgressIndicator(),
                                             ),
                                           ),
                                         );
@@ -330,6 +335,8 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
                                           context, index, reviewList);
                                     }
                                   });
+                            } else if (snapshot.hasError) {
+                              return buildConnectionError();
                             } else {
                               return Center(
                                 child: CircularProgressIndicator(),
@@ -440,6 +447,7 @@ class _InterviewReviewPageState extends State<InterviewReviewPage> {
       }
     } catch (e) {
       print(e);
+      return e;
     }
   }
 }

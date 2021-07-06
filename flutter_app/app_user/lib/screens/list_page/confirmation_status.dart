@@ -12,6 +12,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -350,6 +351,8 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
                               shrinkWrap: true,
                               physics: ScrollPhysics(),
                             );
+                          } else if (snapshot.hasError) {
+                            return buildConnectionError();
                           } else {
                             return Center(
                               child: CircularProgressIndicator(),
@@ -377,6 +380,7 @@ class _ConfirmationStatusPageState extends State<ConfirmationStatusPage> {
       }
     } catch (e) {
       print(e);
+      return e;
     }
   }
 

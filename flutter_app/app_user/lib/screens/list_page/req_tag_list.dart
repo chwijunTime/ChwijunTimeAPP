@@ -7,6 +7,7 @@ import 'package:app_user/screens/search_page.dart';
 import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 
 class ReqTagList extends StatefulWidget {
@@ -189,6 +190,8 @@ class _ReqTagListState extends State<ReqTagList> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                       );
+                    } else if (snapshot.hasError) {
+                      return buildConnectionError();
                     } else {
                       return Center(
                         child: CircularProgressIndicator(),
@@ -215,6 +218,7 @@ class _ReqTagListState extends State<ReqTagList> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
@@ -277,19 +281,21 @@ class _ReqTagListState extends State<ReqTagList> {
                 btnName2: "저장하기",
                 btnCall2: () async {
                   try {
-                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    helper = RetrofitHelper(
+                        await TokenInterceptor.getApiClient(context, () {
                       setState(() {});
                     }));
                     for (int i = 0; i < postList.length; i++) {
-                      var res =
-                          await helper.postTag(postList[i].toJson());
+                      var res = await helper.postTag(postList[i].toJson());
                       if (res.success) {
                         print("저장함: ${res.msg}");
                         selectTag.clear();
                       } else {
                         print("error: ${res.msg}");
                         snackBar(res.msg, context);
-                        Navigator.pop(context,);
+                        Navigator.pop(
+                          context,
+                        );
                         return;
                       }
                     }
@@ -332,7 +338,8 @@ class _ReqTagListState extends State<ReqTagList> {
                 btnName2: "삭제하기",
                 btnCall2: () async {
                   try {
-                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    helper = RetrofitHelper(
+                        await TokenInterceptor.getApiClient(context, () {
                       setState(() {});
                     }));
                     for (int i = 0; i < deleteList.length; i++) {
@@ -340,7 +347,7 @@ class _ReqTagListState extends State<ReqTagList> {
                       if (res.success) {
                         print("삭제함: ${res.msg}");
                         selectTag.clear();
-                        itemCount --;
+                        itemCount--;
                       } else {
                         print("errorr: ${res.msg}");
                       }

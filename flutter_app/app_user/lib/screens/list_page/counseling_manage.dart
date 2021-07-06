@@ -10,6 +10,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/counseling_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -44,6 +45,7 @@ class _CounselingManageState extends State<CounselingManage> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
@@ -61,6 +63,7 @@ class _CounselingManageState extends State<CounselingManage> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
@@ -202,12 +205,14 @@ class _CounselingManageState extends State<CounselingManage> {
                                 if (counAdminList.length == 0) {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
                                       child: Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: Text(
                                             "등록된 상담이 없습니다.",
                                             style: TextStyle(
@@ -237,7 +242,8 @@ class _CounselingManageState extends State<CounselingManage> {
                                 } else {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
@@ -255,6 +261,8 @@ class _CounselingManageState extends State<CounselingManage> {
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
                           );
+                        } else if (snapshot.hasError) {
+                          return buildConnectionError();
                         } else {
                           return Center(
                             child: CircularProgressIndicator(),
@@ -279,12 +287,14 @@ class _CounselingManageState extends State<CounselingManage> {
                                 if (counUserList.length == 0) {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
                                       child: Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: Text(
                                             "상담 신청이 없습니다.",
                                             style: TextStyle(
@@ -314,7 +324,8 @@ class _CounselingManageState extends State<CounselingManage> {
                                 } else {
                                   return Card(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18)),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                     elevation: 5,
                                     margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
                                     child: Center(
@@ -332,6 +343,8 @@ class _CounselingManageState extends State<CounselingManage> {
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
                           );
+                        } else if (snapshot.hasError) {
+                          return buildConnectionError();
                         } else {
                           return Center(
                             child: CircularProgressIndicator(),

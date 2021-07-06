@@ -9,6 +9,7 @@ import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +58,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
           }
         } else {
           if (itemCount != searchTipList.length) {
-            if ((searchTipList.length - itemCount) ~/ Consts.showItemCount <= 0) {
+            if ((searchTipList.length - itemCount) ~/ Consts.showItemCount <=
+                0) {
               itemCount = searchTipList.length;
             } else {
               itemCount += Consts.showItemCount;
@@ -81,6 +83,7 @@ class _TipStoragePageState extends State<TipStoragePage> {
       }
     } catch (e) {
       print(e);
+      return e;
     }
   }
 
@@ -186,26 +189,9 @@ class _TipStoragePageState extends State<TipStoragePage> {
                           right: 33, left: 33, bottom: 15, top: 15),
                       child: buildTextField("업체명", titleC,
                           autoFocus: false, prefixIcon: Icon(Icons.search),
-                          textInput: (String key) async {
-                            helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
-                              setState(() {});
-                            }));
-                        try {
-                          var res = await helper.getTipListKeyword(key);
-                          print(res.toJson());
-                          if (res.success)
-                            setState(() {
-                              searchTipList = res.list;
-                              if (searchTipList.length <= Consts.showItemCount) {
-                                itemCount = searchTipList.length;
-                                print(searchTipList.length);
-                                msg = "검색된 리뷰가 없습니다.";
-                              }
-                            });
-                        } catch (e) {
-                          print("error: $e");
-                        }
-                      }))
+                          textInput: (String key) {
+                            _onSearchKey(key);
+                          }))
                   : SizedBox(),
               selectValue == valueList[1]
                   ? Expanded(
@@ -239,7 +225,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
                                         _scrollController.animateTo(
                                             _scrollController
                                                 .position.minScrollExtent,
-                                            duration: Duration(milliseconds: 200),
+                                            duration:
+                                                Duration(milliseconds: 200),
                                             curve: Curves.elasticOut);
                                       },
                                       mode: 1,
@@ -263,7 +250,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
                                 );
                               }
                             } else {
-                              return buildItemTip(context, index, searchTipList);
+                              return buildItemTip(
+                                  context, index, searchTipList);
                             }
                           }),
                     )
@@ -347,6 +335,8 @@ class _TipStoragePageState extends State<TipStoragePage> {
                                       }
                                     }),
                               );
+                            } else if (snapshot.hasError) {
+                              return buildConnectionError();
                             } else {
                               return Center(
                                 child: CircularProgressIndicator(),
@@ -359,6 +349,29 @@ class _TipStoragePageState extends State<TipStoragePage> {
         ),
       ),
     );
+  }
+
+  _onSearchKey(String key) async {
+    helper = RetrofitHelper(
+        await TokenInterceptor.getApiClient(context, () {
+          setState(() {});
+        }));
+    try {
+      var res = await helper.getTipListKeyword(key);
+      print(res.toJson());
+      if (res.success)
+        setState(() {
+          searchTipList = res.list;
+          if (searchTipList.length <=
+              Consts.showItemCount) {
+            itemCount = searchTipList.length;
+            print(searchTipList.length);
+            msg = "검색된 리뷰가 없습니다.";
+          }
+        });
+    } catch (e) {
+      print("error: $e");
+    }
   }
 
   Widget buildItemTip(BuildContext context, int index, List<TipVO> list) {

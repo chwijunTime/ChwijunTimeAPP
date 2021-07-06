@@ -11,6 +11,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/notification_dialog.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -100,8 +101,8 @@ class _NotificationPageState extends State<NotificationPage> {
               User.role == User.user
                   ? SizedBox()
                   : Padding(
-                      padding:
-                          const EdgeInsets.only(right: 26, left: 26, bottom: 10),
+                      padding: const EdgeInsets.only(
+                          right: 26, left: 26, bottom: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -114,18 +115,18 @@ class _NotificationPageState extends State<NotificationPage> {
                                         builder: (context) =>
                                             NotificationWrite()));
                                 if (res != null && res) {
-                                    setState(() {
-                                      _getNotice();
-                                      _scrollController.animateTo(
-                                          _scrollController
-                                              .position.minScrollExtent,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.elasticOut);
-                                      print("itemCount: ${itemCount}");
-                                    });
-                                    if (noticeList.length == itemCount) {
-                                      itemCount++;
-                                    }
+                                  setState(() {
+                                    _getNotice();
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                    print("itemCount: ${itemCount}");
+                                  });
+                                  if (noticeList.length == itemCount) {
+                                    itemCount++;
+                                  }
                                 }
                               },
                               mode: 1,
@@ -171,7 +172,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                           borderRadius:
                                               BorderRadius.circular(18)),
                                       elevation: 5,
-                                      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      margin:
+                                          EdgeInsets.fromLTRB(25, 13, 25, 13),
                                       child: Center(
                                         child: Padding(
                                             padding:
@@ -208,10 +210,12 @@ class _NotificationPageState extends State<NotificationPage> {
                                           borderRadius:
                                               BorderRadius.circular(18)),
                                       elevation: 5,
-                                      margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                      margin:
+                                          EdgeInsets.fromLTRB(25, 13, 25, 13),
                                       child: Center(
                                         child: Padding(
-                                          padding: EdgeInsets.all(Consts.padding),
+                                          padding:
+                                              EdgeInsets.all(Consts.padding),
                                           child: CircularProgressIndicator(),
                                         ),
                                       ),
@@ -227,6 +231,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                   }
                                 }
                               });
+                        } else if (snapshot.hasError) {
+                          return buildConnectionError();
                         } else {
                           return Center(
                             child: CircularProgressIndicator(),
@@ -246,11 +252,16 @@ class _NotificationPageState extends State<NotificationPage> {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));
-    var res = await helper.getNoticeList();
-    if (res.success) {
-      return res.list.toList();
-    } else {
-      return null;
+    try {
+      var res = await helper.getNoticeList();
+      if (res.success) {
+        return res.list.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("error: $e");
+      return e;
     }
   }
 
@@ -356,11 +367,13 @@ class _NotificationPageState extends State<NotificationPage> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                  helper = RetrofitHelper(
+                      await TokenInterceptor.getApiClient(context, () {
                     setState(() {});
                   }));
                   try {
-                    helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                    helper = RetrofitHelper(
+                        await TokenInterceptor.getApiClient(context, () {
                       setState(() {});
                     }));
                     int deleteCnt = 0;
@@ -368,7 +381,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       final res = await helper.deleteNotice(arr[i]);
                       if (res.success) {
                         if (noticeList.length == itemCount) {
-                          deleteCnt ++;
+                          deleteCnt++;
                         }
                         deleteNoti.clear();
                       } else {

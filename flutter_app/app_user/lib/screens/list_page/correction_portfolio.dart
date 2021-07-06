@@ -1,6 +1,5 @@
 import 'package:app_user/consts.dart';
 import 'package:app_user/model/correction/admin_correction_vo.dart';
-import 'package:app_user/model/correction/correction_vo.dart';
 import 'package:app_user/retrofit/retrofit_helper.dart';
 import 'package:app_user/retrofit/token_interceptor.dart';
 import 'package:app_user/widgets/app_bar.dart';
@@ -8,11 +7,13 @@ import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 
 class CorrectionPortfolioPage extends StatefulWidget {
   @override
-  _CorrectionPortfolioPageState createState() => _CorrectionPortfolioPageState();
+  _CorrectionPortfolioPageState createState() =>
+      _CorrectionPortfolioPageState();
 }
 
 class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
@@ -103,8 +104,8 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
                                     padding: EdgeInsets.all(Consts.padding),
                                     child: Text(
                                       "등록된 요청이 없습니다.",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.w700),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700),
                                     )),
                               ),
                             );
@@ -157,6 +158,8 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                     );
+                  } else if (snapshot.hasError) {
+                    return buildConnectionError();
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -179,7 +182,7 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
       var res = await helper.getCorrectionList();
       if (res.success) {
         List<AdminCorrectionVO> list = [];
-        for (int i=0; i< res.list.length; i++) {
+        for (int i = 0; i < res.list.length; i++) {
           if (res.list[i].type == "Portfolio") {
             list.add(res.list[i]);
             print(res.list[i].toJson());
@@ -189,6 +192,7 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
       }
     } catch (e) {
       print("err: $e");
+      return e;
     }
   }
 
@@ -201,19 +205,22 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
         onTap: () async {
           await showDialog(
               context: context,
-              builder: (BuildContext context) =>
-                  CorrectionDialog(index: vo.index,));
+              builder: (BuildContext context) => CorrectionDialog(
+                    index: vo.index,
+                  ));
           setState(() {
             _getCorrection();
           });
-          },
+        },
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Row(
             children: [
               Expanded(
                   child: Text(
-                      "${vo.member.classNumber}_포트폴리오 ${vo.portfolio.index}", style: TextStyle(fontWeight: FontWeight.w600),)),
+                "${vo.member.classNumber}_포트폴리오 ${vo.portfolio.index}",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              )),
               makeTag(vo.status)
             ],
           ),
@@ -241,17 +248,14 @@ class _CorrectionPortfolioPageState extends State<CorrectionPortfolioPage> {
       width: 48,
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-          BorderRadius.all(Radius.circular(40)),
+          borderRadius: BorderRadius.all(Radius.circular(40)),
           border: Border.all(color: color)),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2, top: 2),
         child: Text(
           msg,
           style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: color),
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
           textAlign: TextAlign.center,
         ),
       ),

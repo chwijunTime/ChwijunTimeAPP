@@ -7,6 +7,7 @@ import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/correction_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 
 class CorrectionResumePage extends StatefulWidget {
@@ -79,90 +80,92 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
               ),
               Expanded(
                   child: FutureBuilder(
-                    future: _getCorrection(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        correctionList = snapshot.data;
-                        if (correctionList.length <= Consts.showItemCount) {
-                          itemCount = correctionList.length;
-                        }
-                        return ListView.separated(
-                          controller: _scrollController,
-                          itemCount: itemCount + 1,
-                          itemBuilder: (context, index) {
-                            if (index == itemCount) {
-                              if (correctionList.length == 0) {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18)),
-                                  elevation: 5,
-                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                  child: Center(
-                                    child: Padding(
-                                        padding: EdgeInsets.all(Consts.padding),
-                                        child: Text(
-                                          "등록된 요청이 없습니다.",
-                                          style:
-                                          TextStyle(fontWeight: FontWeight.w700),
-                                        )),
-                                  ),
-                                );
-                              } else if (index == correctionList.length) {
-                                return Padding(
-                                  padding: EdgeInsets.all(Consts.padding),
-                                  child: makeGradientBtn(
-                                      msg: "맨 처음으로",
-                                      onPressed: () {
-                                        _scrollController.animateTo(
-                                            _scrollController
-                                                .position.minScrollExtent,
-                                            duration: Duration(milliseconds: 200),
-                                            curve: Curves.elasticOut);
-                                      },
-                                      mode: 1,
-                                      icon: Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.white,
-                                      )),
-                                );
-                              } else {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18)),
-                                  elevation: 5,
-                                  margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(Consts.padding),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
-                                );
-                              }
-                            } else {
-                              return buildPortfolioCorrection(context, index);
-                            }
-                          },
-                          separatorBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 20, right: 20),
-                              child: Container(
-                                height: 1,
-                                color: Colors.grey,
+                future: _getCorrection(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    correctionList = snapshot.data;
+                    if (correctionList.length <= Consts.showItemCount) {
+                      itemCount = correctionList.length;
+                    }
+                    return ListView.separated(
+                      controller: _scrollController,
+                      itemCount: itemCount + 1,
+                      itemBuilder: (context, index) {
+                        if (index == itemCount) {
+                          if (correctionList.length == 0) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                    padding: EdgeInsets.all(Consts.padding),
+                                    child: Text(
+                                      "등록된 요청이 없습니다.",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700),
+                                    )),
                               ),
                             );
-                          },
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
+                          } else if (index == correctionList.length) {
+                            return Padding(
+                              padding: EdgeInsets.all(Consts.padding),
+                              child: makeGradientBtn(
+                                  msg: "맨 처음으로",
+                                  onPressed: () {
+                                    _scrollController.animateTo(
+                                        _scrollController
+                                            .position.minScrollExtent,
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.elasticOut);
+                                  },
+                                  mode: 1,
+                                  icon: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.white,
+                                  )),
+                            );
+                          } else {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18)),
+                              elevation: 5,
+                              margin: EdgeInsets.fromLTRB(25, 13, 25, 13),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(Consts.padding),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          return buildPortfolioCorrection(context, index);
+                        }
+                      },
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            height: 1,
+                            color: Colors.grey,
+                          ),
                         );
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ))
+                      },
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return buildConnectionError();
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ))
             ],
           ),
         ),
@@ -178,7 +181,7 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
       var res = await helper.getCorrectionList();
       if (res.success) {
         List<AdminCorrectionVO> list = [];
-        for (int i=0; i< res.list.length; i++) {
+        for (int i = 0; i < res.list.length; i++) {
           if (res.list[i].type == "Resume") {
             list.add(res.list[i]);
           }
@@ -187,6 +190,7 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
       }
     } catch (e) {
       print("err: $e");
+      return e;
     }
   }
 
@@ -194,30 +198,33 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
     AdminCorrectionVO vo = correctionList[index];
     return Container(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-          child: InkWell(
-            onTap: () async {
-              await showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      CorrectionDialog(index: vo.index,));
-              setState(() {
-                _getCorrection();
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Text(
-                        "${vo.member.classNumber}_이력서 ${vo.resume.index}", style: TextStyle(fontWeight: FontWeight.w600),)),
-                  makeTag(vo.status)
-                ],
-              ),
-            ),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: InkWell(
+        onTap: () async {
+          await showDialog(
+              context: context,
+              builder: (BuildContext context) => CorrectionDialog(
+                    index: vo.index,
+                  ));
+          setState(() {
+            _getCorrection();
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(
+                "${vo.member.classNumber}_이력서 ${vo.resume.index}",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              )),
+              makeTag(vo.status)
+            ],
           ),
-        ));
+        ),
+      ),
+    ));
   }
 
   Widget makeTag(String str) {
@@ -239,17 +246,14 @@ class _CorrectionResumePageState extends State<CorrectionResumePage> {
       width: 48,
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-          BorderRadius.all(Radius.circular(40)),
+          borderRadius: BorderRadius.all(Radius.circular(40)),
           border: Border.all(color: color)),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2, top: 2),
         child: Text(
           msg,
           style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: color),
+              fontSize: 12, fontWeight: FontWeight.w500, color: color),
           textAlign: TextAlign.center,
         ),
       ),

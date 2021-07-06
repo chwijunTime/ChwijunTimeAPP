@@ -7,6 +7,7 @@ import 'package:app_user/widgets/back_button.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/counseling_apply_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -111,8 +112,8 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                                     padding: EdgeInsets.all(Consts.padding),
                                     child: Text(
                                       "등록된 상담이 없습니다.",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.w700),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700),
                                     )),
                               ),
                             );
@@ -155,6 +156,8 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                     );
+                  } else if (snapshot.hasError) {
+                    return buildConnectionError();
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -176,12 +179,13 @@ class _CounselingApplyPageState extends State<CounselingApplyPage> {
     try {
       var res = await helper.getConsultingAdminList();
       if (res.success) {
-            return res.list;
+        return res.list;
       } else {
         return null;
       }
     } catch (e) {
       print("error: $e");
+      return (e);
     }
   }
 

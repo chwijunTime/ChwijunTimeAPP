@@ -13,6 +13,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -295,11 +296,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                           future: _getCompany(),
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else {
+                            if (snapshot.hasData) {
                               noticeList = snapshot.data;
                               for (int i = 0; i < noticeList.length; i++) {
                                 deleteNoti.add(false);
@@ -316,14 +313,14 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                       return Card(
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(18)),
+                                            BorderRadius.circular(18)),
                                         elevation: 5,
                                         margin:
-                                            EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                        EdgeInsets.fromLTRB(25, 13, 25, 13),
                                         child: Center(
                                           child: Padding(
                                               padding:
-                                                  EdgeInsets.all(Consts.padding),
+                                              EdgeInsets.all(Consts.padding),
                                               child: Text(
                                                 msg,
                                                 style: TextStyle(
@@ -341,7 +338,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                                   _scrollController
                                                       .position.minScrollExtent,
                                                   duration:
-                                                      Duration(milliseconds: 200),
+                                                  Duration(milliseconds: 200),
                                                   curve: Curves.elasticOut);
                                             },
                                             mode: 1,
@@ -354,14 +351,14 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                       return Card(
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(18)),
+                                            BorderRadius.circular(18)),
                                         elevation: 5,
                                         margin:
-                                            EdgeInsets.fromLTRB(25, 13, 25, 13),
+                                        EdgeInsets.fromLTRB(25, 13, 25, 13),
                                         child: Center(
                                           child: Padding(
                                             padding:
-                                                EdgeInsets.all(Consts.padding),
+                                            EdgeInsets.all(Consts.padding),
                                             child: CircularProgressIndicator(),
                                           ),
                                         ),
@@ -374,6 +371,13 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
                                 },
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
+                              );
+                            } else if (snapshot.hasError) {
+                              return buildConnectionError();
+                            }
+                              else{
+                              return Center(
+                                child: CircularProgressIndicator(),
                               );
                             }
                           }),
@@ -399,6 +403,7 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
       }
     } catch (e) {
       print("error: $e");
+      return(e);
     }
   }
 
@@ -577,21 +582,25 @@ class _CompanyNoticePageState extends State<CompanyNoticePage> {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));
-    var res = await helper.getCompListKeyword(key);
-    if (res.success) {
-      setState(() {
-        searchNoticeList = res.list;
-        for (int i = 0; i < searchNoticeList.length; i++) {
-          deleteNoti.add(false);
-        }
-        if (searchNoticeList.length <= Consts.showItemCount) {
-          itemCount = searchNoticeList.length;
-          print(searchNoticeList.length);
-          msg = "검색된 취업공고가 없습니다.";
-        } else {
-          itemCount = Consts.showItemCount;
-        }
-      });
+    try {
+      var res = await helper.getCompListKeyword(key);
+      if (res.success) {
+        setState(() {
+          searchNoticeList = res.list;
+          for (int i = 0; i < searchNoticeList.length; i++) {
+            deleteNoti.add(false);
+          }
+          if (searchNoticeList.length <= Consts.showItemCount) {
+            itemCount = searchNoticeList.length;
+            print(searchNoticeList.length);
+            msg = "검색된 취업공고가 없습니다.";
+          } else {
+            itemCount = Consts.showItemCount;
+          }
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

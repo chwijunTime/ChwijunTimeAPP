@@ -12,6 +12,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:app_user/widgets/tag.dart';
 import 'package:app_user/widgets/text_field.dart';
 import 'package:flutter/cupertino.dart';
@@ -343,7 +344,10 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
                                             context, index, contractingList);
                                       }
                                     });
-                              } else {
+                              } else if (snapshot.hasError) {
+                                return buildConnectionError();
+                              }
+                              else {
                                 return Center(
                                   child: CircularProgressIndicator(),
                                 );
@@ -371,6 +375,7 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
@@ -486,18 +491,22 @@ class _ContractingCompPageState extends State<ContractingCompPage> {
     helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
       setState(() {});
     }));
-    var res = await helper.getContListKeyword(key);
-    if (res.success)
-      setState(() {
-        searchContractingList = res.list;
-        if (searchContractingList.length <= Consts.showItemCount) {
-          itemCount = searchContractingList.length;
-          print(searchContractingList.length);
-          msg = "검색된 협약업체가 없습니다.";
-        } else {
-          itemCount = Consts.showItemCount;
-        }
-      });
+    try {
+      var res = await helper.getContListKeyword(key);
+      if (res.success)
+        setState(() {
+          searchContractingList = res.list;
+          if (searchContractingList.length <= Consts.showItemCount) {
+            itemCount = searchContractingList.length;
+            print(searchContractingList.length);
+            msg = "검색된 협약업체가 없습니다.";
+          } else {
+            itemCount = Consts.showItemCount;
+          }
+        });
+    } catch (e) {
+      print(e);
+    }
   }
 
   _onDeleteCompany() {

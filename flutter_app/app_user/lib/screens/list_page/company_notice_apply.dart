@@ -7,6 +7,7 @@ import 'package:app_user/widgets/app_bar.dart';
 import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/apply_dialog.dart';
 import 'package:app_user/widgets/drop_down_button.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 
 class CompanyNoticeApply extends StatefulWidget {
@@ -103,11 +104,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
               child: FutureBuilder(
                   future: _getList(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
+                    if (snapshot.hasData) {
                       applyList = snapshot.data;
                       if (applyList.length <= Consts.showItemCount) {
                         itemCount = applyList.length;
@@ -175,6 +172,12 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                       );
+                    } else if (snapshot.hasError) {
+                      return buildConnectionError();
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
                   }),
             ),
@@ -224,6 +227,7 @@ class _CompanyNoticeApplyState extends State<CompanyNoticeApply> {
       }
     } catch (e) {
       print("err: $e");
+      return e;
     }
   }
 

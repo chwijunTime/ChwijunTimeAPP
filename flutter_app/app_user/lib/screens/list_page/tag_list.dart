@@ -11,6 +11,7 @@ import 'package:app_user/widgets/button.dart';
 import 'package:app_user/widgets/dialog/std_dialog.dart';
 import 'package:app_user/widgets/dialog/tag_dialog.dart';
 import 'package:app_user/widgets/drawer.dart';
+import 'package:app_user/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 
 class TagList extends StatefulWidget {
@@ -97,7 +98,10 @@ class _TagListState extends State<TagList> {
                         makeGradientBtn(
                             msg: "요청 태그 보기",
                             onPressed: () async {
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => ReqTagList()));
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ReqTagList()));
                               setState(() {
                                 _getTagList();
                                 if (tagList.length - itemCount == 1) {
@@ -133,8 +137,8 @@ class _TagListState extends State<TagList> {
                               _getTagList();
                               if (tagList.length == itemCount) {
                                 _scrollController.animateTo(
-                                    _scrollController
-                                        .position.pixels - _scrollController.position.extentBefore,
+                                    _scrollController.position.pixels -
+                                        _scrollController.position.extentBefore,
                                     duration: Duration(milliseconds: 200),
                                     curve: Curves.elasticOut);
                                 itemCount++;
@@ -202,7 +206,8 @@ class _TagListState extends State<TagList> {
                                         _scrollController.animateTo(
                                             _scrollController
                                                 .position.minScrollExtent,
-                                            duration: Duration(milliseconds: 200),
+                                            duration:
+                                                Duration(milliseconds: 200),
                                             curve: Curves.elasticOut);
                                       },
                                       mode: 1,
@@ -225,7 +230,8 @@ class _TagListState extends State<TagList> {
                           },
                           separatorBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.only(left: 20, right: 20),
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20),
                               child: Container(
                                 height: 1,
                                 color: Colors.grey,
@@ -235,6 +241,8 @@ class _TagListState extends State<TagList> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                         );
+                      } else if (snapshot.hasError) {
+                        return buildConnectionError();
                       } else {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -262,6 +270,7 @@ class _TagListState extends State<TagList> {
       }
     } catch (e) {
       print("error: $e");
+      return e;
     }
   }
 
@@ -338,7 +347,8 @@ class _TagListState extends State<TagList> {
                 },
                 btnName2: "삭제하기",
                 btnCall2: () async {
-                  helper = RetrofitHelper(await TokenInterceptor.getApiClient(context, () {
+                  helper = RetrofitHelper(
+                      await TokenInterceptor.getApiClient(context, () {
                     setState(() {});
                   }));
                   int deleteCnt = 0;
@@ -347,7 +357,7 @@ class _TagListState extends State<TagList> {
                       var res = await helper.deleteTag(deleteList[i]);
                       if (res.success) {
                         if (tagList.length == itemCount) {
-                          deleteCnt ++;
+                          deleteCnt++;
                         }
                         deleteTag.clear();
                       } else {
